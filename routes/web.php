@@ -12,5 +12,11 @@
 */
 
 $router->get('/', function () use ($router) {
+
     return $router->app->version();
+
 });
+
+$router->get('/get_menu', 'HomeController@get_menu');
+
+$router->post('/get_dashboard', 'DashboardController@get_dashboard');
