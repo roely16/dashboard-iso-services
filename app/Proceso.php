@@ -22,4 +22,10 @@ class Proceso extends Model{
 
     }
 
+    public function indicadores(){
+
+        return $this->hasMany('App\Indicador', 'id_proceso', 'id');
+
+    }
+
 }

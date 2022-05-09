@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Proceso;
 use App\Area;
+use App\Indicador;
 
 class DashboardController extends Controller{
 
@@ -17,8 +18,11 @@ class DashboardController extends Controller{
 
         $title = $this->get_title($id_proceso, $get_process);
 
+        $indicadores = $this->get_kpi($id_proceso);
+
         $response = [
-            "title" => $title
+            "title" => $title,
+            "indicadores" => $indicadores
         ];
 
         return response()->json($response);
@@ -49,6 +53,37 @@ class DashboardController extends Controller{
         ];
 
         return $response;
+
+    }
+
+    public function get_kpi($id_proceso){
+
+        $indicadores = Indicador::where('id_proceso', $id_proceso)->get();
+
+        foreach ($indicadores as &$indicador) {
+            
+            // Ejecutar la función correspondiente al indicador
+            
+            $indicador->dark = $indicador->dark === 'S' ? true : false;
+
+            $title = [
+                "name" => $indicador->nombre,
+                "icon" => [
+                    "name" => $indicador->icon,
+                    'color' => $indicador->icon_color,
+                    'container' => $indicador->icon_container_color
+                ]
+            ];
+
+            $indicador->title = $title;
+
+            if ($indicador->controlador) {
+                $result = app('App\Http\Controllers' . $indicador->controlador)->{$indicador->funcion}($indicador);
+            }
+            
+        }
+
+        return $indicadores;
 
     }
 
