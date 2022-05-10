@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class CalidadController extends Controller{
+class QuejasController extends Controller{
 
     public function create($indicador){
 

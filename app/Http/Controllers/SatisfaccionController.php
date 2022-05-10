@@ -1,8 +1,8 @@
-<?php
+<?php 
 
 namespace App\Http\Controllers;
 
-class CalidadController extends Controller{
+class SatisfaccionController extends Controller{
 
     public function create($indicador){
 

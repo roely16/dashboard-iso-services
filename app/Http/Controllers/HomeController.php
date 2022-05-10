@@ -13,12 +13,16 @@ class HomeController extends Controller{
             $tipos_procesos = TipoProceso::all();
 
             foreach ($tipos_procesos as &$tipo) {
+
+                $procesos = $tipo->procesos()->where('ocultar', null)->get();
                 
-                foreach ($tipo->procesos as $proceso) {
+                foreach ($procesos as $proceso) {
                 
                     $proceso->selected = false;
 
                 }
+
+                $tipo->procesos = $procesos;
 
             }
 
@@ -26,6 +30,8 @@ class HomeController extends Controller{
 
         } catch (\Throwable $th) {
             
+            return response()->json($th->getMessage());
+
         }
 
     }

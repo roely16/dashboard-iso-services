@@ -17,7 +17,8 @@ class EficaciaController extends Controller{
         ];
 
         $indicador->content = $total;
-
+        $indicador->bottom_detail = $this->bottom_detail();
+        
         return $indicador;
 
     }
@@ -58,6 +59,31 @@ class EficaciaController extends Controller{
         ];
 
         return $chart;
+
+    }
+
+    public function bottom_detail(){
+
+        $result = [
+            [
+                "text" => "Anteriores",
+                "value" => 605,
+            ],
+            [
+                "text" => "Ingresados",
+                "value" => 602,
+            ],
+            [
+                "text" => "Resueltos",
+                "value" => 3,
+            ],
+            [
+                "text" => "Pendientes",
+                "value" => 0,
+            ],
+        ];
+
+        return $result;
 
     }
 

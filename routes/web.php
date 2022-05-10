@@ -11,6 +11,8 @@
 |
 */
 
+use App\MCAProcesos;
+
 $router->get('/', function () use ($router) {
 
     return $router->app->version();
@@ -20,3 +22,11 @@ $router->get('/', function () use ($router) {
 $router->get('/get_menu', 'HomeController@get_menu');
 
 $router->post('/get_dashboard', 'DashboardController@get_dashboard');
+
+$router->get('/test_view', function(){
+
+    $result = MCAProcesos::where('documento', 353)->get();
+
+    return response()->json($result);
+
+});

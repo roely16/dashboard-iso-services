@@ -12,11 +12,9 @@ class DashboardController extends Controller{
 
     public function get_dashboard(Request $request){
 
-        $id_proceso = $request->id_proceso ? $request->id_proceso : 7;
+        $id_proceso = $request->id_proceso ? $request->id_proceso : 11;
 
-        $get_process = $request->id_proceso ? true : false;
-
-        $title = $this->get_title($id_proceso, $get_process);
+        $title = $this->get_title($id_proceso);
 
         $indicadores = $this->get_kpi($id_proceso);
 
@@ -29,17 +27,9 @@ class DashboardController extends Controller{
 
     }
 
-    public function get_title($id_proceso, $get_process){
+    public function get_title($id_proceso){
 
-        if ($get_process) {
-            
-            $area = Proceso::find($id_proceso)->area;
-            
-        }else{
-
-            $area = Area::find($id_proceso);
-
-        }
+        $area = Proceso::find($id_proceso)->area;
 
         $jefe = $area->empleados()->where('jefe', 1)->where('status', 'A')->first(['nombre', 'apellido', 'nit']);
 
