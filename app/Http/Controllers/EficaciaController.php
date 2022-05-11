@@ -2,40 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Proceso;
+use App\MCAProcesos;
+
+use Illuminate\Support\Facades\DB;
+
 class EficaciaController extends Controller{
 
     public function create($indicador){
 
-        $chart = $this->chart($indicador);
+        $proceso = Proceso::find($indicador->id_proceso)->first();
+        $area = $proceso->area;
+        
+        $data = [
+            'codarea' => $area->codarea,
+            'date' => $indicador->date
+        ];
+
+        $result = (object) $this->get_data($data);
+        $chart = $this->chart($result);
 
         $total = [
             'total' => [
-                'value' => "100%",
-                'style' => ["text-h1", "font-weight-bold"],
+                'value' => $result->total . "%",
             ],
-            'chart' => $chart
+            'chart' => $chart,
+            'result' => $result
         ];
 
         $indicador->content = $total;
-        $indicador->bottom_detail = $this->bottom_detail();
+        $indicador->bottom_detail = $result->bottom_detail;
         
         return $indicador;
 
     }
 
-    public function chart($indicador){
+    public function chart($result){
 
         $chart = [
-            'type' => "Bar",
+            'type' => "Doughnut",
             'chartData' => [
                 'labels' => ["January", "February", "March"],
                 'datasets'=> [
                     [
-                        'data' => [40, 20, 12],
+                        'data' => [$result->total, 100 - $result->total],
                         'backgroundColor' => [
                             "rgb(255, 99, 132)",
-                            "rgb(54, 162, 235)",
-                            "rgb(255, 205, 86)",
+                            "rgba(54, 162, 235, 0.1)",
                         ],
                     ]
                 ],
@@ -45,6 +58,9 @@ class EficaciaController extends Controller{
                 'plugins' => [
                     'legend' => [
                         'display' => false,
+                    ],
+                    'tooltips' => [
+                        'enabled' => false
                     ],
                 ],
                 'scales' => [
@@ -62,28 +78,45 @@ class EficaciaController extends Controller{
 
     }
 
-    public function bottom_detail(){
+    public function get_data($data){
 
-        $result = [
-            [
-                "text" => "Anteriores",
-                "value" => 605,
-            ],
-            [
-                "text" => "Ingresados",
-                "value" => 602,
-            ],
-            [
-                "text" => "Resueltos",
-                "value" => 3,
-            ],
-            [
-                "text" => "Pendientes",
-                "value" => 0,
-            ],
+        $ingresados = MCAProcesos::where('codigoclase', 1)
+                    ->where('dependencia', 18)
+                    ->where('mes_inicial', 5)
+                    ->where('anio_inicial', 2022)
+                    ->count();
+
+        $anteriores = 0;
+
+        $resueltos = 3;
+
+        $pendientes = ($ingresados + $anteriores) - $resueltos;
+
+        $porcentaje = round(($resueltos / ($ingresados + $anteriores) * 100), 2);
+
+        $response = [
+            "total" => $porcentaje,
+            'bottom_detail' => [
+                [
+                    "text" => "Anteriores",
+                    "value" => $anteriores,
+                ],
+                [
+                    "text" => "Ingresados",
+                    "value" => $ingresados,
+                ],
+                [
+                    "text" => "Resueltos",
+                    "value" => $resueltos,
+                ],
+                [
+                    "text" => "Pendientes",
+                    "value" => $pendientes,
+                ],
+            ]
         ];
 
-        return $result;
+        return $response;
 
     }
 

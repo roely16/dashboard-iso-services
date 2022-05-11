@@ -13,10 +13,15 @@ class DashboardController extends Controller{
     public function get_dashboard(Request $request){
 
         $id_proceso = $request->id_proceso ? $request->id_proceso : 11;
+        $date = $request->date;
 
-        $title = $this->get_title($id_proceso);
+        $data_request = (object) [
+            "id_proceso" => $id_proceso,
+            "date" => $date
+        ];
 
-        $indicadores = $this->get_kpi($id_proceso);
+        $title = $this->get_title($data_request);
+        $indicadores = $this->get_kpi($data_request);
 
         $response = [
             "title" => $title,
@@ -27,9 +32,9 @@ class DashboardController extends Controller{
 
     }
 
-    public function get_title($id_proceso){
+    public function get_title($data){
 
-        $area = Proceso::find($id_proceso)->area;
+        $area = Proceso::find($data->id_proceso)->area;
 
         $jefe = $area->empleados()->where('jefe', 1)->where('status', 'A')->first(['nombre', 'apellido', 'nit']);
 
@@ -46,15 +51,16 @@ class DashboardController extends Controller{
 
     }
 
-    public function get_kpi($id_proceso){
+    public function get_kpi($data){
 
-        $indicadores = Indicador::where('id_proceso', $id_proceso)->get();
+        $indicadores = Indicador::where('id_proceso', $data->id_proceso)->get();
 
         foreach ($indicadores as &$indicador) {
             
             // Ejecutar la función correspondiente al indicador
             
             $indicador->dark = $indicador->dark === 'S' ? true : false;
+            $indicador->date = $data->date;
 
             $title = [
                 "name" => $indicador->nombre,

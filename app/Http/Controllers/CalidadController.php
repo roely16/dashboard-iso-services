@@ -2,23 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\MCAProcesos;
+use App\Proceso;
+
+use DB;
+
 class CalidadController extends Controller{
 
     public function create($indicador){
 
+        $proceso = Proceso::find($indicador->id_proceso)->first();
+        $area = $proceso->area;
+        
+        $data = [
+            'codarea' => $area->codarea,
+            'date' => $indicador->date
+        ];
+
+        $result = $this->get_data($data);
         $chart = $this->chart($indicador);
 
         $total = [
             'total' => [
                 'value' => "100%",
-                'style' => ["text-h1", "font-weight-bold"],
             ],
-            'chart' => $chart
+            'chart' => $chart,
+            'results' => $result
         ];
 
         $indicador->content = $total;
 
-        $indicador->bottom_detail = $this->bottom_detail();
+        $indicador->bottom_detail = $this->bottom_detail($indicador);
 
         return $indicador;
 
@@ -54,7 +68,7 @@ class CalidadController extends Controller{
 
     }
 
-    public function bottom_detail(){
+    public function bottom_detail($indicador){
 
         $result = [
             [
@@ -78,5 +92,20 @@ class CalidadController extends Controller{
         return $result;
 
     }
+
+    public function get_data($data){
+
+        $results = app('db')->connection('catastrousr')->select("SELECT *
+                    FROM SGC.MCA_PROCESOS_VW
+                    WHERE CODIGOCLASE = 1
+                    AND TO_CHAR(FECHA_FINALIZACION, 'YYYY-MM') = '2022-05'
+                    AND TO_CHAR(FECHA_INGRESO, 'YYYY-MM') = '2022-05'
+                    AND DEPENDENCIA = 18
+                    AND MES_INICIAL = 5");
+
+        return $results;
+
+    }
+    
 
 }
