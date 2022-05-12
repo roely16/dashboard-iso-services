@@ -28,4 +28,10 @@ class Proceso extends Model{
 
     }
 
+    public function dependencia(){
+
+        return $this->setConnection('catastrousr')->belongsTo('App\Dependencia', 'id_dependencia', 'codigo');
+
+    }
+
 }

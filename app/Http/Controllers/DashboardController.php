@@ -5,13 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Proceso;
-use App\Area;
 use App\Indicador;
 
 class DashboardController extends Controller{
 
     public function get_dashboard(Request $request){
-
+            
         $id_proceso = $request->id_proceso ? $request->id_proceso : 11;
         $date = $request->date;
 
@@ -28,8 +27,8 @@ class DashboardController extends Controller{
             "indicadores" => $indicadores
         ];
 
-        return response()->json($response);
-
+        return response()->json($response, 200);
+        
     }
 
     public function get_title($data){
@@ -68,7 +67,8 @@ class DashboardController extends Controller{
                     "name" => $indicador->icon,
                     'color' => $indicador->icon_color,
                     'container' => $indicador->icon_container_color
-                ]
+                ],
+                'id_proceso' => $indicador->id_proceso
             ];
 
             $indicador->title = $title;

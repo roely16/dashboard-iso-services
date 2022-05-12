@@ -5,95 +5,207 @@ namespace App\Http\Controllers;
 use App\Proceso;
 use App\MCAProcesos;
 
-use Illuminate\Support\Facades\DB;
-
 class EficaciaController extends Controller{
 
     public function create($indicador){
 
-        $proceso = Proceso::find($indicador->id_proceso)->first();
-        $area = $proceso->area;
+        try {
+            
+            $proceso = Proceso::find($indicador->id_proceso);
+            $area = $proceso->area;
+            $dependencia = $proceso->dependencia;
+            
+            $data = (object) [
+                'codarea' => $area->codarea,
+                'date' => $indicador->date,
+                'dependencia' => $dependencia
+            ];
+
+            $result = (object) $this->data($data);
+            $chart = $this->chart($result);
+
+            $total = [
+                'total' => [
+                    'value' => $result->total . "%",
+                ],
+                'chart' => $chart
+            ];
+
+            $indicador->content = $total;
+            $indicador->bottom_detail = $result->bottom_detail;
+            
+            return $indicador;
+
+        } catch (\Throwable $th) {
+            
+            $error = [
+                'message' => $th->getMessage()
+            ];
+
+            $indicador->error = $error;
+
+            return $indicador;
+
+        }
         
-        $data = [
-            'codarea' => $area->codarea,
-            'date' => $indicador->date
-        ];
-
-        $result = (object) $this->get_data($data);
-        $chart = $this->chart($result);
-
-        $total = [
-            'total' => [
-                'value' => $result->total . "%",
-            ],
-            'chart' => $chart,
-            'result' => $result
-        ];
-
-        $indicador->content = $total;
-        $indicador->bottom_detail = $result->bottom_detail;
-        
-        return $indicador;
-
     }
 
     public function chart($result){
 
-        $chart = [
-            'type' => "Doughnut",
-            'chartData' => [
-                'labels' => ["January", "February", "March"],
-                'datasets'=> [
-                    [
-                        'data' => [$result->total, 100 - $result->total],
-                        'backgroundColor' => [
-                            "rgb(255, 99, 132)",
-                            "rgba(54, 162, 235, 0.1)",
+        try {
+            
+            $chart = [
+                'type' => "Doughnut",
+                'chartData' => [
+                    'datasets'=> [
+                        [
+                            'data' => [$result->total, 100 - $result->total],
+                            'backgroundColor' => [
+                                "rgb(128,232,155)",
+                                "rgba(54, 162, 235, 0.1)",
+                            ],
+                        ]
+                    ],
+                ],
+                'chartOptions' => [
+                    'responsive' => true,
+                    'plugins' => [
+                        'legend' => [
+                            'display' => false,
                         ],
-                    ]
-                ],
-            ],
-            'chartOptions' => [
-                'responsive' => true,
-                'plugins' => [
-                    'legend' => [
-                        'display' => false,
+                        'tooltips' => [
+                            'enabled' => false
+                        ],
                     ],
-                    'tooltips' => [
-                        'enabled' => false
-                    ],
-                ],
-                'scales' => [
-                    'y' => [
-                        'display' => false,
-                    ],
-                    'x' => [
-                        'display' => false,
+                    'scales' => [
+                        'y' => [
+                            'display' => false,
+                        ],
+                        'x' => [
+                            'display' => false,
+                        ],
                     ],
                 ],
-            ],
-        ];
+            ];
+    
+            return $chart;
 
-        return $chart;
+        } catch (\Throwable $th) {
+            
+            $response = [
+                'status' => 'error',
+                'message' => $th->getMessage()
+            ];
+
+            return $response;
+
+        }
+       
 
     }
 
-    public function get_data($data){
-
-        $ingresados = MCAProcesos::where('codigoclase', 1)
-                    ->where('dependencia', 18)
-                    ->where('mes_inicial', 5)
-                    ->where('anio_inicial', 2022)
-                    ->count();
-
+    public function data($data){
+        
         $anteriores = 0;
 
-        $resueltos = 3;
+        // En el mes actual buscar los expedientes que han sigo ingresados 
 
-        $pendientes = ($ingresados + $anteriores) - $resueltos;
+        $ingresados = MCAProcesos::where('dependencia', $data->dependencia->codigo)
+                        ->whereRaw("TO_CHAR(FECHA_INGRESO, 'YYYY-MM') = '$data->date'")
+                        ->get();
 
-        $porcentaje = round(($resueltos / ($ingresados + $anteriores) * 100), 2);
+        $headers_ingresados = [
+            [
+                'text' => 'Documento',
+                'value' => 'documento',
+                'width' => '25%'
+            ],
+            [
+                'text' => 'Año',
+                'value' => 'anio',
+                'width' => '25%'
+            ],
+            [
+                'text' => 'Ingreso',
+                'value' => 'fecha_ingreso',
+                'width' => '25%'
+            ],
+            [
+                'text' => 'Usuario',
+                'value' => 'usuario',
+                'width' => '25%'
+            ]
+        ];
 
+        $total_ingresados = count($ingresados);
+
+        $resueltos = [];
+        $pendientes = [];
+
+        foreach ($ingresados as $ingresado) {
+            
+            if ($ingresado->fecha_finalizacion) {
+                
+                $resueltos [] = $ingresado;
+
+            }else{
+
+                $pendientes [] = $ingresado;
+
+            }
+
+        }
+
+        // En el mes actual buscar aquellos expedientes que han sido resueltos
+
+        $total_resueltos = count($resueltos);
+
+        $headers_resueltos = [
+            [
+                'text' => 'Documento',
+                'value' => 'documento',
+                'width' => '10%',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Año',
+                'value' => 'anio',
+                'width' => '10%',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Ingreso',
+                'value' => 'fecha_ingreso',
+                'width' => '30%',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Finalización',
+                'value' => 'fecha_finalizacion',
+                'width' => '30%',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Usuario',
+                'value' => 'usuario',
+                'width' => '20%',
+                'sortable' => false
+            ]
+        ];
+
+        $total_pendientes = ($total_ingresados + $anteriores) - $total_resueltos;
+
+        $carga_trabajo = $total_ingresados + $anteriores;
+
+        if ($carga_trabajo > 0) {
+           
+            $porcentaje = round(($total_resueltos / ($carga_trabajo) * 100), 1);
+
+        }else{
+
+            $porcentaje = 0;
+        }
+        
         $response = [
             "total" => $porcentaje,
             'bottom_detail' => [
@@ -103,20 +215,40 @@ class EficaciaController extends Controller{
                 ],
                 [
                     "text" => "Ingresados",
-                    "value" => $ingresados,
+                    "value" => $total_ingresados,
+                    'detail' => [
+                        'table' => [
+                            'headers' => $headers_ingresados,
+                            'items' => $ingresados
+                        ]
+                    ]
                 ],
                 [
                     "text" => "Resueltos",
-                    "value" => $resueltos,
+                    "value" => $total_resueltos,
+                    'detail' => [
+                        'table' => [
+                            'headers' => $headers_resueltos,
+                            'items' => $resueltos
+                        ]
+                    ]
                 ],
                 [
                     "text" => "Pendientes",
-                    "value" => $pendientes,
+                    "value" => $total_pendientes,
+                    'detail' => [
+                        'table' => [
+                            'headers' => $headers_ingresados,
+                            'items' => $pendientes
+                        ]
+                    ]
                 ],
             ]
         ];
 
         return $response;
+
+       
 
     }
 
