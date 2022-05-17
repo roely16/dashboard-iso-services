@@ -52,7 +52,7 @@ class DashboardController extends Controller{
 
     public function get_kpi($data){
 
-        $indicadores = Indicador::where('id_proceso', $data->id_proceso)->get();
+        $indicadores = Indicador::where('id_proceso', $data->id_proceso)->where('OCULTAR', null)->get();
 
         foreach ($indicadores as &$indicador) {
             
@@ -73,8 +73,20 @@ class DashboardController extends Controller{
 
             $indicador->title = $title;
 
-            if ($indicador->controlador) {
-                $result = app('App\Http\Controllers' . $indicador->controlador)->{$indicador->funcion}($indicador);
+            try {
+                
+                if ($indicador->controlador) {
+                    app('App\Http\Controllers' . $indicador->controlador)->{$indicador->funcion}($indicador);
+                }
+
+            } catch (\Throwable $th) {
+                
+                $error = [
+                    'message' => $th->getMessage()
+                ];
+
+                $indicador->error = $error;
+
             }
             
         }

@@ -33,6 +33,8 @@ class EficaciaController extends Controller{
 
             $indicador->content = $total;
             $indicador->bottom_detail = $result->bottom_detail;
+            $indicador->carga_trabajo = $result->carga_trabajo;
+            $indicador->total_resueltos = $result->total_resueltos;
             
             return $indicador;
 
@@ -208,6 +210,8 @@ class EficaciaController extends Controller{
         
         $response = [
             "total" => $porcentaje,
+            'carga_trabajo' => $carga_trabajo,
+            'total_resueltos' => $total_resueltos,
             'bottom_detail' => [
                 [
                     "text" => "Anteriores",
