@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Indicador;
 use App\Proceso;
 
-class EficaciaController extends Controller{
+class QuejasController extends Controller{
 
     public function create($indicador){
 
@@ -31,20 +31,32 @@ class EficaciaController extends Controller{
 
         return $indicador;
 
-    } 
-    
-    public function chart($result){
+    }
+
+    public function chart($data){
+
+        $bottom_detail = $data->bottom_detail;
 
         $chart = [
-            'type' => "Doughnut",
+            'type' => "Bar",
             'chartData' => [
+                'labels' => [
+                    $bottom_detail[0]['text'], 
+                    $bottom_detail[1]['text'], 
+                    $bottom_detail[2]['text']
+                ],
                 'datasets'=> [
                     [
-                        'data' => [$result->total, 100 - $result->total],
-                        'backgroundColor' => [
-                            "rgb(128,232,155)",
-                            "rgba(54, 162, 235, 0.1)",
+                        'data' => [
+                            $bottom_detail[0]['value'], 
+                            $bottom_detail[1]['value'], 
+                            $bottom_detail[2]['value']
                         ],
+                        'backgroundColor' => [
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)',
+                            'rgb(130, 201, 129)'
+                        ]
                     ]
                 ],
             ],
@@ -70,13 +82,11 @@ class EficaciaController extends Controller{
         ];
 
         return $chart;
-
     }
-
+    
     public function data($data){
 
-        // Obtener la lista de procesos que tienen un indicador de eficacia
-        $indicadores = Indicador::where('tipo', 'eficacia')->get();
+        $indicadores = Indicador::where('tipo', 'quejas')->get();
 
         foreach ($indicadores as $indicador) {
             
@@ -87,26 +97,22 @@ class EficaciaController extends Controller{
         }
 
         $i = 0;
-        $carga_trabajo = 0;
-        $total_resueltos = 0;
+        $encuestas = 0;
+        $quejas = 0;
 
         $bottom_detail = [
             [
-                'text' => 'Anteriores',
+                'text' => 'Encuestas',
                 'value' => null
             ],
             [
-                'text' => 'Ingresados',
+                'text' => 'Quejas',
                 'value' => null
             ],
             [
-                'text' => 'Resueltos',
+                'text' => 'Felicitaciones',
                 'value' => null
             ],
-            [
-                'text' => 'Pendientes',
-                'value' => null
-            ]
         ];
 
         $indicadores_p = $indicadores;
@@ -114,8 +120,8 @@ class EficaciaController extends Controller{
         // Por cada indicador obtener los valores necesarios para realizar la sumatoria
         foreach ($indicadores as $indicador) {
             
-            $carga_trabajo += $indicador->carga_trabajo;
-            $total_resueltos += $indicador->total_resueltos;
+            $encuestas += $indicador->encuestas;
+            $quejas += $indicador->quejas;
 
             foreach ($indicador->bottom_detail as $detalle) {
                 
@@ -126,18 +132,18 @@ class EficaciaController extends Controller{
                 foreach ($indicadores_p as $indicador_p) {
                     
                     $area = Proceso::find($indicador_p->id_proceso)->area;
+        
+                    if (array_key_exists('detail', $indicador_p->bottom_detail[$i])) {
+                        $area->bottom_detail = $indicador_p->bottom_detail[$i]['detail'];
 
-                    $empty_table = [
-                        'table' => [
-                            'headers' => [],
-                            'items' => []
-                        ]
-                    ];
-
-                    $area->bottom_detail = array_key_exists('detail', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['detail'] : $empty_table;
-
-                    $areas [] = $area;
-
+                        if (count($area->bottom_detail['table']['items']) > 0) {
+      
+                            $areas [] = $area;
+                            
+                        }
+                        
+                    }
+                   
                 }
 
                 $bottom_detail[$i]['detail'] = $areas;
@@ -148,16 +154,13 @@ class EficaciaController extends Controller{
             $i = 0;
         }
 
-        $porcentaje = round(($total_resueltos / ($carga_trabajo) * 100), 1);
-
         $response = [
             'indicadores' => $indicadores,
-            'total' => $porcentaje,
+            'total' => $encuestas > 0 ? round(($quejas / $encuestas)* 100, 2) : 0,
             'bottom_detail' => $bottom_detail,
         ];
 
         return $response;
 
     }
-
 }

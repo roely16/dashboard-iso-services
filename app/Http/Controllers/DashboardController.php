@@ -52,7 +52,10 @@ class DashboardController extends Controller{
 
     public function get_kpi($data){
 
-        $indicadores = Indicador::where('id_proceso', $data->id_proceso)->where('OCULTAR', null)->get();
+        $indicadores = Indicador::where('id_proceso', $data->id_proceso)
+                        ->where('OCULTAR', null)
+                        ->orderBy('ORDEN', 'ASC')
+                        ->get();
 
         foreach ($indicadores as &$indicador) {
             

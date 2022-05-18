@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Proceso;
 use App\Models\Satisfaccion\Proceso as MSAProceso;
 use App\Models\Satisfaccion\Encabezado;
+use App\Models\Satisfaccion\ModeloEncabezado;
 
 class SatisfaccionController extends Controller{
 
@@ -22,12 +23,12 @@ class SatisfaccionController extends Controller{
                 'dependencia' => $dependencia
             ];
 
-            $result = $this->data($data);
-            $chart = $this->chart($indicador);
+            $result = (object) $this->data($data);
+            $chart = $this->chart($result);
 
             $total = [
                 'total' => [
-                    'value' => "100%",
+                    'value' => $result->total . '%',
                     'style' => ["text-h1", "font-weight-bold"],
                 ],
                 'chart' => $chart
@@ -35,7 +36,9 @@ class SatisfaccionController extends Controller{
 
             $indicador->content = $total;
 
-            $indicador->bottom_detail = $this->data($data);
+            $indicador->bottom_detail = $result->bottom_detail;
+            $indicador->evaluaciones = $result->evaluaciones;
+            $indicador->no_conformes = $result->no_conformes;
 
             return $indicador;
 
@@ -53,19 +56,20 @@ class SatisfaccionController extends Controller{
 
     }
 
-    public function chart($indicador){
+    public function chart($data){
+
+        $bottom_detail = $data->bottom_detail;
 
         $chart = [
             'type' => "Bar",
             'chartData' => [
-                'labels' => ["January", "February", "March"],
+                'labels' => [$bottom_detail[1]['text'], $bottom_detail[2]['text']],
                 'datasets'=> [
                     [
-                        'data' => [90, 30, 10],
+                        'data' => [$bottom_detail[1]['value'], $bottom_detail[2]['value']],
                         'backgroundColor' => [
                             'rgb(54, 162, 235)',
                             'rgb(255, 205, 86)',
-                            'rgb(255, 205, 86)'
                         ]
                     ]
                 ],
@@ -94,12 +98,17 @@ class SatisfaccionController extends Controller{
 
     public function data($data){
 
-        $msa_proceso = MSAProceso::where('codarea', $data->codarea)->first()->modelos->where('estado', 'A')->first();
+        $msa_procesos = MSAProceso::select('idproceso')->where('codarea', $data->codarea)->get()->pluck('idproceso');
 
-        $evaluaciones = Encabezado::where('id_medicion', $msa_proceso->id_medicion)
-                        ->whereRaw("to_char(periodo_del, 'YYYY-MM') = '$data->date'")
+        $modelos_encabezado = ModeloEncabezado::select('id_medicion')
+                                ->whereIn('idproceso', $msa_procesos)
+                                ->get()
+                                ->pluck('id_medicion');
+
+        $evaluaciones = Encabezado::whereIn('id_medicion', $modelos_encabezado)
+                        ->whereRaw("to_char(fecha_opinion, 'YYYY-MM') = '$data->date'")
                         ->get();
-
+                        
         $aceptables = [];
         $no_conformes = [];
 
@@ -110,7 +119,7 @@ class SatisfaccionController extends Controller{
 
             foreach ($evaluacion->detalle as $detalle) {
                 
-                if ($detalle->valor != ' ') {
+                if (is_numeric($detalle->valor)) {
                     
                     $total += intval($detalle->valor);
                     $eva_num [] = $detalle;
@@ -140,6 +149,10 @@ class SatisfaccionController extends Controller{
 
         $headers = [
             [
+                'text' => 'Correlativo',
+                'value' => 'correlativo'
+            ],
+            [
                 'text' => 'Usuario',
                 'value' => 'colaborador'
             ],
@@ -153,7 +166,7 @@ class SatisfaccionController extends Controller{
             ]
         ];
 
-        $result = [
+        $bottom_detail = [
             [
                 "text" => 'Universo',
                 "value" => count($evaluaciones),
@@ -167,14 +180,33 @@ class SatisfaccionController extends Controller{
             [
                 "text" => 'Aceptable',
                 "value" => count($aceptables),
+                'detail' => [
+                    'table' => [
+                        'headers' => $headers,
+                        'items' => $aceptables
+                    ]
+                ]
             ],
             [
                 "text" => 'No Conforme',
                 "value" => count($no_conformes),
+                'detail' => [
+                    'table' => [
+                        'headers' => $headers,
+                        'items' => $no_conformes
+                    ]
+                ]
             ],
         ];
 
-        return $result;
+        $response = [
+            'total' => count($evaluaciones) > 0 ? round(100 - ((count($no_conformes) / count($evaluaciones)) * 100), 1) : 100,
+            'evaluaciones' => count($evaluaciones),
+            'no_conformes' => count($no_conformes),
+            'bottom_detail' => $bottom_detail
+        ];
+
+        return $response;
 
     }
 
