@@ -255,9 +255,9 @@ class QuejasController extends Controller{
                     'table' => [
                         'headers' => $headers_evaluaciones,
                         'items' => $evaluaciones
-                    ],
-                    'component' => 'tables/TableSatisfaccion'
-                ]
+                    ]
+                ],
+                'component' => 'tables/TableSatisfaccion'
             ],
             [
                 "text" => "Quejas",
@@ -267,8 +267,8 @@ class QuejasController extends Controller{
                         'headers' => $headers,
                         'items' => $quejas
                     ],
-                    'component' => 'tables/TableDetail'
-                ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
             [
                 "text" => "Felicitaciones",
@@ -278,8 +278,8 @@ class QuejasController extends Controller{
                         'headers' => $headers,
                         'items' => $felicitaciones
                     ],
-                    'component' => 'tables/TableDetail'
-                ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
         ];
 

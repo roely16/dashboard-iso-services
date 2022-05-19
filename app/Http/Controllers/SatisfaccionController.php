@@ -206,8 +206,8 @@ class SatisfaccionController extends Controller{
                         'headers' => $headers,
                         'items' => $evaluaciones
                     ],
-                    'component' => 'tables/TableSatisfaccion'
-                ]
+                ],
+                'component' => 'tables/TableSatisfaccion'
             ],
             [
                 "text" => 'Aceptable',
@@ -217,8 +217,8 @@ class SatisfaccionController extends Controller{
                         'headers' => $headers,
                         'items' => $aceptables
                     ],
-                    'component' => 'tables/TableSatisfaccion'
-                ]
+                ],
+                'component' => 'tables/TableSatisfaccion'
             ],
             [
                 "text" => 'No Conforme',
@@ -228,8 +228,8 @@ class SatisfaccionController extends Controller{
                         'headers' => $headers,
                         'items' => $no_conformes
                     ],
-                    'component' => 'tables/TableSatisfaccion'
-                ]
+                ],
+                'component' => 'tables/TableSatisfaccion'
             ],
         ];
 

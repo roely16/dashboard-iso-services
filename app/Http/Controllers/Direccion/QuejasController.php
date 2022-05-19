@@ -103,15 +103,18 @@ class QuejasController extends Controller{
         $bottom_detail = [
             [
                 'text' => 'Encuestas',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ],
             [
                 'text' => 'Quejas',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ],
             [
                 'text' => 'Felicitaciones',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ],
         ];
 
@@ -134,8 +137,10 @@ class QuejasController extends Controller{
                     $area = Proceso::find($indicador_p->id_proceso)->area;
         
                     if (array_key_exists('detail', $indicador_p->bottom_detail[$i])) {
-                        $area->bottom_detail = $indicador_p->bottom_detail[$i]['detail'];
 
+                        $area->bottom_detail = $indicador_p->bottom_detail[$i]['detail'];
+                        $area->component = $indicador_p->bottom_detail[$i]['component'];
+                        
                         if (count($area->bottom_detail['table']['items']) > 0) {
       
                             $areas [] = $area;

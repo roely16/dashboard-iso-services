@@ -94,15 +94,18 @@ class SatisfaccionController extends Controller{
         $bottom_detail = [
             [
                 'text' => 'Universo',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ],
             [
                 'text' => 'Aceptable',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ],
             [
                 'text' => 'No Conforme',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ],
         ];
 
@@ -125,10 +128,12 @@ class SatisfaccionController extends Controller{
                     $area = Proceso::find($indicador_p->id_proceso)->area;
         
                     if (array_key_exists('detail', $indicador_p->bottom_detail[$i])) {
+                        
                         $area->bottom_detail = $indicador_p->bottom_detail[$i]['detail'];
+                        $area->component = $indicador_p->bottom_detail[$i]['component'];
 
                         if (count($area->bottom_detail['table']['items']) > 0) {
-      
+                            
                             $areas [] = $area;
                             
                         }

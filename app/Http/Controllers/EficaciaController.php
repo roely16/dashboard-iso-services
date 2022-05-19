@@ -228,8 +228,8 @@ class EficaciaController extends Controller{
                             'headers' => $headers_ingresados,
                             'items' => $ingresados
                         ],
-                        'component' => 'tables/TableDetail'
-                    ]
+                    ],
+                    'component' => 'tables/TableDetail'
                 ],
                 [
                     "text" => "Resueltos",
@@ -239,8 +239,8 @@ class EficaciaController extends Controller{
                             'headers' => $headers_resueltos,
                             'items' => $resueltos
                         ],
-                        'component' => 'tables/TableDetail'
-                    ]
+                    ],
+                    'component' => 'tables/TableDetail'
                 ],
                 [
                     "text" => "Pendientes",
@@ -250,8 +250,8 @@ class EficaciaController extends Controller{
                             'headers' => $headers_ingresados,
                             'items' => $pendientes
                         ],
-                        'component' => 'tables/TableDetail'
-                    ]
+                    ],
+                    'component' => 'tables/TableDetail'
                 ],
             ]
         ];

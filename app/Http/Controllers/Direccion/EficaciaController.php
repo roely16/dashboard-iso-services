@@ -93,19 +93,23 @@ class EficaciaController extends Controller{
         $bottom_detail = [
             [
                 'text' => 'Anteriores',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ],
             [
                 'text' => 'Ingresados',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ],
             [
                 'text' => 'Resueltos',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ],
             [
                 'text' => 'Pendientes',
-                'value' => null
+                'value' => null,
+                'component' => 'tables/TableProcesos'
             ]
         ];
 
@@ -135,6 +139,7 @@ class EficaciaController extends Controller{
                     ];
 
                     $area->bottom_detail = array_key_exists('detail', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['detail'] : $empty_table;
+                    $area->component = array_key_exists('component', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['component'] : null;
 
                     $areas [] = $area;
 
