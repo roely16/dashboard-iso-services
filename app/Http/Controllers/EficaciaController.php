@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Proceso;
 use App\MCAProcesos;
 
+use Illuminate\Support\Facades\DB;
+
 class EficaciaController extends Controller{
 
     public function create($indicador){
@@ -112,30 +114,37 @@ class EficaciaController extends Controller{
 
         // En el mes actual buscar los expedientes que han sigo ingresados 
 
-        $ingresados = MCAProcesos::where('dependencia', $data->dependencia->codigo)
+        // Obtener únicamente la información necesario, con el formato requerido
+
+        $ingresados = MCAProcesos::select(
+                            'documento', 
+                            'anio', 
+                            'status_documento', 
+                            'usuario', 
+                            'dependencia',
+                            DB::raw("to_char(fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso"),
+                            DB::raw("to_char(fecha_finalizacion, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion"),
+                            DB::raw("concat(documento, concat('-', anio)) as expediente")
+                        )
+                        ->where('dependencia', $data->dependencia->codigo)
                         ->whereRaw("TO_CHAR(FECHA_INGRESO, 'YYYY-MM') = '$data->date'")
                         ->get();
 
         $headers_ingresados = [
             [
                 'text' => 'Documento',
-                'value' => 'documento',
-                'width' => '25%'
-            ],
-            [
-                'text' => 'Año',
-                'value' => 'anio',
-                'width' => '25%'
+                'value' => 'expediente',
+                'width' => '33%'
             ],
             [
                 'text' => 'Ingreso',
                 'value' => 'fecha_ingreso',
-                'width' => '25%'
+                'width' => '33%'
             ],
             [
                 'text' => 'Usuario',
                 'value' => 'usuario',
-                'width' => '25%'
+                'width' => '33%'
             ]
         ];
 
@@ -165,14 +174,8 @@ class EficaciaController extends Controller{
         $headers_resueltos = [
             [
                 'text' => 'Documento',
-                'value' => 'documento',
-                'width' => '10%',
-                'sortable' => false
-            ],
-            [
-                'text' => 'Año',
-                'value' => 'anio',
-                'width' => '10%',
+                'value' => 'expediente',
+                'width' => '20%',
                 'sortable' => false
             ],
             [
@@ -224,7 +227,8 @@ class EficaciaController extends Controller{
                         'table' => [
                             'headers' => $headers_ingresados,
                             'items' => $ingresados
-                        ]
+                        ],
+                        'component' => 'tables/TableDetail'
                     ]
                 ],
                 [
@@ -234,7 +238,8 @@ class EficaciaController extends Controller{
                         'table' => [
                             'headers' => $headers_resueltos,
                             'items' => $resueltos
-                        ]
+                        ],
+                        'component' => 'tables/TableDetail'
                     ]
                 ],
                 [
@@ -244,7 +249,8 @@ class EficaciaController extends Controller{
                         'table' => [
                             'headers' => $headers_ingresados,
                             'items' => $pendientes
-                        ]
+                        ],
+                        'component' => 'tables/TableDetail'
                     ]
                 ],
             ]

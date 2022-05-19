@@ -6,6 +6,9 @@ use App\Proceso;
 use App\Models\Satisfaccion\Proceso as MSAProceso;
 use App\Models\Satisfaccion\Encabezado;
 use App\Models\Satisfaccion\ModeloEncabezado;
+use App\Models\Satisfaccion\ModeloDetalle;
+
+use Illuminate\Support\Facades\DB;
 
 class SatisfaccionController extends Controller{
 
@@ -105,7 +108,12 @@ class SatisfaccionController extends Controller{
                                 ->get()
                                 ->pluck('id_medicion');
 
-        $evaluaciones = Encabezado::whereIn('id_medicion', $modelos_encabezado)
+        $evaluaciones = Encabezado::select(
+                            'correlativo', 
+                            'colaborador', 
+                            DB::raw("to_char(fecha_opinion, 'DD/MM/YYYY HH24:MI:SS') as fecha_opinion")
+                        )
+                        ->whereIn('id_medicion', $modelos_encabezado)
                         ->whereRaw("to_char(fecha_opinion, 'YYYY-MM') = '$data->date'")
                         ->get();
                         
@@ -119,6 +127,12 @@ class SatisfaccionController extends Controller{
 
             foreach ($evaluacion->detalle as $detalle) {
                 
+                // Obtener la pregunta
+                $pregunta = ModeloDetalle::where('id_medicion', $detalle->id_medicion)->where('id_pregunta', $detalle->id_pregunta)->first();
+
+                $detalle->pregunta = $pregunta->texto_pregunta;
+                $detalle->tipo_valor = $pregunta->tipo_valor;
+
                 if (is_numeric($detalle->valor)) {
                     
                     $total += intval($detalle->valor);
@@ -135,9 +149,13 @@ class SatisfaccionController extends Controller{
             // Validar si es mayor que 8 para tomarla como ACEPTABLE
             if ($nota >= 8) {
                 
+                $evaluacion->color = 'success';
+
                 $aceptables [] = $evaluacion;
 
             }else {
+
+                $evaluacion->color = 'error';
 
                 $no_conformes [] = $evaluacion;
             
@@ -150,19 +168,32 @@ class SatisfaccionController extends Controller{
         $headers = [
             [
                 'text' => 'Correlativo',
-                'value' => 'correlativo'
+                'value' => 'correlativo',
+                'width' => '25%',
+                'sortable' => false
             ],
             [
                 'text' => 'Usuario',
-                'value' => 'colaborador'
+                'value' => 'colaborador',
+                'width' => '25%',
+                'sortable' => false
             ],
             [
                 'text' => 'Fecha de Opinión',
-                'value' => 'fecha_opinion'
+                'value' => 'fecha_opinion',
+                'width' => '25%',
+                'sortable' => false
             ],
             [
                 'text' => 'Total',
-                'value' => 'total'
+                'value' => 'total',
+                'width' => '25%',
+                'align' => 'center',
+                'sortable' => false
+            ],
+            [
+                'text' => '',
+                'value' => 'data-table-expand'
             ]
         ];
 
@@ -174,7 +205,8 @@ class SatisfaccionController extends Controller{
                     'table' => [
                         'headers' => $headers,
                         'items' => $evaluaciones
-                    ]
+                    ],
+                    'component' => 'tables/TableSatisfaccion'
                 ]
             ],
             [
@@ -184,7 +216,8 @@ class SatisfaccionController extends Controller{
                     'table' => [
                         'headers' => $headers,
                         'items' => $aceptables
-                    ]
+                    ],
+                    'component' => 'tables/TableSatisfaccion'
                 ]
             ],
             [
@@ -194,7 +227,8 @@ class SatisfaccionController extends Controller{
                     'table' => [
                         'headers' => $headers,
                         'items' => $no_conformes
-                    ]
+                    ],
+                    'component' => 'tables/TableSatisfaccion'
                 ]
             ],
         ];
