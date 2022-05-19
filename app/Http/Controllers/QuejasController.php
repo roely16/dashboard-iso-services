@@ -7,7 +7,10 @@ use App\Models\Satisfaccion\Proceso as MSAProceso;
 use App\Models\Satisfaccion\Encabezado;
 use App\Models\Quejas\Queja;
 use App\Models\Satisfaccion\ModeloEncabezado;
+use App\Models\Satisfaccion\ModeloDetalle;
 use App\Proceso;
+
+use Illuminate\Support\Facades\DB;
 
 class QuejasController extends Controller{
 
@@ -97,14 +100,21 @@ class QuejasController extends Controller{
 
         $sq_proceso = SQProceso::where('rh_areas_codarea', $data->codarea)->first();
 
-        $result_quejas = Queja::where('id_proceso', $sq_proceso->id_proceso)
-                    ->where(function($query){
-                        $query->where('clasificacion', 'QUEJA')
-                        ->orWhere('clasificacion', 'FELICITACION');
-                    })
-                    ->where('status', 'A')
-                    ->whereRaw("to_char(fecha_acuse_recibo, 'YYYY-MM') = '$data->date'")
-                    ->get();
+        $result_quejas = Queja::select(
+                            'id_queja',
+                            'descripcion',
+                            'clasificacion',
+                            'dirigido_a',
+                            DB::raw("to_char(fecha_acuse_recibo, 'DD/MM/YYYY') as fecha_acuse_recibo")
+                        )
+                        ->where('id_proceso', $sq_proceso->id_proceso)
+                        ->where(function($query){
+                            $query->where('clasificacion', 'QUEJA')
+                            ->orWhere('clasificacion', 'FELICITACION');
+                        })
+                        ->where('status', 'A')
+                        ->whereRaw("to_char(fecha_acuse_recibo, 'YYYY-MM') = '$data->date'")
+                        ->get();
 
 
         $quejas = [];
@@ -135,29 +145,105 @@ class QuejasController extends Controller{
                                 ->get()
                                 ->pluck('id_medicion');
 
-        $evaluaciones = Encabezado::whereIn('id_medicion', $modelos_encabezado)
+        $evaluaciones = Encabezado::select(
+                            'correlativo', 
+                            'colaborador', 
+                            DB::raw("to_char(fecha_opinion, 'DD/MM/YYYY HH24:MI:SS') as fecha_opinion")
+                        )
+                        ->whereIn('id_medicion', $modelos_encabezado)
                         ->whereRaw("to_char(fecha_opinion, 'YYYY-MM') = '$data->date'")
                         ->get();
+        
+        foreach ($evaluaciones as &$evaluacion) {
 
+            $eva_num = [];
+            $total = 0;
+
+            foreach ($evaluacion->detalle as $detalle) {
+                
+                // Obtener la pregunta
+                $pregunta = ModeloDetalle::where('id_medicion', $detalle->id_medicion)->where('id_pregunta', $detalle->id_pregunta)->first();
+
+                $detalle->pregunta = $pregunta->texto_pregunta;
+                $detalle->tipo_valor = $pregunta->tipo_valor;
+
+                if (is_numeric($detalle->valor)) {
+                    
+                    $total += intval($detalle->valor);
+                    $eva_num [] = $detalle;
+
+                }
+
+            }
+
+            $evaluacion->eva_num = $eva_num;
+
+            $nota = round($total / count($eva_num), 2);
+
+            // Validar si es mayor que 8 para tomarla como ACEPTABLE
+            if ($nota >= 8) {
+                
+                $evaluacion->color = 'success';
+
+            }else {
+
+                $evaluacion->color = 'error';
+            
+            }
+
+            $evaluacion->total = $nota;
+
+        }
         $headers_evaluaciones = [
             [
+                'text' => 'Correlativo',
+                'value' => 'correlativo',
+                'width' => '25%',
+                'sortable' => false
+            ],
+            [
                 'text' => 'Usuario',
-                'value' => 'colaborador'
+                'value' => 'colaborador',
+                'width' => '25%',
+                'sortable' => false
             ],
             [
                 'text' => 'Fecha de Opinión',
-                'value' => 'fecha_opinion'
+                'value' => 'fecha_opinion',
+                'width' => '25%',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Total',
+                'value' => 'total',
+                'width' => '25%',
+                'align' => 'center',
+                'sortable' => false
+            ],
+            [
+                'text' => '',
+                'value' => 'data-table-expand'
             ]
         ];
 
         $headers = [
             [
                 'text' => 'Fecha',
-                'value' => 'fecha_acuse_recibo'
+                'value' => 'fecha_acuse_recibo',
+                'width' => '25%',
+                'sortable' => false
             ],
             [
                 'text' => 'Usuario',
-                'value' => 'dirigido_a'
+                'value' => 'dirigido_a',
+                'width' => '25%',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Descripción',
+                'value' => 'descripcion',
+                'width' => '50%',
+                'sortable' => false
             ]
         ];
 
@@ -169,7 +255,8 @@ class QuejasController extends Controller{
                     'table' => [
                         'headers' => $headers_evaluaciones,
                         'items' => $evaluaciones
-                    ]
+                    ],
+                    'component' => 'tables/TableSatisfaccion'
                 ]
             ],
             [
@@ -179,7 +266,8 @@ class QuejasController extends Controller{
                     'table' => [
                         'headers' => $headers,
                         'items' => $quejas
-                    ]
+                    ],
+                    'component' => 'tables/TableDetail'
                 ]
             ],
             [
@@ -189,7 +277,8 @@ class QuejasController extends Controller{
                     'table' => [
                         'headers' => $headers,
                         'items' => $felicitaciones
-                    ]
+                    ],
+                    'component' => 'tables/TableDetail'
                 ]
             ],
         ];
