@@ -34,4 +34,12 @@ return [
         'charset'       => env('DB_CHARSET', 'AL32UTF8'),
         'prefix'        => env('DB_PREFIX', ''),
     ],
+    'tickets' => [
+        'driver'        => 'mysql',
+        'host'          => env('DB_HOST', '172.23.25.31'),
+        'database'      => env('DB_DATABASE', 'tickets'),
+        'username'      => env('DB_USERNAME', 'root'),
+        'password'      => env('DB_PASSWORD', 'udiwf'),
+        'charset'       => env('DB_CHARSET', 'utf8'),
+    ],
 ];

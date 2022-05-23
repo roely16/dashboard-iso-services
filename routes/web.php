@@ -11,7 +11,7 @@
 |
 */
 
-use App\MCAProcesos;
+use App\Models\Tickets\Ticket;
 
 $router->get('/', function () use ($router) {
 
@@ -25,7 +25,7 @@ $router->post('/get_dashboard', 'DashboardController@get_dashboard');
 
 $router->get('/test_view', function(){
 
-    $result = MCAProcesos::where('documento', 353)->get();
+    $result = Ticket::where('id', 9)->get();
 
     return response()->json($result);
 
