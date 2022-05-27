@@ -134,17 +134,20 @@ class EficaciaController extends Controller{
             [
                 'text' => 'Documento',
                 'value' => 'expediente',
-                'width' => '33%'
+                'width' => '33%',
+                'sortable' => false
             ],
             [
                 'text' => 'Ingreso',
                 'value' => 'fecha_ingreso',
-                'width' => '33%'
+                'width' => '33%',
+                'sortable' => false
             ],
             [
                 'text' => 'Usuario',
                 'value' => 'usuario',
-                'width' => '33%'
+                'width' => '33%',
+                'sortable' => false
             ]
         ];
 

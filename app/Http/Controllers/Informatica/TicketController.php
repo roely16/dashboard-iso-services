@@ -83,6 +83,8 @@ class TicketController extends Controller {
 
         $mes_anterior = date('Y-m', strtotime($data->date . ' -1 month'));
 
+        // * Los tickets pendientes en el mes actual son aquellos que fueron ingresados en el mes anterior y que fueron finalizados en el mes actual o bien que aún no han sido finalizados
+            
         // Tickets pendientes del mes anterior
         $anteriores = DB::connection('tickets')->select("SELECT 
                                                             tk.id,
@@ -91,25 +93,27 @@ class TicketController extends Controller {
                                                             tk.category,
                                                             tk.subject,
                                                             tk.message,
-                                                            date_format(dt, '%d/%m/%Y %H:%i:%s') as dt,
-                                                            date_format(fecha_cierre, '%d/%m/%Y') as fecha_cierre,
-                                                            us.name as tecnico
+                                                            DATE_FORMAT(dt, '%d/%m/%Y %H:%i:%s') AS dt,
+                                                            DATE_FORMAT(fecha_cierre, '%d/%m/%Y') AS fecha_cierre,
+                                                            us.name AS tecnico
                                                         FROM tks_tickets tk
-                                                        inner join tks_users us
-                                                        on tk.owner = us.id
-                                                        where date_format(dt, '%Y-%m') = '$mes_anterior'
-                                                        and (
-                                                            date_format(fecha_cierre, '%Y-%m') = '$data->date'
-                                                            or fecha_cierre is null
+                                                        LEFT JOIN tks_users us
+                                                        ON tk.owner = us.id
+                                                        WHERE DATE_FORMAT(dt, '%Y-%m') = '$mes_anterior'
+                                                        AND (
+                                                            DATE_FORMAT(fecha_cierre, '%Y-%m') = '$data->date'
+                                                            OR fecha_cierre IS NULL
                                                         )
-                                                        and category in (
-                                                            select id
-                                                            from tks_categories 
-                                                            where reportar = 1)
-                                                        ");
+                                                        AND category IN (
+                                                            SELECT id
+                                                            FROM tks_categories 
+                                                            WHERE reportar = 1
+                                                        )
+                                                        ORDER BY tk.id ASC");
+
+        //* Se toman aquellos tickets ingresados únicamente en el mes actual 
 
         // Tickets ingresados en el mes 
-
         $ingresados = Ticket::select(
                         'tks_tickets.id',
                         'trackid',
@@ -125,8 +129,11 @@ class TicketController extends Controller {
                     ->join('tks_users', 'tks_tickets.owner', '=', 'tks_users.id')
                     ->whereRaw("date_format(dt, '%Y-%m') = '$data->date'")
                     ->where('tks_categories.reportar', 1)
+                    ->orderBy('tks_tickets.id', 'ASC')
                     ->get();
-
+        
+        // !Verificar si se debe de limitar a los ticketes atendidos en el mes actual y en el anterior
+        
         // Tickets resueltos en el mes
         $resueltos = Ticket::select(
                         'tks_tickets.id',
@@ -144,22 +151,40 @@ class TicketController extends Controller {
                     ->whereRaw("date_format(fecha_cierre, '%Y-%m') = '$data->date'")
                     ->where('tks_categories.reportar', 1)
                     ->where('status', '3')
+                    ->orderBy('tks_tickets.id', 'ASC')
                     ->get();
-
-        $pendientes =  Ticket::select(
-                            'tks_tickets.id',
-                            'trackid',
-                            'tks_tickets.name',
-                            'email',
-                            'category',
-                            'status'
-                        )
-                        ->join('tks_categories', 'tks_tickets.category', '=', 'tks_categories.id')
-                        ->whereRaw("date_format(dt, '%Y-%m') = '$data->date'")
-                        ->where('fecha_cierre', null)
-                        ->where('tks_categories.reportar', 1)
-                        ->get();   
         
+        // *Los pendientes son todos aquellos tickets que fueron ingresados en el mes actual o bien en el anterior y que aún no tienen fecha de cierre
+
+        $pendientes = DB::connection('tickets')->select("SELECT 
+                                                            tk.id,
+                                                            tk.trackid,
+                                                            tk.status,
+                                                            tk.name,
+                                                            tk.category,
+                                                            tk.subject,
+                                                            tk.message,
+                                                            DATE_FORMAT(dt, '%d/%m/%Y %H:%i:%s') AS dt,
+                                                            DATE_FORMAT(fecha_cierre, '%d/%m/%Y') AS fecha_cierre,
+                                                            us.name AS tecnico, 
+                                                            tk.registros
+                                                        FROM tks_tickets tk
+                                                        LEFT JOIN tks_users us
+                                                        ON tk.owner = us.id
+                                                        WHERE (
+                                                            DATE_FORMAT(dt, '%Y-%m') = '$mes_anterior'
+                                                            OR DATE_FORMAT(dt, '%Y-%m') = '$data->date'
+                                                        )
+                                                        AND (
+                                                            fecha_cierre IS NULL
+                                                        )
+                                                        AND category IN (
+                                                            SELECT id
+                                                            FROM tks_categories 
+                                                            WHERE reportar = 1
+                                                        )
+                                                        ORDER BY tk.id ASC");
+
         $total_pendientes = (count($ingresados) + count($anteriores)) - count($resueltos);
 
         $headers = [
@@ -232,19 +257,19 @@ class TicketController extends Controller {
             ],
             [
                 'text' => 'Pendientes',
-                'value' => $total_pendientes,
+                'value' => count($pendientes),
                 'component' => 'tables/TableProcesos',
-                // 'detail' => [
-                //     'table' => [
-                //         'headers' => $headers,
-                //         'items' => $anteriores
-                //     ],
-                // ],
-                // 'component' => 'tables/TableDetail'
+                'detail' => [
+                    'table' => [
+                        'headers' => $headers,
+                        'items' => $pendientes
+                    ],
+                ],
+                'component' => 'tables/TableTickets'
             ]
         ];
 
-        $porcentaje = round((100 - (($total_pendientes / count($resueltos)) * 100)), 1);
+        $porcentaje = round((100 - ((count($pendientes) / count($resueltos)) * 100)), 1);
 
         $response = [
             'total' => $porcentaje,

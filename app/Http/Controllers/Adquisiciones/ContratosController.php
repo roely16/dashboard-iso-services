@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Adquisiciones;
+use App\Http\Controllers\Controller;
 
 use App\Proceso;
 
-class CalidadController extends Controller{
+class ContratosController extends Controller{
 
     public function create($indicador){
 
@@ -17,23 +18,20 @@ class CalidadController extends Controller{
             $data = (object) [
                 'codarea' => $area->codarea,
                 'date' => $indicador->date,
-                'dependencia' => $dependencia,
-                'data_controlador' => $indicador->data_controlador
+                'dependencia' => $dependencia
             ];
 
             $result = (object) $this->data($data);
-            $chart = $this->chart($indicador);
+            $chart = $this->chart($result);
 
             $total = [
                 'total' => [
                     'value' => $result->total . "%",
                 ],
-                'chart' => $chart,
-                'results' => $result
+                'chart' => $chart
             ];
-
+            
             $indicador->content = $total;
-
             $indicador->bottom_detail = $result->bottom_detail;
 
             return $indicador;
@@ -49,23 +47,20 @@ class CalidadController extends Controller{
             return $indicador;
 
         }
-        
-
     }
 
-    public function chart($data){
+    public function chart(){
 
         $chart = [
-            'type' => "Pie",
+            'type' => "Doughnut",
             'chartData' => [
-                'labels' => ["January", "February", "March"],
                 'datasets'=> [
                     [
-                        'data' => [90, 10],
+                        'data' => [50, 10],
                         'backgroundColor' => [
-                            'rgb(54, 162, 235)',
-                            'rgba(255, 205, 86, 0)'
-                        ]
+                            "rgb(128,232,155)",
+                            "rgba(54, 162, 235, 0.1)",
+                        ],
                     ]
                 ],
             ],
@@ -73,6 +68,17 @@ class CalidadController extends Controller{
                 'responsive' => true,
                 'plugins' => [
                     'legend' => [
+                        'display' => false,
+                    ],
+                    'tooltips' => [
+                        'enabled' => false
+                    ],
+                ],
+                'scales' => [
+                    'y' => [
+                        'display' => false,
+                    ],
+                    'x' => [
                         'display' => false,
                     ],
                 ],
@@ -83,13 +89,17 @@ class CalidadController extends Controller{
 
     }
 
-    public function data($data){
+    public function data(){
+        
+        $response = [
+            'total' => 100,
+            'bottom_detail' => []
+        ];
 
-        $result = app('App\Http\Controllers' . $data->data_controlador)->data($data);
-
-        return $result;
-
+        return $response;
+        
     }
-    
 
 }
+
+?>
