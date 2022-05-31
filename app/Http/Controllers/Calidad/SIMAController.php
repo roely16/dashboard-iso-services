@@ -3,51 +3,60 @@
 namespace App\Http\Controllers\Calidad;
 use App\Http\Controllers\Controller;
 
-use App\Models\Avisos\ISOAvisos;
-
 use Illuminate\Support\Facades\DB;
 
-class AvisosController extends Controller{
+class SIMAController extends Controller{
 
     public function data($data){
 
-        $total = ISOAvisos::select(
-                        'lote',
-                        DB::raw("to_char(fecha, 'DD/MM/YYYY HH24:MI:SS') as fecha"),
-                        'historial',
-                        'resultado',
-                        'usuario'
-                    )
-                    ->whereRaw("to_char(fecha, 'YYYY-MM') = '$data->date'")
-                    ->get();
+        $total = DB::connection('catastrousr')->select("    SELECT
+                                                                CONCAT(DOC.DOCUMENTO, CONCAT('-', DOC.ANIO)) AS EXPEDIENTE,
+                                                                TO_CHAR(DOC.FECHA, 'DD/MM/YYYY HH24:MI:SS') AS FECHA,
+                                                                DOC.USUARIO AS USUARIO_OPERA
+                                                            FROM CDO_DOCUMENTO DOC
+                                                            INNER JOIN CDO_DETDOCUMENTO DET
+                                                            ON DOC.DOCUMENTO = DET.DOCUMENTO
+                                                            AND DOC.ANIO = DET.ANIO
+                                                            AND DOC.CODIGOCLASE = DET.CODIGOCLASE
+                                                            AND DOC.CODIGOCLASE = 3
+                                                            AND DET.CODTRAMITE = 192
+                                                            AND TO_CHAR(DOC.FECHA_ISO, 'YYYY-MM') = '$data->date'
+                                                            AND DOC.CALIDAD = 2
+                                                            ORDER BY DOC.DOCUMENTO ASC
+                                                        ");
 
         $validos = [];
-        $rechazados = [];       
+        $rechazados = [];  
 
-        foreach ($total as &$item) {
+        foreach ($total as $item) {
             
-            $split_historial = explode(',', $item['historial']);
+            // Verificar el resultado
+            $result = DB::connection('catastrousr')->select("SELECT 
+                                                                (CASE WHEN SUM(NVL(ERROR, 0)) = 0 THEN 'ACIERTO' ELSE 'ERROR' END) AS RESULTADO
+                                                            FROM CDO_Q_DOCUMENTO
+                                                            WHERE CONCAT(DOCUMENTO, CONCAT('-', ANIO)) = '$item->expediente'
+                                                            ");
 
-            $item->expediente = $split_historial[0];
-            $item->usuario_opera = $split_historial[2];
-
-            if ($item->resultado === 'VALIDO') {
+            if ($result) {
                 
-                $validos [] = $item;
+                $result = $result[0];
 
-            }else{
+                if ($result->resultado === 'ACIERTO') {
+                    
+                    $validos [] = $item;
 
-                $rechazados [] = $item;
+                }else{
+                    
+                    $rechazados [] = $item;
+
+                }
 
             }
 
         }
-        
-        // Obtener los servicios no conformes 
 
+        // Servicios No Conformes
         $no_conformes = (object) app('App\Http\Controllers\NoConformesController')->process($data);
-
-        // * Validar que el SNC sea eliminado de los expedientes válidos
 
         $exp_no_conformes = [];
 

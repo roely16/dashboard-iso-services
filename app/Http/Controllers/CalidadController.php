@@ -22,7 +22,7 @@ class CalidadController extends Controller{
             ];
 
             $result = (object) $this->data($data);
-            $chart = $this->chart($indicador);
+            $chart = $this->chart($result);
 
             $total = [
                 'total' => [
@@ -55,13 +55,24 @@ class CalidadController extends Controller{
 
     public function chart($data){
 
+        $bottom_detail = $data->bottom_detail;
+
+        $total = $bottom_detail[0];
+        $validas = $bottom_detail[1];
+
         $chart = [
             'type' => "Pie",
             'chartData' => [
-                'labels' => ["January", "February", "March"],
+                'labels' => [
+                    $validas['text'],
+                    'SNC y Rechazos'
+                ],
                 'datasets'=> [
                     [
-                        'data' => [90, 10],
+                        'data' => [
+                            $validas['value'],
+                            $total['value'] - $validas['value']
+                        ],
                         'backgroundColor' => [
                             'rgb(54, 162, 235)',
                             'rgba(255, 205, 86, 0)'
