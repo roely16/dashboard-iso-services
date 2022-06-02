@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Proceso;
 use App\Models\Compras\FondoCompra;
 use App\Models\Compras\Gestion;
-use App\Models\Compras\BitacoraEtapas;
 
 class ComprasController extends Controller{
 
