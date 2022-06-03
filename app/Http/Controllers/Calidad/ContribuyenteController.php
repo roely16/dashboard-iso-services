@@ -86,7 +86,6 @@ class ContribuyenteController extends Controller{
 
         // * Si el o los servicios no conformes no existen en el total de expedientes sujetos a procesos de calidad, agregarlos 
         
-        
         // * Se obtiene un array con los números de expediente de los servicios no conformes
                
         $exp_total = [];
