@@ -34,6 +34,17 @@ return [
         'charset'       => env('DB_CHARSET', 'AL32UTF8'),
         'prefix'        => env('DB_PREFIX', ''),
     ],
+    'cobros-iusi' => [
+        'driver'        => 'oracle',
+        'tns'           => env('DB_TNS', ''),
+        'host'          => env('DB_HOST', '172.23.50.95'),
+        'port'          => env('DB_PORT', '1521'),
+        'database'      => env('DB_DATABASE', 'CATGIS'),
+        'username'      => env('DB_USERNAME', 'cobros_iusi'),
+        'password'      => env('DB_PASSWORD', 'cobrosiusi'),
+        'charset'       => env('DB_CHARSET', 'AL32UTF8'),
+        'prefix'        => env('DB_PREFIX', ''),
+    ],
     'tickets' => [
         'driver'        => 'mysql',
         'host'          => env('DB_HOST', '172.23.25.31'),
