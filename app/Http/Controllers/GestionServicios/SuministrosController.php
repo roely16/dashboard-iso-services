@@ -100,37 +100,100 @@ class SuministrosController extends Controller {
 
         // * Ordenes ingresadas en el mes anterior y que no fueron atendidas o que fueron atendidas hasta el mes siguiente
         
-        $anteriores = Orden::whereRaw("to_char(fechasolicitudimpresa, 'YYYY-MM') = '$mes_anterior'")
+        $anteriores = Orden::select(
+                            'adm_ordenes.*',
+                            DB::raw("concat(rh_empleados.nombre, CONCAT(' ', rh_empleados.apellido)) as empleado"),
+                            DB::raw("to_char(adm_ordenes.fecha, 'DD/MM/YYYY HH24:MI:SS') as fecha")
+                        )
+                        ->join('rh_empleados', 'adm_ordenes.empleadoid', '=', 'rh_empleados.nit')
+                        ->whereRaw("to_char(adm_ordenes.fechasolicitudimpresa, 'YYYY-MM') = '$mes_anterior'")
                         ->where(function($query) use ($data){
-                            $query->where('fechafinalizacion', null)
-                            ->orWhereRaw("to_char(fechafinalizacion, 'YYYY-MM') = '$data->date'");
+                            $query->where('adm_ordenes.fechafinalizacion', null)
+                            ->orWhereRaw("to_char(adm_ordenes.fechafinalizacion, 'YYYY-MM') = '$data->date'");
                         })
+                        ->orderBy('adm_ordenes.ordenid', 'asc')
                         ->get();
 
         // * Ordenes ingresadas en el mes 
         
-        $ingresadas = Orden::whereRaw("to_char(fechasolicitudimpresa, 'YYYY-MM') = '$data->date'")
-                        ->whereNotIn('status', [0, 3])
+        $ingresadas = Orden::select(
+                            'adm_ordenes.*',
+                            DB::raw("concat(rh_empleados.nombre, CONCAT(' ', rh_empleados.apellido)) as empleado"),
+                            DB::raw("to_char(adm_ordenes.fecha, 'DD/MM/YYYY HH24:MI:SS') as fecha")
+                        )
+                        ->join('rh_empleados', 'adm_ordenes.empleadoid', '=', 'rh_empleados.nit')
+                        ->whereRaw("to_char(adm_ordenes.fechasolicitudimpresa, 'YYYY-MM') = '$data->date'")
+                        ->whereNotIn('adm_ordenes.status', [0, 3])
+                        ->orderBy('adm_ordenes.ordenid', 'asc')
                         ->get();
 
         // * Ordenes finalizadas en el mes
         // ! No se está tomando en cuenta el mes en el que fue ingresado
 
-        $resueltas = Orden::whereRaw("to_char(fechafinalizacion, 'YYYY-MM') = '$data->date'")
+        $resueltas = Orden::select(
+                        'adm_ordenes.*',
+                        DB::raw("concat(rh_empleados.nombre, CONCAT(' ', rh_empleados.apellido)) as empleado"),
+                        DB::raw("to_char(adm_ordenes.fecha, 'DD/MM/YYYY HH24:MI:SS') as fecha")
+                    )
+                    ->join('rh_empleados', 'adm_ordenes.empleadoid', '=', 'rh_empleados.nit')
+                    ->whereRaw("to_char(adm_ordenes.fechafinalizacion, 'YYYY-MM') = '$data->date'")
+                    ->orderBy('adm_ordenes.ordenid', 'asc')
                     ->get();
+
+        $headers = [
+            [
+                'text' => 'ID',
+                'value' => 'ordenid',
+                'sortable' => false,
+                'width' => '20%'
+            ],
+            [
+                'text' => 'Empleado',
+                'value' => 'empleado',
+                'sortable' => false,
+                'width' => '40%'
+            ],
+            [
+                'text' => 'Fecha',
+                'value' => 'fecha',
+                'sortable' => false,
+                'width' => '40%'
+            ]
+        ];            
 
         $bottom_detail = [
             [
                 'text' => 'Anterior',
-                'value' => count($anteriores)
+                'value' => count($anteriores),
+                'detail' => [
+                    'table' => [
+                        'items' => $anteriores,
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
             [
                 'text' => 'Ingresadas',
-                'value' => count($ingresadas)
+                'value' => count($ingresadas),
+                'detail' => [
+                    'table' => [
+                        'items' => $ingresadas,
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
             [
                 'text' => 'Resueltas',
-                'value' => count($resueltas)
+                'value' => count($resueltas),
+                'detail' => [
+                    'table' => [
+                        'items' => $resueltas,
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ]
         ];
 
