@@ -97,54 +97,113 @@ class ValesController extends Controller {
     public function data($data){
 
         $mes_anterior = date('Y-m', strtotime($data->date . ' -1 month'));
+        $mes_posterior = date('Y-m', strtotime($data->date . ' +1 month'));
 
         // * Obtener los vales pendientes ingresados en el mes anterior donde la fecha de entrega sea null o del mes actual
-        $vales_anteriores = DB::connection('rrhh')->select("SELECT *
-                                                            FROM adm_vales
+        $vales_anteriores = DB::connection('rrhh')->select("SELECT t1.*, CONCAT(t2.nombre, CONCAT(' ', t2.apellido)) as nombre_responsable
+                                                            FROM adm_vales t1
+                                                            INNER JOIN rh_empleados t2
+                                                            ON t1.responsable = t2.nit
                                                             WHERE
                                                                 to_char(to_date(fecha, 'DD/MM/YY'), 'YYYY-MM') = '$mes_anterior'
-                                                            
                                                             AND (
                                                                 to_char(fecha_entrega, 'YYYY-MM') = '$data->date'
                                                                 OR fecha_entrega IS NULL
-                                                            )");
+                                                            )
+                                                            ORDER BY t1.valeid ASC");
 
         // * Obtener los vales solicitados en el mes 
-        $vales_ingresados = Vale::whereRaw("
-                                to_char(to_date(fecha, 'DD/MM/YY'), 'YYYY-MM') = '$data->date'
-                            ")
+        $vales_ingresados = Vale::select(
+                                'adm_vales.*',
+                                DB::raw("concat(rh_empleados.nombre, CONCAT(' ', rh_empleados.apellido)) as nombre_responsable")
+                            )
+                            ->join('rh_empleados', 'adm_vales.responsable', '=', 'rh_empleados.nit')
+                            ->whereRaw("to_char(to_date(adm_vales.fecha, 'DD/MM/YY'), 'YYYY-MM') = '$data->date'")
+                            ->orderBy('adm_vales.valeid', 'ASC')
                             ->get();
 
         // * Obtener los vales finalizados en el mes 
-        $vales_finalizados = Vale::whereRaw("
-                                to_char(fecha_entrega, 'YYYY-MM') = '$data->date'
+        $vales_finalizados = Vale::select(
+                                'adm_vales.*',
+                                DB::raw("concat(rh_empleados.nombre, CONCAT(' ', rh_empleados.apellido)) as nombre_responsable")
+                            )
+                            ->join('rh_empleados', 'adm_vales.responsable', '=', 'rh_empleados.nit')
+                            ->whereRaw("
+                                to_char(adm_vales.fecha_entrega, 'YYYY-MM') = '$data->date'
                             ")
+                            ->orderBy('adm_vales.valeid', 'ASC')
                             ->get();
 
-        // !Si es un mes anterior se deberá de realizar otro tipo de verificación
-        $vales_pendientes = Vale::whereRaw("
-                                (to_char(to_date(fecha, 'DD/MM/YY'), 'YYYY-MM') = '$mes_anterior'
-                                or to_char(to_date(fecha, 'DD/MM/YY'), 'YYYY-MM') = '$data->date')
-                            ")
-                            ->where('fecha_entrega', null)
+        // * Un vale pendiente es aquel que no tiene fecha de entrega o bien que fue entregado en el mes siguiente
+        $vales_pendientes = Vale::select(
+                                'adm_vales.*',
+                                DB::raw("concat(rh_empleados.nombre, CONCAT(' ', rh_empleados.apellido)) as nombre_responsable")
+                            )
+                            ->join('rh_empleados', 'adm_vales.responsable', '=', 'rh_empleados.nit')
+                            ->whereRaw("to_char(to_date(adm_vales.fecha, 'DD/MM/YY'), 'YYYY-MM') = '$data->date'")
+                            ->whereRaw("(adm_vales.fecha_entrega is null or to_char(adm_vales.fecha_entrega, 'YYYY-MM') = '$mes_posterior')")
+                            ->orderBy('adm_vales.valeid', 'ASC')
                             ->get();
 
+        $headers = [
+            [
+                'text' => 'Vale',
+                'value' => 'no_vale'
+            ],
+            [
+                'text' => 'Fecha',
+                'value' => 'fecha'
+            ],
+            [
+                'text' => 'Responsable',
+                'value' => 'nombre_responsable'
+            ]
+        ];
+        
         $bottom_detail = [
             [
                 'text' => 'Anterior',
-                'value' => count($vales_anteriores)
+                'value' => count($vales_anteriores),
+                'detail' => [
+                    'table' => [
+                        'items' => $vales_anteriores,
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
             [
                 'text' => 'Recibido',
-                'value' => count($vales_ingresados)
+                'value' => count($vales_ingresados),
+                'detail' => [
+                    'table' => [
+                        'items' => $vales_ingresados,
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
             [
                 'text' => 'Finalizado',
-                'value' => count($vales_finalizados)
+                'value' => count($vales_finalizados),
+                'detail' => [
+                    'table' => [
+                        'items' => $vales_finalizados,
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
             [
                 'text' => 'Pendiente',
-                'value' => count($vales_pendientes)
+                'value' => count($vales_pendientes),
+                'detail' => [
+                    'table' => [
+                        'items' => $vales_pendientes,
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ]
         ];
 
