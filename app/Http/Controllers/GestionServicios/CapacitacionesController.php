@@ -115,7 +115,11 @@ class CapacitacionesController extends Controller {
 
         $str_trimestre = implode(',', $trimestres[$trimestre - 1]);
 
-        $capacitaciones = Capacitacion::whereRaw("to_char(fecha_estimada, 'YYYY') = '$year'")
+        $capacitaciones = Capacitacion::select(
+                                'rh_capacitacion.*',
+                                DB::raw("to_char(fecha_estimada, 'MM/YYYY') as mes_estimado")
+                            )
+                            ->whereRaw("to_char(fecha_estimada, 'YYYY') = '$year'")
                             ->whereRaw("to_number(to_char(fecha_estimada, 'MM')) IN ($str_trimestre)")
                             ->get();
 
@@ -123,7 +127,8 @@ class CapacitacionesController extends Controller {
         $cap = [
             'finalizado' => [],
             'programado' => [],
-            'suspendido' => []
+            'suspendido' => [],
+            'pendiente' => []
         ];
 
         foreach ($capacitaciones as &$capacitacion) {
@@ -132,23 +137,73 @@ class CapacitacionesController extends Controller {
 
         }
 
+        $headers = [
+            [
+                'text' => 'Nombre',
+                'value' => 'nombre',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Descripción',
+                'value' => 'descripcion',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Estado',
+                'value' => 'estado',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Mes',
+                'value' => 'mes_estimado',
+                'sortable' => false
+            ]
+        ];
+
         $bottom_detail = [
             [
                 'text' => 'Total',
                 'value' => count($capacitaciones),
-                'capacitaciones' => $cap
+                'detail' => [
+                    'table' => [
+                        'items' => $capacitaciones,
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
             [
                 'text' => 'Realizadas',
-                'value' => count($cap['finalizado'])
+                'value' => count($cap['finalizado']),
+                'detail' => [
+                    'table' => [
+                        'items' => $cap['finalizado'],
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
             [
                 'text' => 'Pendientes',
-                'value' => count($cap['programado'])
+                'value' => count($cap['programado']) + count($cap['pendiente']),
+                'detail' => [
+                    'table' => [
+                        'items' => array_merge($cap['programado'], $cap['pendiente']),
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ],
             [
                 'text' => 'Suspendidas',
-                'value' => count($cap['suspendido'])
+                'value' => count($cap['suspendido']),
+                'detail' => [
+                    'table' => [
+                        'items' => $cap['suspendido'],
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ]
         ];
 
