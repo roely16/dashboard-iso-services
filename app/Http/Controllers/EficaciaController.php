@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Historial;
 use App\Proceso;
 use App\MCAProcesos;
 
@@ -20,7 +21,8 @@ class EficaciaController extends Controller{
             $data = (object) [
                 'codarea' => $area->codarea,
                 'date' => $indicador->date,
-                'dependencia' => $dependencia
+                'dependencia' => $dependencia,
+                'nombre_historial' => $proceso->nombre_historial
             ];
 
             $result = (object) $this->data($data);
@@ -110,26 +112,69 @@ class EficaciaController extends Controller{
 
     public function data($data){
         
+        // * Separar la fecha
+    
+
+        $date_before = date('Y-m', strtotime($data->date . ' -1 month'));
+        $date_after = date('Y-m', strtotime($data->date . ' +1 month'));
+
+        // * Obtener de la tabla ISO_DASHBOARD_HISTORIAL el campo CAMPO_4 que hace referencia a ANTERIORES 
+
         $anteriores = 0;
 
-        // En el mes actual buscar los expedientes que han sigo ingresados 
+        if ($data->nombre_historial) {
+            
+            // $anteriores = Historial::select('campo_4 as total')
+            //             ->where('area', $data->nombre_historial)
+            //             ->where('mes', $month_before)
+            //             ->where('anio', $year)
+            //             ->where('sub_area', 'EFICACIA')
+            //             ->first();
 
-        // Obtener únicamente la información necesario, con el formato requerido
+            // $anteriores = $anteriores->total;
 
-        $ingresados = MCAProcesos::select(
-                            'documento', 
-                            'anio', 
-                            'status_documento', 
-                            'usuario', 
-                            'dependencia',
-                            DB::raw("to_char(fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso"),
-                            DB::raw("to_char(fecha_finalizacion, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion"),
-                            DB::raw("concat(documento, concat('-', anio)) as expediente")
-                        )
-                        ->where('dependencia', $data->dependencia->codigo)
-                        ->whereRaw("TO_CHAR(FECHA_INGRESO, 'YYYY-MM') = '$data->date'")
-                        ->get();
+        }
 
+        // Calculo en base a consultas
+        $anteriores = MCAProcesos::where('dependencia', $data->dependencia->codigo)
+                        ->whereRaw("(
+                            fecha_ingreso < to_date('$data->date', 'YYYY-MM')
+                        )")
+                        ->whereRaw("to_char(fecha_ingreso, 'YYYY') = '2022'")
+                        ->whereRaw("(
+                            fecha_finalizacion is null
+                            or to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
+                        )")
+                        ->count();
+        
+        $ingresados = MCAProcesos::where('dependencia', $data->dependencia->codigo)
+                        ->whereRaw("
+                            to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
+                        ")
+                        ->count();
+
+        $resueltos = MCAProcesos::where('dependencia', $data->dependencia->codigo)
+                        ->whereRaw("(
+                            fecha_ingreso < to_date('$data->date', 'YYYY-MM')
+                            or to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
+                        )")
+                        ->whereRaw("to_char(fecha_ingreso, 'YYYY') = '2022'")
+                        ->whereRaw("(
+                            to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
+                        )")
+                        ->count();
+
+        $pendientes = MCAProcesos::where('dependencia', $data->dependencia->codigo)
+                        ->whereRaw("(
+                            fecha_ingreso < to_date('$date_after', 'YYYY-MM')
+                        )")
+                        ->whereRaw("to_char(fecha_ingreso, 'YYYY') = '2022'")
+                        ->whereRaw("(
+                            fecha_finalizacion is null or
+                            to_char(fecha_finalizacion, 'YYYY-MM') = '$date_after'
+                        )")
+                        ->count();
+    
         $headers_ingresados = [
             [
                 'text' => 'Documento',
@@ -150,29 +195,6 @@ class EficaciaController extends Controller{
                 'sortable' => false
             ]
         ];
-
-        $total_ingresados = count($ingresados);
-
-        $resueltos = [];
-        $pendientes = [];
-
-        foreach ($ingresados as $ingresado) {
-            
-            if ($ingresado->fecha_finalizacion) {
-                
-                $resueltos [] = $ingresado;
-
-            }else{
-
-                $pendientes [] = $ingresado;
-
-            }
-
-        }
-
-        // En el mes actual buscar aquellos expedientes que han sido resueltos
-
-        $total_resueltos = count($resueltos);
 
         $headers_resueltos = [
             [
@@ -201,13 +223,13 @@ class EficaciaController extends Controller{
             ]
         ];
 
-        $total_pendientes = ($total_ingresados + $anteriores) - $total_resueltos;
+        // $total_pendientes = ($total_ingresados + count($anteriores)) - $total_resueltos;
 
-        $carga_trabajo = $total_ingresados + $anteriores;
+        $carga_trabajo = $ingresados + $anteriores;
 
         if ($carga_trabajo > 0) {
            
-            $porcentaje = round(($total_resueltos / ($carga_trabajo) * 100), 1);
+            $porcentaje = round(($resueltos / $carga_trabajo * 100), 1);
 
         }else{
 
@@ -217,15 +239,22 @@ class EficaciaController extends Controller{
         $response = [
             "total" => $porcentaje,
             'carga_trabajo' => $carga_trabajo,
-            'total_resueltos' => $total_resueltos,
+            'total_resueltos' => $resueltos,
             'bottom_detail' => [
                 [
                     "text" => "Anteriores",
                     "value" => $anteriores,
+                    'detail' => [
+                        'table' => [
+                            'headers' => $headers_resueltos,
+                            'items' => $anteriores
+                        ],
+                    ],
+                    'component' => 'tables/TableDetail'
                 ],
                 [
                     "text" => "Ingresados",
-                    "value" => $total_ingresados,
+                    "value" => $ingresados,
                     'detail' => [
                         'table' => [
                             'headers' => $headers_ingresados,
@@ -236,7 +265,7 @@ class EficaciaController extends Controller{
                 ],
                 [
                     "text" => "Resueltos",
-                    "value" => $total_resueltos,
+                    "value" => $resueltos,
                     'detail' => [
                         'table' => [
                             'headers' => $headers_resueltos,
@@ -247,10 +276,10 @@ class EficaciaController extends Controller{
                 ],
                 [
                     "text" => "Pendientes",
-                    "value" => $total_pendientes,
+                    "value" => $pendientes,
                     'detail' => [
                         'table' => [
-                            'headers' => $headers_ingresados,
+                            'headers' => $headers_resueltos,
                             'items' => $pendientes
                         ],
                     ],
