@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Indicador;
 use App\Proceso;
 
-class EficaciaController extends Controller{
+class CalidadController extends Controller{
 
     public function create($indicador){
 
@@ -31,20 +31,32 @@ class EficaciaController extends Controller{
 
         return $indicador;
 
-    } 
-    
-    public function chart($result){
+    }
+
+    public function chart($data){
+
+        $bottom_detail = $data->bottom_detail;
+
+        $total = $bottom_detail[0];
+        $validas = $bottom_detail[1];
 
         $chart = [
-            'type' => "Doughnut",
+            'type' => "Pie",
             'chartData' => [
+                'labels' => [
+                    $validas['text'],
+                    'SNC y Rechazos'
+                ],
                 'datasets'=> [
                     [
-                        'data' => [$result->total, 100 - $result->total],
-                        'backgroundColor' => [
-                            "rgb(128,232,155)",
-                            "rgba(54, 162, 235, 0.1)",
+                        'data' => [
+                            $validas['value'],
+                            $total['value'] - $validas['value']
                         ],
+                        'backgroundColor' => [
+                            'rgb(54, 162, 235)',
+                            'rgba(255, 205, 86, 0)'
+                        ]
                     ]
                 ],
             ],
@@ -52,17 +64,6 @@ class EficaciaController extends Controller{
                 'responsive' => true,
                 'plugins' => [
                     'legend' => [
-                        'display' => false,
-                    ],
-                    'tooltips' => [
-                        'enabled' => false
-                    ],
-                ],
-                'scales' => [
-                    'y' => [
-                        'display' => false,
-                    ],
-                    'x' => [
                         'display' => false,
                     ],
                 ],
@@ -76,7 +77,9 @@ class EficaciaController extends Controller{
     public function data($data){
 
         // Obtener la lista de procesos que tienen un indicador de eficacia
-        $indicadores = Indicador::where('tipo', 'eficacia')->get();
+        $indicadores = Indicador::where('tipo', 'calidad')
+                        ->orderBy('id_proceso', 'asc')
+                        ->get();
 
         foreach ($indicadores as $indicador) {
             
@@ -87,33 +90,29 @@ class EficaciaController extends Controller{
         }
 
         $i = 0;
-        $carga_trabajo = 0;
-        $total_resueltos = 0;
+        $total = 0;
+        $validas = 0;
 
         $bottom_detail = [
             [
-                'text' => 'Anteriores',
+                'text' => 'Total',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
             ],
             [
-                'text' => 'Ingresados',
+                'text' => 'Válidas',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
             ],
             [
-                'text' => 'Resueltos',
+                'text' => 'SNC',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
             ],
             [
-                'text' => 'Pendientes',
+                'text' => 'Rechazadas',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
             ]
         ];
 
@@ -122,8 +121,8 @@ class EficaciaController extends Controller{
         // Por cada indicador obtener los valores necesarios para realizar la sumatoria
         foreach ($indicadores as $indicador) {
             
-            $carga_trabajo += $indicador->carga_trabajo;
-            $total_resueltos += $indicador->total_resueltos;
+            $total += $indicador->total_calidad;
+            $validas += $indicador->validas;
 
             foreach ($indicador->bottom_detail as $detalle) {
                 
@@ -135,17 +134,18 @@ class EficaciaController extends Controller{
                     
                     $area = Proceso::find($indicador_p->id_proceso)->area;
 
-                    $empty_table = [
-                        'table' => [
-                            'headers' => [],
-                            'items' => []
-                        ]
-                    ];
+                    if (array_key_exists('detail', $indicador_p->bottom_detail[$i])) {
 
-                    $area->bottom_detail = array_key_exists('detail', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['detail'] : $empty_table;
-                    $area->component = array_key_exists('component', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['component'] : null;
-
-                    $areas [] = $area;
+                        $area->bottom_detail = $indicador_p->bottom_detail[$i]['detail'];
+                        $area->component = $indicador_p->bottom_detail[$i]['component'];
+                        
+                        if (count($area->bottom_detail['table']['items']) > 0) {
+      
+                            $areas [] = $area;
+                            
+                        }
+                        
+                    }
 
                 }
 
@@ -157,7 +157,15 @@ class EficaciaController extends Controller{
             $i = 0;
         }
 
-        $porcentaje = round(($total_resueltos / ($carga_trabajo) * 100), 1);
+        if ($total > 0) {
+            
+            $porcentaje = round(($validas / $total) * 100, 1);
+
+        }else{
+            
+            $porcentaje = 100;
+
+        }
 
         $response = [
             'indicadores' => $indicadores,

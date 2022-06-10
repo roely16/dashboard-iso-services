@@ -112,10 +112,10 @@ class EficaciaController extends Controller{
 
     public function data($data){
         
-        // * Separar la fecha
-    
+        $codigo = $data->dependencia->codigo;
 
-        $date_before = date('Y-m', strtotime($data->date . ' -1 month'));
+        // * Mes siguiente
+    
         $date_after = date('Y-m', strtotime($data->date . ' +1 month'));
 
         // * Obtener de la tabla ISO_DASHBOARD_HISTORIAL el campo CAMPO_4 que hace referencia a ANTERIORES 
@@ -145,35 +145,88 @@ class EficaciaController extends Controller{
                             fecha_finalizacion is null
                             or to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
                         )")
-                        ->count();
+                        ->get();
+
+        $anteriores = DB::connection('catastrousr')->select("SELECT
+                                                                concat(t1.documento, concat('-', t1.anio)) as expediente,
+                                                                to_char(t1.fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso,
+                                                                to_char(t1.fecha_finalizacion, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion,
+                                                                t1.usuario,
+                                                                t2.descripcion as estado,
+                                                                t3.descripcion as tipo
+                                                            from sgc.mca_procesos_vw t1
+                                                            inner join catastro.cdo_status t2
+                                                            on t1.status_documento = t2.codstatus
+                                                            inner join catastro.cdo_clasedocto t3
+                                                            on t1.codigoclase = t3.codigoclase
+                                                            where fecha_ingreso < to_date('$data->date', 'YYYY-MM')
+                                                            and dependencia = '$codigo'
+                                                            and to_char(fecha_ingreso, 'YYYY') = '2022'
+                                                            and (
+                                                                fecha_finalizacion is null
+                                                                or to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
+                                                            )
+                                                            order by t1.fecha_ingreso");
         
-        $ingresados = MCAProcesos::where('dependencia', $data->dependencia->codigo)
-                        ->whereRaw("
-                            to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
-                        ")
-                        ->count();
+        $ingresados = DB::connection('catastrousr')->select("   SELECT 
+                                                                    concat(t1.documento, concat('-', t1.anio)) as expediente,
+                                                                    to_char(t1.fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso,
+                                                                    to_char(t1.fecha_finalizacion, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion,
+                                                                    t1.usuario,
+                                                                    t2.descripcion as estado,
+                                                                    t3.descripcion as tipo
+                                                                from sgc.mca_procesos_vw t1
+                                                                inner join catastro.cdo_status t2
+                                                                on t1.status_documento = t2.codstatus
+                                                                inner join catastro.cdo_clasedocto t3
+                                                                on t1.codigoclase = t3.codigoclase
+                                                                where to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
+                                                                and dependencia = '$codigo'
+                                                                order by t1.fecha_ingreso");
 
-        $resueltos = MCAProcesos::where('dependencia', $data->dependencia->codigo)
-                        ->whereRaw("(
-                            fecha_ingreso < to_date('$data->date', 'YYYY-MM')
-                            or to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
-                        )")
-                        ->whereRaw("to_char(fecha_ingreso, 'YYYY') = '2022'")
-                        ->whereRaw("(
-                            to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
-                        )")
-                        ->count();
+        $resueltos = DB::connection('catastrousr')->select("SELECT 
+                                                                concat(t1.documento, concat('-', t1.anio)) as expediente,
+                                                                to_char(t1.fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso,
+                                                                to_char(t1.fecha_finalizacion, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion,
+                                                                t1.usuario,
+                                                                t2.descripcion as estado,
+                                                                t3.descripcion as tipo
+                                                            from sgc.mca_procesos_vw t1
+                                                            inner join catastro.cdo_status t2
+                                                            on t1.status_documento = t2.codstatus
+                                                            inner join catastro.cdo_clasedocto t3
+                                                            on t1.codigoclase = t3.codigoclase
+                                                            where (
+                                                                fecha_ingreso < to_date('$data->date', 'YYYY-MM')
+                                                                or to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
+                                                            )
+                                                            and dependencia = '$codigo'
+                                                            and to_char(fecha_ingreso, 'YYYY') = '2022'
+                                                            and (
+                                                                to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
+                                                            )
+                                                            order by t1.fecha_ingreso");
 
-        $pendientes = MCAProcesos::where('dependencia', $data->dependencia->codigo)
-                        ->whereRaw("(
-                            fecha_ingreso < to_date('$date_after', 'YYYY-MM')
-                        )")
-                        ->whereRaw("to_char(fecha_ingreso, 'YYYY') = '2022'")
-                        ->whereRaw("(
-                            fecha_finalizacion is null or
-                            to_char(fecha_finalizacion, 'YYYY-MM') = '$date_after'
-                        )")
-                        ->count();
+        $pendientes = DB::connection('catastrousr')->select("SELECT
+                                                                concat(t1.documento, concat('-', t1.anio)) as expediente,
+                                                                to_char(t1.fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso,
+                                                                to_char(t1.fecha_finalizacion, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion,
+                                                                t1.usuario,
+                                                                t2.descripcion as estado,
+                                                                t3.descripcion as tipo
+                                                            from sgc.mca_procesos_vw t1
+                                                            inner join catastro.cdo_status t2
+                                                            on t1.status_documento = t2.codstatus
+                                                            inner join catastro.cdo_clasedocto t3
+                                                            on t1.codigoclase = t3.codigoclase
+                                                            where fecha_ingreso < to_date('$date_after', 'YYYY-MM')
+                                                            and dependencia = '$codigo'
+                                                            and to_char(fecha_ingreso, 'YYYY') = '2022'
+                                                            and (
+                                                                fecha_finalizacion is null
+                                                                or to_char(fecha_finalizacion, 'YYYY-MM') = '$date_after'
+                                                            )
+                                                            order by t1.fecha_ingreso");
     
         $headers_ingresados = [
             [
@@ -200,36 +253,48 @@ class EficaciaController extends Controller{
             [
                 'text' => 'Documento',
                 'value' => 'expediente',
-                'width' => '20%',
+                'width' => '10%',
                 'sortable' => false
             ],
             [
                 'text' => 'Ingreso',
                 'value' => 'fecha_ingreso',
-                'width' => '30%',
+                'width' => '20%',
                 'sortable' => false
             ],
             [
                 'text' => 'Finalización',
                 'value' => 'fecha_finalizacion',
-                'width' => '30%',
+                'width' => '20%',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Tipo',
+                'value' => 'tipo',
+                'width' => '15%',
+                'sortable' => false
+            ],
+            [
+                'text' => 'Estado',
+                'value' => 'estado',
+                'width' => '15%',
                 'sortable' => false
             ],
             [
                 'text' => 'Usuario',
                 'value' => 'usuario',
-                'width' => '20%',
+                'width' => '10%',
                 'sortable' => false
             ]
         ];
 
         // $total_pendientes = ($total_ingresados + count($anteriores)) - $total_resueltos;
 
-        $carga_trabajo = $ingresados + $anteriores;
+        $carga_trabajo = count($ingresados) + count($anteriores);
 
         if ($carga_trabajo > 0) {
            
-            $porcentaje = round(($resueltos / $carga_trabajo * 100), 1);
+            $porcentaje = round((count($resueltos) / $carga_trabajo * 100), 1);
 
         }else{
 
@@ -239,51 +304,55 @@ class EficaciaController extends Controller{
         $response = [
             "total" => $porcentaje,
             'carga_trabajo' => $carga_trabajo,
-            'total_resueltos' => $resueltos,
+            'total_resueltos' => count($resueltos),
             'bottom_detail' => [
                 [
                     "text" => "Anteriores",
-                    "value" => $anteriores,
+                    "value" => count($anteriores),
                     'detail' => [
                         'table' => [
                             'headers' => $headers_resueltos,
                             'items' => $anteriores
                         ],
                     ],
-                    'component' => 'tables/TableDetail'
+                    'component' => 'tables/TableDetail',
+                    'fullscreen' => true
                 ],
                 [
                     "text" => "Ingresados",
-                    "value" => $ingresados,
+                    "value" => count($ingresados),
                     'detail' => [
                         'table' => [
-                            'headers' => $headers_ingresados,
+                            'headers' => $headers_resueltos,
                             'items' => $ingresados
                         ],
                     ],
-                    'component' => 'tables/TableDetail'
+                    'component' => 'tables/TableDetail',
+                    'fullscreen' => true
                 ],
                 [
                     "text" => "Resueltos",
-                    "value" => $resueltos,
+                    "value" => count($resueltos),
                     'detail' => [
                         'table' => [
                             'headers' => $headers_resueltos,
                             'items' => $resueltos
                         ],
                     ],
-                    'component' => 'tables/TableDetail'
+                    'component' => 'tables/TableDetail',
+                    'fullscreen' => true
                 ],
                 [
                     "text" => "Pendientes",
-                    "value" => $pendientes,
+                    "value" => count($pendientes),
                     'detail' => [
                         'table' => [
                             'headers' => $headers_resueltos,
                             'items' => $pendientes
                         ],
                     ],
-                    'component' => 'tables/TableDetail'
+                    'component' => 'tables/TableDetail',
+                    'fullscreen' => true
                 ],
             ]
         ];

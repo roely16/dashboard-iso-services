@@ -143,6 +143,8 @@ class AvisosController extends Controller{
 
         $response = [
             'total' => $porcentaje,
+            'validas' => count($filter_validos),
+            'total_calidad' => count($total),
             'bottom_detail' => $bottom_detail
         ];
 

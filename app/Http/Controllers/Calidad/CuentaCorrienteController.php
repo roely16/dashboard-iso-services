@@ -161,6 +161,8 @@ class CuentaCorrienteController extends Controller{
 
         $response = [
             'total' => $porcentaje,
+            'validas' => count($validos),
+            'total_calidad' => count($total),
             'bottom_detail' => $bottom_detail
         ];
 

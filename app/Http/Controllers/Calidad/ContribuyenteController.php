@@ -183,6 +183,8 @@ class ContribuyenteController extends Controller{
 
         $response = [
             'total' => $porcentaje,
+            'validas' => count($validas),
+            'total_calidad' => count($historial_array),
             'bottom_detail' => $bottom_detail
         ];
 

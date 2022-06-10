@@ -31,6 +31,8 @@ class ConveniosController extends Controller{
 
             $indicador->content = $total;
             $indicador->bottom_detail = $result->bottom_detail;
+            $indicador->carga_trabajo = $result->carga_trabajo;
+            $indicador->total_resueltos = $result->total_resueltos;
 
             return $indicador;
 
@@ -138,7 +140,7 @@ class ConveniosController extends Controller{
 
             if ($inicio == 0 || $fin == 0) {
                 
-                unset($personas[$key]);
+                array_splice($personas, $key, 1);
 
                 continue;
 
@@ -175,6 +177,10 @@ class ConveniosController extends Controller{
             }
             
         }
+
+        // echo json_encode($personas);
+
+        // exit;
 
         $headers = [
             [
@@ -238,6 +244,8 @@ class ConveniosController extends Controller{
 
         $response = [
             'total' => $porcentaje,
+            'carga_trabajo' => 100,
+            'total_resueltos' => 100,
             'bottom_detail' => $bottom_detail
         ];
 

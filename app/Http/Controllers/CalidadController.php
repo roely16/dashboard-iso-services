@@ -35,6 +35,8 @@ class CalidadController extends Controller{
             $indicador->content = $total;
 
             $indicador->bottom_detail = $result->bottom_detail;
+            $indicador->validas = $result->validas;
+            $indicador->total_calidad = $result->total_calidad;
 
             return $indicador;
 
