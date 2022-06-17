@@ -82,6 +82,8 @@ class TicketController extends Controller {
     public function data($data){
 
         $mes_anterior = date('Y-m', strtotime($data->date . ' -1 month'));
+        $mes_posterior = date('Y-m', strtotime($data->date . ' +1 month'));
+        $dos_meses_adelante = date('Y-m', strtotime($data->date . ' +2 month'));
 
         // * Los tickets pendientes en el mes actual son aquellos que fueron ingresados en el mes anterior y que fueron finalizados en el mes actual o bien que aún no han sido finalizados
             
@@ -93,21 +95,26 @@ class TicketController extends Controller {
                                                             tk.category,
                                                             tk.subject,
                                                             tk.message,
+                                                            tk.status,
                                                             DATE_FORMAT(dt, '%d/%m/%Y %H:%i:%s') AS dt,
-                                                            DATE_FORMAT(fecha_cierre, '%d/%m/%Y') AS fecha_cierre,
+                                                            DATE_FORMAT(fecha_cierre, '%d/%m/%Y %H:%i:%s') AS fecha_cierre,
                                                             us.name AS tecnico
                                                         FROM tks_tickets tk
                                                         LEFT JOIN tks_users us
                                                         ON tk.owner = us.id
-                                                        WHERE DATE_FORMAT(dt, '%Y-%m') = '$mes_anterior'
-                                                        AND (
-                                                            DATE_FORMAT(fecha_cierre, '%Y-%m') = '$data->date'
-                                                            OR fecha_cierre IS NULL
-                                                        )
-                                                        AND category IN (
-                                                            SELECT id
-                                                            FROM tks_categories 
-                                                            WHERE reportar = 1
+                                                        where ((
+                                                            fecha_cierre > '$data->date'
+                                                            and fecha_cierre < '$mes_posterior'
+                                                            and dt < '$data->date'
+                                                        ) or (
+                                                            dt < '$data->date'
+                                                            and status not in ('3')
+                                                            and fecha_cierre is null
+                                                        ))
+                                                        and category in (
+                                                            select id
+                                                            from tks_categories 
+                                                            where reportar = 1
                                                         )
                                                         ORDER BY tk.id ASC");
 
@@ -121,6 +128,7 @@ class TicketController extends Controller {
                         'category',
                         'subject',
                         'message',
+                        'status',
                         DB::raw("date_format(dt, '%d/%m/%Y %H:%i:%s') as dt"),
                         'tks_users.name as tecnico',
                         DB::raw("date_format(fecha_cierre, '%d/%m/%Y %H:%i:%s') as fecha_cierre")
@@ -142,6 +150,7 @@ class TicketController extends Controller {
                         'category',
                         'subject',
                         'message',
+                        'status',
                         DB::raw("date_format(dt, '%d/%m/%Y %H:%i:%s') as dt"),
                         'tks_users.name as tecnico',
                         DB::raw("date_format(fecha_cierre, '%d/%m/%Y %H:%i:%s') as fecha_cierre")
@@ -150,7 +159,7 @@ class TicketController extends Controller {
                     ->join('tks_users', 'tks_tickets.owner', '=', 'tks_users.id')
                     ->whereRaw("date_format(fecha_cierre, '%Y-%m') = '$data->date'")
                     ->where('tks_categories.reportar', 1)
-                    ->where('status', '3')
+                    // ->where('status', '3')
                     ->orderBy('tks_tickets.id', 'ASC')
                     ->get();
         
@@ -165,23 +174,25 @@ class TicketController extends Controller {
                                                             tk.subject,
                                                             tk.message,
                                                             DATE_FORMAT(dt, '%d/%m/%Y %H:%i:%s') AS dt,
-                                                            DATE_FORMAT(fecha_cierre, '%d/%m/%Y') AS fecha_cierre,
+                                                            DATE_FORMAT(fecha_cierre, '%d/%m/%Y %H:%i:%s') AS fecha_cierre,
                                                             us.name AS tecnico, 
                                                             tk.registros
                                                         FROM tks_tickets tk
                                                         LEFT JOIN tks_users us
                                                         ON tk.owner = us.id
-                                                        WHERE (
-                                                            DATE_FORMAT(dt, '%Y-%m') = '$mes_anterior'
-                                                            OR DATE_FORMAT(dt, '%Y-%m') = '$data->date'
-                                                        )
-                                                        AND (
-                                                            fecha_cierre IS NULL
-                                                        )
-                                                        AND category IN (
-                                                            SELECT id
-                                                            FROM tks_categories 
-                                                            WHERE reportar = 1
+                                                        where ((
+                                                            fecha_cierre > '$mes_posterior'
+                                                            and fecha_cierre < '$dos_meses_adelante'
+                                                            and dt < '$mes_posterior'
+                                                        ) or (
+                                                            dt < '$mes_posterior'
+                                                            and status not in ('3')
+                                                            and fecha_cierre is null
+                                                        ))
+                                                        and category in (
+                                                            select id
+                                                            from tks_categories 
+                                                            where reportar = 1
                                                         )
                                                         ORDER BY tk.id ASC");
 
@@ -198,7 +209,7 @@ class TicketController extends Controller {
                 'text' => 'Usuario',
                 'value' => 'name',
                 'sortable' => false,
-                'width' => '25%'
+                'width' => '15%'
             ],
             [
                 'text' => 'Fecha',
@@ -210,13 +221,25 @@ class TicketController extends Controller {
                 'text' => 'Técnico',
                 'value' => 'tecnico',
                 'sortable' => false,
-                'width' => '25%'
+                'width' => '15%'
             ],
             [
                 'text' => 'Estado',
                 'value' => 'estado',
                 'sortable' => false,
                 'width' => '15%'
+            ],
+            [
+                'text' => 'Estatus',
+                'value' => 'status',
+                'sortable' => false,
+                'width' => '15%'
+            ],
+            [
+                'text' => 'Finalización',
+                'value' => 'fecha_cierre',
+                'sortable' => false,
+                'width' => '25%'
             ]
         ];
 
@@ -230,7 +253,8 @@ class TicketController extends Controller {
                         'items' => $anteriores
                     ],
                 ],
-                'component' => 'tables/TableTickets'
+                'component' => 'tables/TableTickets',
+                'fullscreen' => true
                 
             ],
             [
@@ -242,7 +266,8 @@ class TicketController extends Controller {
                         'items' => $ingresados
                     ],
                 ],
-                'component' => 'tables/TableTickets'
+                'component' => 'tables/TableTickets',
+                'fullscreen' => true
             ],
             [
                 'text' => 'Resueltos',
@@ -253,7 +278,8 @@ class TicketController extends Controller {
                         'items' => $resueltos
                     ],
                 ],
-                'component' => 'tables/TableTickets'
+                'component' => 'tables/TableTickets',
+                'fullscreen' => true
             ],
             [
                 'text' => 'Pendientes',
@@ -265,11 +291,24 @@ class TicketController extends Controller {
                         'items' => $pendientes
                     ],
                 ],
-                'component' => 'tables/TableTickets'
+                'component' => 'tables/TableTickets',
+                'fullscreen' => true
             ]
         ];
 
-        $porcentaje = round((100 - ((count($pendientes) / count($resueltos)) * 100)), 1);
+        $carga_trabajo = count($anteriores) + count($ingresados);
+
+        if ($carga_trabajo > 0) {
+            
+            $porcentaje = round(count($resueltos) / $carga_trabajo * 100, 1);
+
+        }else{
+
+            $porcentaje = 0;
+
+        }
+
+        $porcentaje = $porcentaje;
 
         $response = [
             'total' => $porcentaje,

@@ -142,7 +142,7 @@ class AccionesController extends Controller{
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableAcciones'
             ],
             [
                 'text' => 'Cerradas',
@@ -153,7 +153,7 @@ class AccionesController extends Controller{
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableAcciones'
             ],
             [
                 'text' => 'Total',
@@ -164,7 +164,7 @@ class AccionesController extends Controller{
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableAcciones'
             ]
         ];
 
@@ -189,7 +189,7 @@ class AccionesController extends Controller{
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableAcciones'
             ],
             'bottom_detail' => $bottom_detail
         ];
