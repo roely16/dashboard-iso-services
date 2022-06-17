@@ -14,9 +14,7 @@
 use App\Models\Tickets\Ticket;
 
 $router->get('/', function () use ($router) {
-
     return $router->app->version();
-
 });
 
 $router->get('/get_menu', 'HomeController@get_menu');

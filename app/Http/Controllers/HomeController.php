@@ -25,7 +25,7 @@ class HomeController extends Controller{
                 $tipo->procesos = $procesos;
 
             }
-
+            
             return response()->json($tipos_procesos);
 
         } catch (\Throwable $th) {

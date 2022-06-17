@@ -5,9 +5,9 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": "^7.2.5|^8.0",
-        "laravel/lumen-framework": "^7.0|^8.0",
-        "yajra/laravel-oci8": "7|^8.0"
+        "php": "^7.2.5",
+        "laravel/lumen-framework": "^7.0",
+        "yajra/laravel-oci8": "7.*"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.9.1",
@@ -31,8 +31,7 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true,
-        "platform-check": false
+        "optimize-autoloader": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
