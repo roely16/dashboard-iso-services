@@ -19,6 +19,8 @@ class AvisosController extends Controller{
                         'usuario'
                     )
                     ->whereRaw("to_char(fecha, 'YYYY-MM') = '$data->date'")
+                    ->where('intento', 1)
+                    ->orderBy('fecha', 'desc')
                     ->get();
 
         $validos = [];
@@ -51,7 +53,7 @@ class AvisosController extends Controller{
 
         $exp_no_conformes = [];
 
-        foreach ($no_conformes as $snc) {
+        foreach ($no_conformes as &$snc) {
             
             $exp_no_conformes [] = $snc->expediente;
 
