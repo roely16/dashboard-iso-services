@@ -147,7 +147,7 @@ class SatisfaccionController extends Controller{
             $nota = round($total / count($eva_num), 2);
 
             // Validar si es mayor que 8 para tomarla como ACEPTABLE
-            if ($nota >= 8) {
+            if ($nota >= 8.5) {
                 
                 $evaluacion->color = 'success';
 
