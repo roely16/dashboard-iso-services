@@ -1,6 +1,8 @@
-<?php
+<?php 
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Eficacia;
+
+use App\Http\Controllers\Controller;
 
 use App\Historial;
 use App\Proceso;
@@ -8,119 +10,9 @@ use App\MCAProcesos;
 
 use Illuminate\Support\Facades\DB;
 
-class EficaciaController extends Controller{
-
-    public function create($indicador){
-
-        try {
-            
-            $proceso = Proceso::find($indicador->id_proceso);
-            $area = $proceso->area;
-            $dependencia = $proceso->dependencia;
-            
-            $data = (object) [
-                'codarea' => $area->codarea,
-                'date' => $indicador->date,
-                'dependencia' => $dependencia,
-                'nombre_historial' => $proceso->nombre_historial,
-                'data_controlador' => $indicador->data_controlador
-            ];
-
-            $result = (object) $this->data($data);
-            $chart = $this->chart($result);
-
-            $total = [
-                'total' => [
-                    'value' => $result->total . "%",
-                ],
-                'chart' => $chart
-            ];
-
-            $indicador->content = $total;
-            $indicador->bottom_detail = $result->bottom_detail;
-            $indicador->carga_trabajo = $result->carga_trabajo;
-            $indicador->total_resueltos = $result->total_resueltos;
-            
-            return $indicador;
-
-        } catch (\Throwable $th) {
-            
-            $error = [
-                'message' => $th->getMessage()
-            ];
-
-            $indicador->error = $error;
-
-            return $indicador;
-
-        }
-        
-    }
-
-    public function chart($result){
-
-        try {
-            
-            $chart = [
-                'type' => "Doughnut",
-                'chartData' => [
-                    'datasets'=> [
-                        [
-                            'data' => [$result->total, 100 - $result->total],
-                            'backgroundColor' => [
-                                "rgb(128,232,155)",
-                                "rgba(54, 162, 235, 0.1)",
-                            ],
-                        ]
-                    ],
-                ],
-                'chartOptions' => [
-                    'responsive' => true,
-                    'plugins' => [
-                        'legend' => [
-                            'display' => false,
-                        ],
-                        'tooltips' => [
-                            'enabled' => false
-                        ],
-                    ],
-                    'scales' => [
-                        'y' => [
-                            'display' => false,
-                        ],
-                        'x' => [
-                            'display' => false,
-                        ],
-                    ],
-                ],
-            ];
-    
-            return $chart;
-
-        } catch (\Throwable $th) {
-            
-            $response = [
-                'status' => 'error',
-                'message' => $th->getMessage()
-            ];
-
-            return $response;
-
-        }
-       
-
-    }
+class CuentaCorriente extends Controller{
 
     public function data($data){
-        
-        // Validar si existe un función especifica para la data
-        if ($data->data_controlador) {
-            
-            $result = app('App\Http\Controllers' . $data->data_controlador)->data($data);
-
-            return $result;
-            
-        }
 
         $codigo = $data->dependencia->codigo;
 
@@ -176,6 +68,8 @@ class EficaciaController extends Controller{
                                                                 fecha_finalizacion is null
                                                                 or to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
                                                             )
+                                                            and t1.codigoclase = 3
+                                                            and t1.tramite in (322)
                                                             order by t1.fecha_ingreso");
         
         $ingresados = DB::connection('catastrousr')->select("   SELECT 
@@ -192,6 +86,8 @@ class EficaciaController extends Controller{
                                                                 on t1.codigoclase = t3.codigoclase
                                                                 where to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
                                                                 and dependencia = '$codigo'
+                                                                and t1.codigoclase = 3
+                                                                and t1.tramite in (322)
                                                                 order by t1.fecha_ingreso");
 
         $resueltos = DB::connection('catastrousr')->select("SELECT 
@@ -215,6 +111,8 @@ class EficaciaController extends Controller{
                                                             and (
                                                                 to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
                                                             )
+                                                            and t1.codigoclase = 3
+                                                            and t1.tramite in (322)
                                                             order by t1.fecha_ingreso");
 
         $pendientes = DB::connection('catastrousr')->select("SELECT
@@ -236,6 +134,8 @@ class EficaciaController extends Controller{
                                                                 fecha_finalizacion is null
                                                                 or to_char(fecha_finalizacion, 'YYYY-MM') = '$date_after'
                                                             )
+                                                            and t1.codigoclase = 3
+                                                            and t1.tramite in (322)
                                                             order by t1.fecha_ingreso");
     
         $headers_ingresados = [
@@ -368,8 +268,6 @@ class EficaciaController extends Controller{
         ];
 
         return $response;
-
-       
 
     }
 
