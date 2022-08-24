@@ -175,9 +175,14 @@ class ConveniosController extends Controller{
                 'datasets' => [
                     [
                         'data' => $data_chart,
-                        'backgroundColor' => '#81C784'
-                    ]
-                ]
+                        'backgroundColor' => '#81C784',
+                        'datalabels' => [
+                            'align' => 'start',
+                            'anchor' => 'end',
+                            
+                        ]
+                    ],
+                ],
             ],
             'options' => [
                 'responsive' => true,
@@ -191,9 +196,12 @@ class ConveniosController extends Controller{
                         'text' => 'Documentos Aprobados'
                     ],
                     'datalabels' => [
-                        'align' => 'top'
+                        'padding' => 6,
+                        'color' => 'black',
+                        'borderRadious' => 4
                     ]
-                ] 
+                ],
+                'dataLabels' => true  
             ]
         ];
 
@@ -240,9 +248,12 @@ class ConveniosController extends Controller{
                         'text' => 'Documentos Rechazados'
                     ],
                     'datalabels' => [
-                        'align' => 'top'
+                        'padding' => 6,
+                        'color' => 'black',
+                        'borderRadious' => 4
                     ]
-                ] 
+                ],
+                'dataLabels' => true   
             ]
         ];
 
@@ -284,13 +295,20 @@ class ConveniosController extends Controller{
                 'responsive' => false,
                 'plugins' => [
                     'legend' => [
-                        'display' => false
+                        'display' => true,
+                        'position' => 'bottom'
                     ],
                     'title' => [
                         'display' => true,
                         'text' => 'Motivos de Rechazo'
                     ],
-                ] 
+                    'datalabels' => [
+                        'padding' => 6,
+                        'color' => 'black',
+                        'borderRadious' => 4
+                    ]
+                ],
+                'dataLabels' => true   
             ]
         ];
 
