@@ -21,6 +21,10 @@ $router->get('/get_menu', 'HomeController@get_menu');
 
 $router->post('/get_dashboard', 'DashboardController@get_dashboard');
 
+$router->post('/tecnicos_rechazos', 'Calidad\ConveniosController@tecnicos_rechazos');
+
+$router->post('/chart_rechazo_tecnico', 'Calidad\ConveniosController@chart_rechazo_tecnico');
+
 $router->get('/test_view', function(){
 
     $result = Ticket::where('id', 9)->get();

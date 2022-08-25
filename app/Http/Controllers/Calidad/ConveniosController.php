@@ -8,16 +8,14 @@ use App\Models\Convenios\Convenio;
 
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Http\Request;
+
 class ConveniosController extends Controller{
 
     public function data($data){
 
         // * Obtener los servicios no conformes
         $no_conformes = (object) app('App\Http\Controllers\NoConformesController')->process($data);
-        
-        // echo json_encode($no_conformes);
-
-        // exit;
 
         $total = DB::connection('cobros-iusi')->select(" SELECT 
                                                             t1.idpersona,
@@ -312,6 +310,38 @@ class ConveniosController extends Controller{
             ]
         ];
 
+        //Motivos de rechazo por técnico 
+        $chart_rechazo_tecnico = [
+            'data' => [
+                'labels' => [],
+                'datasets' => [
+                    [
+                        'data' => [],
+                        'backgroundColor' => []
+                    ]
+                ]
+            ],
+            'options' => [
+                'responsive' => false,
+                'plugins' => [
+                    'legend' => [
+                        'display' => true,
+                        'position' => 'bottom'
+                    ],
+                    'title' => [
+                        'display' => true,
+                        'text' => 'Motivos de Rechazo'
+                    ],
+                    'datalabels' => [
+                        'padding' => 6,
+                        'color' => 'black',
+                        'borderRadious' => 4
+                    ]
+                ],
+                'dataLabels' => true   
+            ]
+        ];
+
         $response = [
             'total' => $porcentaje,
             'validas' => count($validos),
@@ -323,12 +353,122 @@ class ConveniosController extends Controller{
                 'detail' => [
                     'chart_aprobados' => $chart_aprobados,
                     'chart_rechazados' => $chart_rechazados,
-                    'chart_motivos' => $chart_motivos
+                    'chart_motivos' => $chart_motivos,
+                    'chart_rechazo_tecnico' => $chart_rechazo_tecnico
                 ]
             ]
         ];
 
         return $response;
+
+    }
+
+    public function tecnicos_rechazos(Request $request){
+
+        try {
+            
+            $tecnicos = DB::connection('cobros-iusi')->select(" SELECT *
+                                                                from (SELECT b.nit, concat(concat(ap.nombre, ' '), ap.apellido) as colaborador
+                                                                    from mco_bitacora b
+                                                                            inner join rh_empleados ap on ap.nit = b.nit
+                                                                    where b.idestado = 7
+                                                                        and idpersona in
+                                                                            (select idpersona from mco_bitacora where idestado = 8 and to_char(b.fecha, 'YYYY-MM') = '$request->date')
+                                                                    group by concat(concat(ap.nombre, ' '), ap.apellido), b.nit)");
+
+            $options = [];
+
+            foreach ($tecnicos as $tecnico) {
+                
+                $options[$tecnico->nit] = $tecnico->colaborador;
+
+            }
+
+            return response()->json($options);
+
+        } catch (\Throwable $th) {
+            
+            return response()->json($th->getMessage());
+
+        }
+
+    }
+
+    public function chart_rechazo_tecnico(Request $request){
+
+        try {
+            
+            $data_chart = DB::connection('cobros-iusi')->select(" SELECT *
+                                                            from (SELECT count(b.idestado) as rechazados, c.descripcion
+                                                                from mco_bitacora b
+                                                                        inner join rh_empleados ap on ap.nit = b.nit
+                                                                        inner join mco_cat_motivo c on c.idmotivo = b.idmotivo
+                                                                where b.idestado = 8
+                                                                    and idpersona in (select idpersona
+                                                                                    from mco_bitacora
+                                                                                    where idestado = 3 and nit = '$request->nit' and to_char(fecha, 'YYYY-MM') = '$request->date')
+                                                                group by b.idestado, c.descripcion) rd");
+            
+            $data = [];
+            $labels = [];
+            $colors = [];
+ 
+            foreach ($data_chart as &$item) {
+                
+                $labels [] = $item->descripcion;
+                $data [] = $item->rechazados;
+                $colors [] = '#' . str_pad(dechex(rand(0x000000, 0xFFFFFF)), 6, 0, STR_PAD_LEFT);
+
+            }
+
+            // Obtener nombre del colaborador 
+            $colaborador = Empleado::find($request->nit);
+
+            $chart_rechazo_tecnico = [
+                'data' => [
+                    'labels' => $labels,
+                    'datasets' => [
+                        [
+                            'data' => $data,
+                            'backgroundColor' => $colors
+                        ]
+                    ]
+                ],
+                'options' => [
+                    'responsive' => false,
+                    'plugins' => [
+                        'legend' => [
+                            'display' => true,
+                            'position' => 'bottom'
+                        ],
+                        'title' => [
+                            'display' => true,
+                            'text' => 'Motivos de Rechazo'
+                        ],
+                        'subtitle' => [
+                            'display' => true,
+                            'text' => $colaborador->nombre . ' ' . $colaborador->apellido,
+                            'padding' => [
+                                'bottom' => 5
+                            ]
+                        ],
+                        'datalabels' => [
+                            'padding' => 6,
+                            'color' => 'black',
+                            'borderRadious' => 4
+                        ]
+                    ],
+                    'dataLabels' => true   
+                ]
+            ];
+
+            return response()->json($chart_rechazo_tecnico);
+
+        } catch (\Throwable $th) {
+            
+            return response()->json($th->getMessage(), 400);
+
+        }
 
     }
 
