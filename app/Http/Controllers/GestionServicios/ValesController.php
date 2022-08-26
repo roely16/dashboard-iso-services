@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\Proceso;
 use App\Models\Vales\Vale;
+use App\Models\Compras\Gestion;
 
 use Illuminate\Support\Facades\DB;
 
@@ -122,6 +123,24 @@ class ValesController extends Controller {
                             ->orderBy('adm_vales.valeid', 'ASC')
                             ->get();
 
+        // * Como pendientes se deberán de agregar aquellas gestiónes de vale sin atender
+        $gestiones_pendientes = Gestion::select(
+                                    'adm_gestiones.gestionid as no_gestion',
+                                    DB::raw("to_char(adm_gestiones.fecha, 'DD/MM/YYYY HH24:MI:SS') as fecha"),
+                                    DB::raw("concat(rh_empleados.nombre, CONCAT(' ', rh_empleados.apellido)) as nombre_responsable")
+                                )
+                                ->join('rh_empleados', 'adm_gestiones.empleadoid', '=', 'rh_empleados.nit')
+                                ->where('tipogestion', 1)
+                                ->where('adm_gestiones.status', 0)
+                                ->whereRaw("to_char(adm_gestiones.fecha, 'YYYY-MM') = '$data->date'")
+                                ->get();
+
+        foreach ($gestiones_pendientes as $gestion) {
+            
+            $vales_ingresados [] = $gestion;
+
+        }
+
         // * Obtener los vales finalizados en el mes 
         $vales_finalizados = Vale::select(
                                 'adm_vales.*',
@@ -151,11 +170,30 @@ class ValesController extends Controller {
                 'value' => 'no_vale'
             ],
             [
+                'text' => 'Gestión',
+                'value' => 'no_gestion'
+            ],
+            [
                 'text' => 'Fecha',
                 'value' => 'fecha'
             ],
             [
                 'text' => 'Responsable',
+                'value' => 'nombre_responsable'
+            ]
+        ];
+
+        $headers_pendientes = [
+            [
+                'text' => 'Gestión',
+                'value' => 'no_gestion'
+            ],
+            [
+                'text' => 'Fecha',
+                'value' => 'fecha'
+            ],
+            [
+                'text' => 'Solicitante',
                 'value' => 'nombre_responsable'
             ]
         ];
@@ -195,12 +233,23 @@ class ValesController extends Controller {
                 'component' => 'tables/TableDetail'
             ],
             [
-                'text' => 'Pendiente',
+                'text' => 'Emitidos',
                 'value' => count($vales_pendientes),
                 'detail' => [
                     'table' => [
                         'items' => $vales_pendientes,
                         'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
+            ],
+            [
+                'text' => 'Pendientes',
+                'value' => count($gestiones_pendientes),
+                'detail' => [
+                    'table' => [
+                        'items' => $gestiones_pendientes,
+                        'headers' => $headers_pendientes
                     ]
                 ],
                 'component' => 'tables/TableDetail'
