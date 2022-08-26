@@ -37,7 +37,7 @@ class CalidadController extends Controller{
             $indicador->bottom_detail = $result->bottom_detail;
             $indicador->validas = $result->validas;
             $indicador->total_calidad = $result->total_calidad;
-            $indicador->custom_data = $result->custom_data;
+            $indicador->custom_data = property_exists($result, 'custom_data') ? $result->custom_data : null;
 
             return $indicador;
 
