@@ -31,15 +31,15 @@ class EficaciaController extends Controller{
 
             $total = [
                 'total' => [
-                    'value' => $result->total . "%",
+                    'value' => property_exists($result, 'total') ? $result->total . "%" : 0 . "%",
                 ],
                 'chart' => $chart
             ];
 
             $indicador->content = $total;
-            $indicador->bottom_detail = $result->bottom_detail;
-            $indicador->carga_trabajo = $result->carga_trabajo;
-            $indicador->total_resueltos = $result->total_resueltos;
+            $indicador->bottom_detail = property_exists($result, 'bottom_detail') ? $result->bottom_detail : [];
+            $indicador->carga_trabajo = property_exists($result, 'carga_trabajo') ? $result->carga_trabajo : 0;
+            $indicador->total_resueltos = property_exists($result, 'total_resueltos') ? $result->total_resueltos : 0;
             
             return $indicador;
 
