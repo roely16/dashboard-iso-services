@@ -128,7 +128,8 @@ class CapacitacionesController extends Controller {
             'finalizado' => [],
             'programado' => [],
             'suspendido' => [],
-            'pendiente' => []
+            'pendiente' => [],
+            'rechazado' => []
         ];
 
         foreach ($capacitaciones as &$capacitacion) {
@@ -184,6 +185,17 @@ class CapacitacionesController extends Controller {
                 'component' => 'tables/TableDetail'
             ],
             [
+                'text' => 'Rechazadas',
+                'value' => count($cap['rechazado']),
+                'detail' => [
+                    'table' => [
+                        'items' => $cap['rechazado'],
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
+            ],
+            [
                 'text' => 'Pendientes',
                 'value' => count($cap['programado']) + count($cap['pendiente']),
                 'detail' => [
@@ -209,7 +221,7 @@ class CapacitacionesController extends Controller {
 
         if(count($capacitaciones) > 0){
 
-            $porcentaje = round((count($cap['finalizado']) / count($capacitaciones)) * 100, 1);
+            $porcentaje = round(((count($cap['finalizado']) + count($cap['rechazado'])) / count($capacitaciones)) * 100, 1);
 
         }else{
 
