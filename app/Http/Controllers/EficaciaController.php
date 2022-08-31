@@ -131,17 +131,20 @@ class EficaciaController extends Controller{
         // * Obtener de la tabla ISO_DASHBOARD_HISTORIAL el campo CAMPO_4 que hace referencia a ANTERIORES 
 
         $anteriores = 0;
+        $split_date = explode('-', $data->date);
+        $month_before = intval($split_date[1]) - 1;
+        $year = $split_date[0];
 
         if ($data->nombre_historial) {
             
-            // $anteriores = Historial::select('campo_4 as total')
-            //             ->where('area', $data->nombre_historial)
-            //             ->where('mes', $month_before)
-            //             ->where('anio', $year)
-            //             ->where('sub_area', 'EFICACIA')
-            //             ->first();
+            $anteriores = Historial::select('campo_4 as total')
+                        ->where('area', $data->nombre_historial)
+                        ->where('mes', $month_before)
+                        ->where('anio', $year)
+                        ->where('sub_area', 'EFICACIA')
+                        ->first();
 
-            // $anteriores = $anteriores->total;
+            $total_anterior = $anteriores->total;
 
         }
 
@@ -165,8 +168,8 @@ class EficaciaController extends Controller{
                                                                 t2.descripcion as estado,
                                                                 t3.descripcion as tipo
                                                             from sgc.mca_procesos_vw t1
-                                                            inner join catastro.cdo_status t2
-                                                            on t1.status_documento = t2.codstatus
+                                                            inner join catastro.cdo_status_docto t2
+                                                            on t1.status_documento = t2.codigo
                                                             inner join catastro.cdo_clasedocto t3
                                                             on t1.codigoclase = t3.codigoclase
                                                             where fecha_ingreso < to_date('$data->date', 'YYYY-MM')
@@ -186,8 +189,8 @@ class EficaciaController extends Controller{
                                                                     t2.descripcion as estado,
                                                                     t3.descripcion as tipo
                                                                 from sgc.mca_procesos_vw t1
-                                                                inner join catastro.cdo_status t2
-                                                                on t1.status_documento = t2.codstatus
+                                                                inner join catastro.cdo_status_docto t2
+                                                                on t1.status_documento = t2.codigo
                                                                 inner join catastro.cdo_clasedocto t3
                                                                 on t1.codigoclase = t3.codigoclase
                                                                 where to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
@@ -202,8 +205,8 @@ class EficaciaController extends Controller{
                                                                 t2.descripcion as estado,
                                                                 t3.descripcion as tipo
                                                             from sgc.mca_procesos_vw t1
-                                                            inner join catastro.cdo_status t2
-                                                            on t1.status_documento = t2.codstatus
+                                                            inner join catastro.cdo_status_docto t2
+                                                            on t1.status_documento = t2.codigo
                                                             inner join catastro.cdo_clasedocto t3
                                                             on t1.codigoclase = t3.codigoclase
                                                             where (
@@ -225,8 +228,8 @@ class EficaciaController extends Controller{
                                                                 t2.descripcion as estado,
                                                                 t3.descripcion as tipo
                                                             from sgc.mca_procesos_vw t1
-                                                            inner join catastro.cdo_status t2
-                                                            on t1.status_documento = t2.codstatus
+                                                            inner join catastro.cdo_status_docto t2
+                                                            on t1.status_documento = t2.codigo
                                                             inner join catastro.cdo_clasedocto t3
                                                             on t1.codigoclase = t3.codigoclase
                                                             where fecha_ingreso < to_date('$date_after', 'YYYY-MM')
@@ -300,7 +303,7 @@ class EficaciaController extends Controller{
 
         // $total_pendientes = ($total_ingresados + count($anteriores)) - $total_resueltos;
 
-        $carga_trabajo = count($ingresados) + count($anteriores);
+        $carga_trabajo = count($ingresados) + ($data->nombre_historial ? $total_anterior : count($anteriores));
 
         if ($carga_trabajo > 0) {
            
@@ -310,6 +313,8 @@ class EficaciaController extends Controller{
 
             $porcentaje = 0;
         }
+
+        $total_pendientes = $carga_trabajo - count($resueltos);
         
         $response = [
             "total" => $porcentaje,
@@ -318,7 +323,7 @@ class EficaciaController extends Controller{
             'bottom_detail' => [
                 [
                     "text" => "Anteriores",
-                    "value" => count($anteriores),
+                    "value" => $data->nombre_historial ? $total_anterior : count($anteriores),
                     'detail' => [
                         'table' => [
                             'headers' => $headers_resueltos,
@@ -354,7 +359,7 @@ class EficaciaController extends Controller{
                 ],
                 [
                     "text" => "Pendientes",
-                    "value" => count($pendientes),
+                    "value" => $total_pendientes,
                     'detail' => [
                         'table' => [
                             'headers' => $headers_resueltos,

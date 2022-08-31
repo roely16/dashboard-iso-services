@@ -103,7 +103,7 @@ class SatisfaccionController extends Controller{
                 'component' => 'tables/TableProcesos'
             ],
             [
-                'text' => 'No Conforme',
+                'text' => 'No Aceptable',
                 'value' => null,
                 'component' => 'tables/TableProcesos'
             ],

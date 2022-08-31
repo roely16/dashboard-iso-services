@@ -132,6 +132,13 @@ class AccionesController extends Controller{
             ]
         ];
 
+        if (count($gestiones) > 0) {
+            
+            $avance = round((count($cerradas) / count($gestiones)) * 100, 1);
+            $eficacia = round(($en_tiempo / count($gestiones)) * 100, 1);
+
+        }
+
         $bottom_detail = [
             [
                 'text' => 'Abiertas',
@@ -165,15 +172,20 @@ class AccionesController extends Controller{
                     ]
                 ],
                 'component' => 'tables/TableAcciones'
+            ],
+            [
+                'text' => 'Avance',
+                'value' => $avance . '%',
+                'detail' => [
+                    'table' => [
+                        'items' => [],
+                        'headers' => []
+                    ]
+                ],
+                'component' => 'tables/TableAcciones'
             ]
         ];
 
-        if (count($gestiones) > 0) {
-            
-            $avance = round((count($cerradas) / count($gestiones)) * 100, 1);
-            $eficacia = round(($en_tiempo / count($gestiones)) * 100, 1);
-
-        }
 
         $response = [
             'avance' => [

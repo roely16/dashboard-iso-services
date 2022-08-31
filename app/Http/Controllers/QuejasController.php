@@ -110,7 +110,8 @@ class QuejasController extends Controller{
                         ->where('id_proceso', $sq_proceso->id_proceso)
                         ->where(function($query){
                             $query->where('clasificacion', 'QUEJA')
-                            ->orWhere('clasificacion', 'FELICITACION');
+                            ->orWhere('clasificacion', 'FELICITACION')
+                            ->orWhere('clasificacion', 'SUGERENCIA');
                         })
                         ->where('status', 'A')
                         ->whereRaw("to_char(fecha_acuse_recibo, 'YYYY-MM') = '$data->date'")
@@ -119,6 +120,7 @@ class QuejasController extends Controller{
 
         $quejas = [];
         $felicitaciones = [];
+        $sugerencias = [];
 
         foreach ($result_quejas as $item) {
             
@@ -126,9 +128,13 @@ class QuejasController extends Controller{
 
                 $quejas [] = $item;
 
-            }else{
+            }elseif($item->clasificacion == 'FELICITACION'){
 
                 $felicitaciones [] = $item;
+
+            }else{
+
+                $sugerencias [] = $item;
 
             }
 
@@ -277,6 +283,17 @@ class QuejasController extends Controller{
                     'table' => [
                         'headers' => $headers,
                         'items' => $felicitaciones
+                    ],
+                ],
+                'component' => 'tables/TableDetail'
+            ],
+            [
+                "text" => "Sugerencias",
+                "value" => count($sugerencias),
+                'detail' => [
+                    'table' => [
+                        'headers' => $headers,
+                        'items' => $sugerencias
                     ],
                 ],
                 'component' => 'tables/TableDetail'

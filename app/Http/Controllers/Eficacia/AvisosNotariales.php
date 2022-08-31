@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Eficacia;
 use App\Http\Controllers\Controller;
 
+use App\Historial;
 use App\Proceso;
 use App\MCAProcesos;
 
@@ -24,6 +25,23 @@ class AvisosNotariales extends Controller{
 
             $anteriores = 0;
 
+            if ($data->nombre_historial) {
+                
+                $split_date = explode('-', $data->date);
+                $month_before = intval($split_date[1]) - 1;
+                $year = $split_date[0];
+
+                $anteriores = Historial::select('campo_4 as total')
+                            ->where('area', $data->nombre_historial)
+                            ->where('mes', $month_before)
+                            ->where('anio', $year)
+                            ->where('sub_area', 'EFICACIA')
+                            ->first();
+    
+                $total_anterior = $anteriores ? $anteriores->total : 0;
+    
+            }
+
             // Calculo en base a consultas
             $anteriores = MCAProcesos::where('dependencia', $data->dependencia->codigo)
                             ->whereRaw("(
@@ -44,8 +62,8 @@ class AvisosNotariales extends Controller{
                                                                     t2.descripcion as estado,
                                                                     t3.descripcion as tipo
                                                                 from sgc.mca_procesos_vw t1
-                                                                inner join catastro.cdo_status t2
-                                                                on t1.status_documento = t2.codstatus
+                                                                inner join catastro.cdo_status_docto t2
+                                                                on t1.status_documento = t2.codigo
                                                                 inner join catastro.cdo_clasedocto t3
                                                                 on t1.codigoclase = t3.codigoclase
                                                                 where fecha_ingreso < to_date('$data->date', 'YYYY-MM')
@@ -55,6 +73,7 @@ class AvisosNotariales extends Controller{
                                                                     fecha_finalizacion is null
                                                                     or to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
                                                                 )
+                                                                and t1.status_tarea <> 1
                                                                 order by t1.fecha_ingreso");
             
             $ingresados = DB::connection('catastrousr')->select("   SELECT 
@@ -65,12 +84,13 @@ class AvisosNotariales extends Controller{
                                                                         t2.descripcion as estado,
                                                                         t3.descripcion as tipo
                                                                     from sgc.mca_procesos_vw t1
-                                                                    inner join catastro.cdo_status t2
-                                                                    on t1.status_documento = t2.codstatus
+                                                                    inner join catastro.cdo_status_docto t2
+                                                                    on t1.status_documento = t2.codigo
                                                                     inner join catastro.cdo_clasedocto t3
                                                                     on t1.codigoclase = t3.codigoclase
                                                                     where to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
                                                                     and dependencia = '$codigo'
+                                                                    and t1.status_tarea <> 1
                                                                     order by t1.fecha_ingreso");
 
             $resueltos = DB::connection('catastrousr')->select("SELECT 
@@ -81,8 +101,8 @@ class AvisosNotariales extends Controller{
                                                                     t2.descripcion as estado,
                                                                     t3.descripcion as tipo
                                                                 from sgc.mca_procesos_vw t1
-                                                                inner join catastro.cdo_status t2
-                                                                on t1.status_documento = t2.codstatus
+                                                                inner join catastro.cdo_status_docto t2
+                                                                on t1.status_documento = t2.codigo
                                                                 inner join catastro.cdo_clasedocto t3
                                                                 on t1.codigoclase = t3.codigoclase
                                                                 where (
@@ -94,6 +114,7 @@ class AvisosNotariales extends Controller{
                                                                 and (
                                                                     to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
                                                                 )
+                                                                and t1.status_tarea <> 1
                                                                 order by t1.fecha_ingreso");
 
             $pendientes = DB::connection('catastrousr')->select("SELECT
@@ -104,8 +125,8 @@ class AvisosNotariales extends Controller{
                                                                     t2.descripcion as estado,
                                                                     t3.descripcion as tipo
                                                                 from sgc.mca_procesos_vw t1
-                                                                inner join catastro.cdo_status t2
-                                                                on t1.status_documento = t2.codstatus
+                                                                inner join catastro.cdo_status_docto t2
+                                                                on t1.status_documento = t2.codigo
                                                                 inner join catastro.cdo_clasedocto t3
                                                                 on t1.codigoclase = t3.codigoclase
                                                                 where fecha_ingreso < to_date('$date_after', 'YYYY-MM')
@@ -115,6 +136,7 @@ class AvisosNotariales extends Controller{
                                                                     fecha_finalizacion is null
                                                                     or to_char(fecha_finalizacion, 'YYYY-MM') = '$date_after'
                                                                 )
+                                                                and t1.status_tarea <> 1
                                                                 order by t1.fecha_ingreso");
         
             $headers_ingresados = [
@@ -179,7 +201,7 @@ class AvisosNotariales extends Controller{
 
             // $total_pendientes = ($total_ingresados + count($anteriores)) - $total_resueltos;
 
-            $carga_trabajo = count($ingresados) + count($anteriores);
+            $carga_trabajo = count($ingresados) + ($data->nombre_historial ? $total_anterior : count($anteriores));
 
             if ($carga_trabajo > 0) {
             
@@ -190,6 +212,8 @@ class AvisosNotariales extends Controller{
                 $porcentaje = 0;
             }
             
+            $total_pendientes = $carga_trabajo - count($resueltos);
+
             $response = [
                 "total" => $porcentaje,
                 'carga_trabajo' => $carga_trabajo,
@@ -197,7 +221,7 @@ class AvisosNotariales extends Controller{
                 'bottom_detail' => [
                     [
                         "text" => "Anteriores",
-                        "value" => count($anteriores),
+                        "value" => $data->nombre_historial ? $total_anterior : count($anteriores),
                         'detail' => [
                             'table' => [
                                 'headers' => $headers_resueltos,
@@ -233,7 +257,7 @@ class AvisosNotariales extends Controller{
                     ],
                     [
                         "text" => "Pendientes",
-                        "value" => count($pendientes),
+                        "value" => $total_pendientes,
                         'detail' => [
                             'table' => [
                                 'headers' => $headers_resueltos,

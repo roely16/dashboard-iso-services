@@ -116,6 +116,11 @@ class QuejasController extends Controller{
                 'value' => null,
                 'component' => 'tables/TableProcesos'
             ],
+            [
+                'text' => 'Sugerencias',
+                'value' => null,
+                'component' => 'tables/TableProcesos'
+            ],
         ];
 
         $indicadores_p = $indicadores;

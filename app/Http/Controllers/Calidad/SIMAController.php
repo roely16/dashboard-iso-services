@@ -128,7 +128,7 @@ class SIMAController extends Controller{
                 'component' => 'tables/TableDetail'
             ],
             [
-                "text" => "Rechazadas",
+                "text" => "Correcciones",
                 "value" => count($rechazados),
                 'detail' => [
                     'table' => [

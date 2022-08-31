@@ -147,13 +147,9 @@ class ContratosController extends Controller{
 
         }
 
-        // echo json_encode($programado);
-
-        // exit;
-
         $headers_progra = [
             [
-                'text' => 'ID Contrato',
+                'text' => 'ID',
                 'value' => 'id_programacion',
                 'sortable' => false,
                 'width' => '5%'
@@ -284,6 +280,18 @@ class ContratosController extends Controller{
         }
 
         $bottom_detail = [
+            [
+                'text' => 'Anteriores', 
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => $headers_progra,
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableContratos',
+                'fullscreen' => true
+            ],
             [
                 'text' => 'Programado', 
                 'value' => count($programado),

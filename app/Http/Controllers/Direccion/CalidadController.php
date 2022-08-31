@@ -110,7 +110,7 @@ class CalidadController extends Controller{
                 'component' => 'tables/TableProcesos',
             ],
             [
-                'text' => 'Rechazadas',
+                'text' => 'Correcciones',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
             ]
