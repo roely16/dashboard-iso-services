@@ -28,6 +28,7 @@ class EficaciaController extends Controller{
 
         $indicador->content = $total;
         $indicador->bottom_detail = $result->bottom_detail;
+        $indicador->indicadores = $result->indicadores;
 
         return $indicador;
 
@@ -120,7 +121,7 @@ class EficaciaController extends Controller{
         $indicadores_p = $indicadores;
 
         // Por cada indicador obtener los valores necesarios para realizar la sumatoria
-        foreach ($indicadores as $indicador) {
+        foreach ($indicadores as &$indicador) {
             
             $carga_trabajo += $indicador->carga_trabajo;
             $total_resueltos += $indicador->total_resueltos;
@@ -157,8 +158,15 @@ class EficaciaController extends Controller{
             $i = 0;
         }
 
-        $porcentaje = round(($total_resueltos / ($carga_trabajo) * 100), 1);
+        
+        $porcentaje = 0;
 
+        if ($carga_trabajo > 0) {
+            
+            $porcentaje = round(($total_resueltos / ($carga_trabajo) * 100), 1);
+
+        }
+       
         $response = [
             'indicadores' => $indicadores,
             'total' => $porcentaje,

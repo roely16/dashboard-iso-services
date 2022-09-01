@@ -144,7 +144,12 @@ class EficaciaController extends Controller{
                         ->where('sub_area', 'EFICACIA')
                         ->first();
 
-            $total_anterior = $anteriores->total;
+            $total_anterior = 0;
+
+            if ($anteriores) {    
+                $total_anterior = $anteriores->total;
+            }
+            
 
         }
 
