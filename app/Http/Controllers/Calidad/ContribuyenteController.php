@@ -11,6 +11,10 @@ class ContribuyenteController extends Controller{
 
     public function data($data){
 
+        $split_date = explode('-', $data->date);
+        $year = $split_date[0];
+        $month = $split_date[1];
+
         // Obtener los servicios no conformes
         $no_conformes = (object) app('App\Http\Controllers\NoConformesController')->process($data);
 
@@ -22,7 +26,9 @@ class ContribuyenteController extends Controller{
                         'usuario',
                         'historial'
                     )
-                    ->whereRaw("to_char(fecha, 'YYYY-MM') = '$data->date'")
+                    // ->whereRaw("to_char(fecha, 'YYYY-MM') = '$data->date'")
+                    ->where('fecha_trabajada', 'like', '%'.$year.$month.'%')
+                    ->where('intento', 1)
                     ->get();
 
         $historial_array = [];
@@ -31,14 +37,14 @@ class ContribuyenteController extends Controller{
 
         $total = 0;
 
-        foreach ($historial as $item) {
+        foreach ($historial as &$item) {
             
             $array_string = explode(';', $item->historial);
 
-            $num_expendientes = (count($array_string)) / 18;
-
             // Quitar el primer elemento
             array_shift($array_string);
+
+            $num_expendientes = (count($array_string)) / 18;
 
             $start = 0;
 
@@ -53,7 +59,9 @@ class ContribuyenteController extends Controller{
                         'respuesta_4' => substr($array_string[$start + 4], 0, 2),
                         'respuesta_10' => substr($array_string[$start + 10], 0, 2),
                         'respuesta_11' => substr($array_string[$start + 11], 0, 2)
-                    ]
+                    ],
+                    'num_expedientes' => $num_expendientes,
+                    'array' => $array_string
                 ];
 
                 // Verificar si el expediente es válido en base a los resultados obtenidos 
@@ -76,7 +84,7 @@ class ContribuyenteController extends Controller{
 
                 $historial_array [] = $element;
 
-                $start =+ 18;
+                $start = $start + 18;
         
             }
 
@@ -90,20 +98,42 @@ class ContribuyenteController extends Controller{
                
         $exp_total = [];
 
-        foreach ($historial_array as $expediente) {
+        foreach ($historial_array as &$expediente) {
             
             $exp_total [] = $expediente->expediente;
 
         }
         
         // * Por cada elemento del total de expediente verificar si existe entre los SNC
-        foreach ($no_conformes as $snc) {
+        foreach ($no_conformes as &$snc) {
             
             // * Se valida que el número de expediente del snc no exista entre el total de expedientes 
             if (!in_array($snc->expediente, $exp_total)) {
                 
                 // * Si no existe este se deberá de agregar
                 $historial_array [] = $snc;
+
+            }
+
+        }
+
+        // * Validar que el SNC sea eliminado de los válidos si existirá duplicidad
+
+        $exp_no_conformes = [];
+
+        foreach ($no_conformes as &$snc) {
+            
+            $exp_no_conformes [] = $snc->expediente;
+
+        }
+
+        $filter_validos = [];
+
+        foreach ($validas as $valido) {
+            
+            if (!in_array($valido->expediente, $exp_no_conformes)) {
+                
+                $filter_validos [] = $valido;
 
             }
 
@@ -138,11 +168,11 @@ class ContribuyenteController extends Controller{
             ],
             [
                 'text' => 'Válidas',
-                'value' => count($validas),
+                'value' => count($filter_validos),
                 'detail' => [
                     'table' => [
                         'headers' => $headers,
-                        'items' => $validas
+                        'items' => $filter_validos
                     ]
                 ],
                 'component' => 'tables/TableDetail'

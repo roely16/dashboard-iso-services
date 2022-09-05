@@ -25,6 +25,10 @@ $router->post('/tecnicos_rechazos', 'Calidad\ConveniosController@tecnicos_rechaz
 
 $router->post('/chart_rechazo_tecnico', 'Calidad\ConveniosController@chart_rechazo_tecnico');
 
+$router->post('/login_config', 'ConfigController@login');
+
+$router->post('/get_process', 'ConfigController@get_process');
+
 $router->get('/test_view', function(){
 
     $result = Ticket::where('id', 9)->get();

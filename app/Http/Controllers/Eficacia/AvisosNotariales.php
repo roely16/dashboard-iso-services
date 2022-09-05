@@ -57,7 +57,7 @@ class AvisosNotariales extends Controller{
             $anteriores = DB::connection('catastrousr')->select("SELECT
                                                                     concat(t1.documento, concat('-', t1.anio)) as expediente,
                                                                     to_char(t1.fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso,
-                                                                    to_char(t1.fecha_finalizacion, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion,
+                                                                    to_char(t1.fecha_fin_tarea, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion,
                                                                     t1.usuario,
                                                                     t2.descripcion as estado,
                                                                     t3.descripcion as tipo
@@ -70,8 +70,8 @@ class AvisosNotariales extends Controller{
                                                                 and dependencia = '$codigo'
                                                                 and to_char(fecha_ingreso, 'YYYY') = '2022'
                                                                 and (
-                                                                    fecha_finalizacion is null
-                                                                    or to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
+                                                                    fecha_fin_tarea is null
+                                                                    or to_char(fecha_fin_tarea, 'YYYY-MM') = '$data->date'
                                                                 )
                                                                 and t1.status_tarea <> 1
                                                                 order by t1.fecha_ingreso");
