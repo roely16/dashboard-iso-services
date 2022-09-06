@@ -29,6 +29,8 @@ $router->post('/login_config', 'ConfigController@login');
 
 $router->post('/get_process', 'ConfigController@get_process');
 
+$router->post('/get_preview_data', 'ConfigController@get_preview_data');
+
 $router->get('/test_view', function(){
 
     $result = Ticket::where('id', 9)->get();

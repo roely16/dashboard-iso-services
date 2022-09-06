@@ -69,4 +69,18 @@ class ConfigController extends Controller{
 
     }
 
+    public function get_preview_data(Request $request){
+
+        try {
+            
+            
+
+        } catch (\Throwable $th) {
+           
+            return response()->json();
+
+        }
+
+    }
+
 }
