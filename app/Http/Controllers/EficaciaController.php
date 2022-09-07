@@ -23,7 +23,10 @@ class EficaciaController extends Controller{
                 'date' => $indicador->date,
                 'dependencia' => $dependencia,
                 'nombre_historial' => $proceso->nombre_historial,
-                'data_controlador' => $indicador->data_controlador
+                'data_controlador' => $indicador->data_controlador,
+                'id_proceso' => $proceso->id,
+                'id_indicador' => $indicador->id,
+                'config' => $indicador->config
             ];
 
             $result = (object) $this->data($data);
@@ -40,6 +43,7 @@ class EficaciaController extends Controller{
             $indicador->bottom_detail = property_exists($result, 'bottom_detail') ? $result->bottom_detail : [];
             $indicador->carga_trabajo = property_exists($result, 'carga_trabajo') ? $result->carga_trabajo : 0;
             $indicador->total_resueltos = property_exists($result, 'total_resueltos') ? $result->total_resueltos : 0;
+            $indicador->total = $result->total;
             
             return $indicador;
 
@@ -112,7 +116,10 @@ class EficaciaController extends Controller{
     }
 
     public function data($data){
+
+        // * Definición de la estructura para el indicador
         
+
         // Validar si existe un función especifica para la data
         if ($data->data_controlador) {
             
@@ -121,6 +128,15 @@ class EficaciaController extends Controller{
             return $result;
             
         }
+
+        // * Validar si es el mes actual o un mes anterior
+         $current_date = date('Y-m');
+
+         if ($current_date == $data->date) {
+             
+             return false;
+ 
+         }
 
         $codigo = $data->dependencia->codigo;
 

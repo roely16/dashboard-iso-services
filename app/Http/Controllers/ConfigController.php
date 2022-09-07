@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Empleado;
 use App\Proceso;
 use App\Area;
+use App\Historico;
 
 class ConfigController extends Controller{
 
@@ -26,7 +27,7 @@ class ConfigController extends Controller{
             }
 
             // * Validar contraseña
-            $colaborador = Empleado::select('nombre', 'apellido', 'nit', 'codarea')
+            $colaborador = Empleado::select('nombre', 'apellido', 'nit', 'codarea', 'usuario')
                             ->whereRaw(DB::raw("upper(usuario) like upper('$request->user')"))
                             ->whereRaw(DB::raw("DESENCRIPTAR(pass) = upper('$request->password')"))
                             ->first();
@@ -60,6 +61,42 @@ class ConfigController extends Controller{
             $procesos = Proceso::orderBy('id', 'asc')->get();
 
             return response()->json($procesos);
+
+        } catch (\Throwable $th) {
+            
+            return response()->json($th->getMessage(), 400);
+
+        }
+
+    }
+
+    public function save_data(Request $request){
+
+        try {
+            
+            // Crear un nuevo registro historico
+            $indicador = $request->id;
+            $id_proceso = $request->id_proceso;
+            $fecha = $request->date;
+            $registrado_por = $request->registrado_por;
+
+            // Crear archivo JSON
+            $json_name = uniqid() . '.json';
+            $file = fopen('json/' . $json_name, "w");
+            $txt = "John Doe\n";
+            fwrite($file, json_encode($request->all()));
+            fclose($file);
+
+            // Registrar en BD
+            $historico = new Historico();
+            $historico->id_proceso = $id_proceso;
+            $historico->id_indicador = $indicador;
+            $historico->fecha = $fecha;
+            $historico->registrado_por = $registrado_por;
+            $historico->path = 'json/' . $json_name;
+            $historico->save();
+
+            return response()->json($historico, 200);
 
         } catch (\Throwable $th) {
             

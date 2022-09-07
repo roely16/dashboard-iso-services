@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Historial;
 use App\Proceso;
 use App\MCAProcesos;
+use App\Historico;
 
 use Illuminate\Support\Facades\DB;
 
@@ -15,6 +16,35 @@ class AvisosNotariales extends Controller{
 
         try {
             
+            $current_date = date('Y-m');
+
+            if (strtotime($data->date) < strtotime($current_date)) {
+                
+                // * Es un mes anterior por lo que es necesario verificar en el historico
+                $historico = Historico::where('id_proceso', $data->id_proceso)
+                                ->where('id_indicador', $data->id_indicador)
+                                ->where('fecha', $data->date)
+                                ->orderBy('id', 'desc')
+                                ->first();
+
+                // * Si se encuentra un registro historico
+                if ($historico) {
+                    
+                    $json_data = json_decode(file_get_contents($historico->path));
+                    
+                    $response = [
+                        'total' => $json_data->total,
+                        'carga_trabajo' => $json_data->carga_trabajo,
+                        'total_resueltos' => $json_data->total_resueltos,
+                        'bottom_detail' => $json_data->bottom_detail,
+                        'updated_at' => $historico->updated_at
+                    ];
+
+                    return $response;
+                }
+
+            }
+
             $codigo = $data->dependencia->codigo;
 
             // * Mes siguiente
@@ -273,7 +303,9 @@ class AvisosNotariales extends Controller{
             return $response;
             
         } catch (\Throwable $th) {
-            //throw $th;
+            
+            return $th->getMessage();
+
         }
      
     }

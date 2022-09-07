@@ -31,6 +31,8 @@ $router->post('/get_process', 'ConfigController@get_process');
 
 $router->post('/get_preview_data', 'ConfigController@get_preview_data');
 
+$router->post('/save_data', 'ConfigController@save_data');
+
 $router->get('/test_view', function(){
 
     $result = Ticket::where('id', 9)->get();
