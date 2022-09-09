@@ -33,6 +33,9 @@ $router->post('/get_preview_data', 'ConfigController@get_preview_data');
 
 $router->post('/save_data', 'ConfigController@save_data');
 
+// * Ruta alternativa para acceder a los datos del dashboard
+$router->post('/get_dashboard_config', 'ConfigController@get_dashboard_data');
+
 $router->get('/test_view', function(){
 
     $result = Ticket::where('id', 9)->get();

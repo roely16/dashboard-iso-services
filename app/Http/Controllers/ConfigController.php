@@ -106,6 +106,31 @@ class ConfigController extends Controller{
 
     }
 
+    public function get_dashboard_data(Request $request){
+
+        try {
+
+            $custom_request = new Request();
+            $custom_request->replace($request->all());
+
+            $kpi = app('App\Http\Controllers\DashboardController')->get_dashboard($custom_request);
+
+            foreach ($kpi->original['indicadores'] as &$item) {
+                
+                $item->editable = true;
+
+            }
+
+            return response()->json($kpi->original);
+
+        } catch (\Throwable $th) {
+            
+            return response()->json($th->getMessage());
+
+        }
+
+    }
+
     public function get_preview_data(Request $request){
 
         try {

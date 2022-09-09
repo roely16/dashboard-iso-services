@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Atencion\Ticket;
 use App\Models\Atencion\IngresoExpediente;
 
+use Illuminate\Support\Facades\DB;
+
 class EficaciaController extends Controller{
 
     public function create($indicador){
@@ -36,6 +38,14 @@ class EficaciaController extends Controller{
     }
 
     public function data($data){
+
+        $split_date = explode('-', $data->date);
+        $year = $split_date[0];
+        $month = $split_date[1];
+
+        $date_fixed = $month . $year;
+
+        $trimestre_vencimiento = [1, 4, 7, 10];
 
         // * Obtener el total de tickets ingresados 
         $ingresados = Ticket::whereRaw("to_char(itiempo, 'YYYY-MM') = '$data->date'")
@@ -200,14 +210,47 @@ class EficaciaController extends Controller{
             ]
         ];
 
+
+
+        // Total de tickets
+        $total = DB::connection('catastrousr')->select("   SELECT * 
+                                                            FROM SGC.INDICADOR_TICKETS_FINAL
+                                                            WHERE TO_CHAR(F_ENTRADA,'YYYY-MM') IN ('$data->date')
+                                                            AND CODIGO_STATUS IN (4)
+                                                            AND UPPER(DESCRIPCION) IN ('CATASTRO','IUSI')
+                                                            AND F_LLAMADA IS NOT NULL
+                                                            AND ITIEMPO IS NOT NULL");
+
+        $menor_10 = DB::connection('catastrousr')->select(" SELECT *
+                                                            FROM SGC.INDICADOR_TICKETS_FINAL A
+                                                            WHERE (FTIEMPO - ITIEMPO) * 24 * 60 <= 10
+                                                            AND F_LLAMADA IS NOT NULL
+                                                            AND ITIEMPO IS NOT NULL
+                                                            AND CODIGO_STATUS IN (4) AND UPPER(DESCRIPCION) IN ('CATASTRO','IUSI')
+                                                            AND TO_CHAR(ITIEMPO,'YYYY-MM') = '$data->date'
+                                                        ");
+
+        $menor_20 = DB::connection('catastrousr')->select(" SELECT *
+                                                            FROM SGC.INDICADOR_TICKETS_FINAL A
+                                                            WHERE (F_LLAMADA - F_ENTRADA)*24*60 <= 20
+                                                            AND F_LLAMADA IS NOT NULL AND ITIEMPO IS NOT NULL
+                                                            AND CODIGO_STATUS IN (4) AND UPPER(DESCRIPCION) IN ('CATASTRO','IUSI')
+                                                            AND TO_CHAR(ITIEMPO,'YYYY-MM') = '$data->date'");
+
+        $cancelados = DB::connection('catastrousr')->select("   SELECT *
+                                                                FROM SGC.INDICADOR_TICKETS_FINAL A
+                                                                WHERE TO_CHAR(F_ENTRADA, 'YYYY-MM') = '$data->date'
+                                                                AND UPPER(DESCRIPCION) IN ('CATASTRO','IUSI')
+                                                                AND (CODIGO_STATUS <> 4 OR (F_LLAMADA IS NULL OR ITIEMPO IS NULL) )");
+
         $bottom_detail = [
             [
                 'text' => 'Total Tickets',
-                'value' => count($ingresados),
+                'value' => count($total),
                 'detail' => [
                     'table' => [
                         'headers' => $headers,
-                        'items' => $ingresados
+                        'items' => []
                     ]
                 ],
                 'component' => 'tables/TableTicketTime'
@@ -218,29 +261,29 @@ class EficaciaController extends Controller{
                 'detail' => [
                     'table' => [
                         'headers' => $headers_docs,
-                        'items' => $ingreso_expedientes
+                        'items' => []
                     ]
                 ],
                 'component' => 'tables/TableDetail'
             ],
             [
                 'text' => 'Cancelados',
-                'value' => count($anulados),
+                'value' => count($cancelados),
                 'detail' => [
                     'table' => [
                         'headers' => $headers,
-                        'items' => $anulados
+                        'items' => []
                     ]
                 ],
                 'component' => 'tables/TableDetail'
             ]
         ];
 
-        if (count($ingresados) > 0) {
+        if (count($total) > 0) {
             
-            $cumplimiento = round((count($tickets_menor_10) / count($ingresados)) * 100, 1);
-            $mensual = round((count($tickets_menor_20) / count($ingresados)) * 100, 1);
-            $trimestral = round((count($tickets_menor_45) / count($ingresados)) * 100, 1);
+            $cumplimiento = round((count($menor_10) / count($total)) * 100, 1);
+            $mensual = round((count($menor_20) / count($total)) * 100, 1);
+            $trimestral = in_array(intval($month), $trimestre_vencimiento) ? round((count($tickets_menor_45) / count($ingresados)) * 100, 1) : 0;
 
         }else{
 
@@ -255,31 +298,31 @@ class EficaciaController extends Controller{
             'mensual' => $mensual,
             'trimestral' => $trimestral,
             'menor_10' => [
-                'value' => count($tickets_menor_10),
+                'value' => count($menor_10),
                 'detail' => [
                     'table' => [
                         'headers' => $headers_cumplimiento,
-                        'items' => $tickets_menor_10
+                        'items' => []
                     ]
                 ],
                 'component' => 'tables/TableTicketTime'
             ],
             'menor_20' => [
-                'value' => count($tickets_menor_20),
+                'value' => count($menor_20),
                 'detail' => [
                     'table' => [
                         'headers' => $headers_cola,
-                        'items' => $tickets_menor_20
+                        'items' => []
                     ]
                 ],
                 'component' => 'tables/TableTicketTime'
             ],
             'menor_45' => [
-                'value' => count($tickets_menor_45),
+                'value' => in_array(intval($month), $trimestre_vencimiento) ? count($tickets_menor_45) : 0,
                 'detail' => [
                     'table' => [
                         'headers' => $headers_cola,
-                        'items' => $tickets_menor_45
+                        'items' => []
                     ]
                 ],
                 'component' => 'tables/TableTicketTime'
@@ -288,6 +331,10 @@ class EficaciaController extends Controller{
         ];
 
         return $response;
+
+    }
+
+    public function detalle_tiempo($data){
 
     }
 

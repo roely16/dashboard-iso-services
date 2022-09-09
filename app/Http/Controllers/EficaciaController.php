@@ -165,7 +165,6 @@ class EficaciaController extends Controller{
             if ($anteriores) {    
                 $total_anterior = $anteriores->total;
             }
-            
 
         }
 
@@ -261,27 +260,6 @@ class EficaciaController extends Controller{
                                                                 or to_char(fecha_finalizacion, 'YYYY-MM') = '$date_after'
                                                             )
                                                             order by t1.fecha_ingreso");
-    
-        $headers_ingresados = [
-            [
-                'text' => 'Documento',
-                'value' => 'expediente',
-                'width' => '33%',
-                'sortable' => false
-            ],
-            [
-                'text' => 'Ingreso',
-                'value' => 'fecha_ingreso',
-                'width' => '33%',
-                'sortable' => false
-            ],
-            [
-                'text' => 'Usuario',
-                'value' => 'usuario',
-                'width' => '33%',
-                'sortable' => false
-            ]
-        ];
 
         $headers_resueltos = [
             [
