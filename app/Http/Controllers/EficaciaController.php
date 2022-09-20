@@ -34,7 +34,7 @@ class EficaciaController extends Controller{
 
             $total = [
                 'total' => [
-                    'value' => property_exists($result, 'total') ? $result->total . "%" : 0 . "%",
+                    'value' => property_exists($result, 'total') ? $result->total : 0,
                 ],
                 'chart' => $chart
             ];

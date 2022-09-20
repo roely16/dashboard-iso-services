@@ -60,6 +60,12 @@ class ConfigController extends Controller{
             // * Obtener la lista de procesos
             $procesos = Proceso::orderBy('id', 'asc')->get();
 
+            foreach ($procesos as $process) {
+                
+                $process->loading = false;
+
+            }
+
             return response()->json($procesos);
 
         } catch (\Throwable $th) {
