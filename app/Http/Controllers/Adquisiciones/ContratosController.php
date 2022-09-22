@@ -29,7 +29,7 @@ class ContratosController extends Controller{
 
             $total = [
                 'total' => [
-                    'value' => $result->total . "%",
+                    'value' => $result->total,
                 ],
                 'chart' => $chart
             ];

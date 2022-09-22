@@ -88,11 +88,19 @@ class ConfigController extends Controller{
             $fecha = $request->date;
             $registrado_por = $request->registrado_por;
 
+            $backup_data = $request->data;
+
+            // * Actualizar el detalle inferior
+            $backup_data['bottom_detail'] = $request->bottom_detail;
+
+            // * Actualizar el total 
+            $backup_data['total'] = $request->content['total']['value'];
+
             // Crear archivo JSON
             $json_name = uniqid() . '.json';
             $file = fopen('json/' . $json_name, "w");
             $txt = "John Doe\n";
-            fwrite($file, json_encode($request->all()));
+            fwrite($file, json_encode($backup_data));
             fclose($file);
 
             // Registrar en BD
@@ -167,18 +175,7 @@ class ConfigController extends Controller{
 
             $json_data = json_decode(file_get_contents($historico->path), true);
 
-            $response = [
-                // 'total' => $json_data->total,
-                // 'carga_trabajo' => $json_data->carga_trabajo,
-                // 'total_resueltos' => $json_data->total_resueltos,
-                'total' => 0,
-                'carga_trabajo' => 0,
-                'total_resueltos' => 0,
-                'bottom_detail' => $json_data->bottom_detail,
-                'updated_at' => $historico->updated_at
-            ];
-            
-            return $response;
+            return $json_data;
 
         }
 

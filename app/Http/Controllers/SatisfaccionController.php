@@ -103,6 +103,7 @@ class SatisfaccionController extends Controller{
             $indicador->bottom_detail = $result->bottom_detail;
             $indicador->evaluaciones = $result->evaluaciones;
             $indicador->no_conformes = $result->no_conformes;
+            $indicador->data = $result;
 
             return $indicador;
 

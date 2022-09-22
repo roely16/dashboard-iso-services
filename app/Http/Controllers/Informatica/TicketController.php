@@ -22,7 +22,7 @@ class TicketController extends Controller {
         $total = [
             'data' => $result,
             'total' => [
-                'value' =>  $result->total . "%",
+                'value' =>  $result->total,
             ],
             'chart' => $chart
         ];

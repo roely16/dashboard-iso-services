@@ -112,6 +112,7 @@ class QuejasController extends Controller{
         $indicador->bottom_detail = $result->bottom_detail;
         $indicador->encuestas = $result->encuestas;
         $indicador->quejas = $result->quejas;
+        $indicador->data = $result;
 
         return $indicador;
 

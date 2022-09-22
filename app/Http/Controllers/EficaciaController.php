@@ -59,6 +59,7 @@ class EficaciaController extends Controller{
             $indicador->carga_trabajo = property_exists($result, 'carga_trabajo') ? $result->carga_trabajo : 0;
             $indicador->total_resueltos = property_exists($result, 'total_resueltos') ? $result->total_resueltos : 0;
             $indicador->total = $result->total;
+            $indicador->data = $result;
             
             return $indicador;
 
