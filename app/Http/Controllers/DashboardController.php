@@ -85,7 +85,8 @@ class DashboardController extends Controller{
             } catch (\Throwable $th) {
                 
                 $error = [
-                    'message' => $th->getMessage()
+                    'message' => $th->getMessage(),
+                    'line' => $th->getLine()
                 ];
 
                 $indicador->error = $error;

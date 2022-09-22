@@ -9,6 +9,8 @@ use App\Empleado;
 use App\Proceso;
 use App\Area;
 use App\Historico;
+use App\Historial;
+use App\Indicador;
 
 class ConfigController extends Controller{
 
@@ -146,6 +148,107 @@ class ConfigController extends Controller{
         } catch (\Throwable $th) {
            
             return response()->json();
+
+        }
+
+    }
+
+    public function get_history($data){
+
+        // * Es un mes anterior por lo que es necesario verificar en el historico
+        $historico = Historico::where('id_proceso', $data->id_proceso)
+                        ->where('id_indicador', $data->id_indicador)
+                        ->where('fecha', $data->date)
+                        ->orderBy('id', 'desc')
+                        ->first();
+
+        // * Si se encuentra un registro historico
+        if ($historico) {
+
+            $json_data = json_decode(file_get_contents($historico->path), true);
+
+            $response = [
+                // 'total' => $json_data->total,
+                // 'carga_trabajo' => $json_data->carga_trabajo,
+                // 'total_resueltos' => $json_data->total_resueltos,
+                'total' => 0,
+                'carga_trabajo' => 0,
+                'total_resueltos' => 0,
+                'bottom_detail' => $json_data->bottom_detail,
+                'updated_at' => $historico->updated_at
+            ];
+            
+            return $response;
+
+        }
+
+        // * Armar el objeto en base a la información del dashboard anterior
+
+        // * Obtener un objeto vacio con la nueva estructura para colocar la información del dashboard anterior
+
+        $data->get_structure = true; 
+
+        $controller = $data->data_controlador ? $data->data_controlador : $data->controlador;
+
+        $data_structure =  app('App\Http\Controllers' . $controller)->data($data);
+
+        // * Obtener la información del historico del dashboard anterior
+
+        $split_date = explode('-', $data->date);
+        $year = $split_date[0];
+        $month = intval($split_date[1]);
+
+        $historial_anterior = Historial::where('anio', $year)
+                                ->where('mes', $month)
+                                ->where('area', $data->nombre_historial)
+                                ->where('sub_area', $data->subarea_historial)
+                                ->first();
+
+        $data_structure['total'] = $historial_anterior->porcentaje;
+        
+        $i = 1;
+        $e = 0;
+
+        foreach ($data_structure['bottom_detail'] as &$item) {
+            
+            $current_field = property_exists($data, 'campos') ? $data->campos[$e] : ('campo_' . $i);
+
+            $item['value'] = $historial_anterior->{$current_field};
+
+            $i++;
+            $e++;
+
+        }
+
+        return $data_structure;
+
+    }
+
+    public function test_cat(Request $request){
+
+        try {
+            
+            // * Ubicar el proceso
+            $proceso = Proceso::find($request->id_proceso);
+
+            $split_date = explode('-', $request->date);
+            $year = $split_date[0];
+            $month = intval($split_date[1]);
+
+            // * Obtener el historial anterior
+            $historial = Historial::where('area', $proceso->nombre_historial)
+                            ->where('anio', $year)
+                            ->where('mes', $month)
+                            ->get();
+
+            // * Obtener indicadores del proceso
+            $indicadores = Indicador::where('id_proceso', $proceso->id)->get();
+
+            return response()->json($indicadores);
+            
+        } catch (\Throwable $th) {
+            
+            return response()->json($th->getMessage());
 
         }
 

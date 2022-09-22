@@ -22,14 +22,29 @@ class EficaciaController extends Controller{
                 'codarea' => $area->codarea,
                 'date' => $indicador->date,
                 'dependencia' => $dependencia,
-                'nombre_historial' => $proceso->nombre_historial,
                 'data_controlador' => $indicador->data_controlador,
+                'controlador' => $indicador->controlador,
                 'id_proceso' => $proceso->id,
                 'id_indicador' => $indicador->id,
-                'config' => $indicador->config
+                'config' => $indicador->config,
+                'nombre_historial' => $proceso->nombre_historial,
+                'subarea_historial' => 'EFICACIA'
             ];
 
-            $result = (object) $this->data($data);
+            // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
+
+            $current_date = date('Y-m');
+
+            if (strtotime($indicador->date) < strtotime($current_date)) {
+                
+                $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
+
+            }else{
+
+                $result = (object) $this->data($data);
+
+            }
+
             $chart = $this->chart($result);
 
             $total = [
@@ -119,7 +134,6 @@ class EficaciaController extends Controller{
 
         // * Definición de la estructura para el indicador
         
-
         // Validar si existe un función especifica para la data
         if ($data->data_controlador) {
             
@@ -130,13 +144,13 @@ class EficaciaController extends Controller{
         }
 
         // * Validar si es el mes actual o un mes anterior
-         $current_date = date('Y-m');
+        $current_date = date('Y-m');
 
-         if ($current_date == $data->date) {
-             
-             return false;
- 
-         }
+        if ($current_date == $data->date) {
+            
+            return false;
+
+        }
 
         $codigo = $data->dependencia->codigo;
 

@@ -14,6 +14,59 @@ use Illuminate\Support\Facades\DB;
 
 class QuejasController extends Controller{
 
+    const DATA_STRUCTURE = [
+
+        'total' => 0,
+        'encuestas' => 0,
+        'quejas' => 0,
+        'bottom_detail' => [
+            [
+                "text" => "Encuestas",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableSatisfaccion'
+            ],
+            [
+                "text" => "Quejas",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail'
+            ],
+            [
+                "text" => "Felicitaciones",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail'
+            ],
+            [
+                "text" => "Sugerencias",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail'
+            ],
+        ]
+    ]; 
+
     public function create($indicador){
 
         $proceso = Proceso::find($indicador->id_proceso);
@@ -23,16 +76,33 @@ class QuejasController extends Controller{
         $data = (object) [
             'codarea' => $area->codarea,
             'date' => $indicador->date,
-            'dependencia' => $dependencia
+            'dependencia' => $dependencia,
+            'data_controlador' => $indicador->data_controlador,
+            'controlador' => $indicador->controlador,
+            'id_proceso' => $proceso->id,
+            'id_indicador' => $indicador->id,
+            'config' => $indicador->config,
+            'nombre_historial' => $proceso->nombre_historial,
+            'subarea_historial' => 'QUEJAS'
         ];
 
-        $result = (object) $this->data($data);
+        $current_date = date('Y-m');
+
+        if (strtotime($indicador->date) < strtotime($current_date)) {
+            
+            $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
+
+        }else{
+
+            $result = (object) $this->data($data);
+
+        }
 
         $chart = $this->chart($result);
 
         $total = [
             'total' => [
-                'value' => $result->total . "%",
+                'value' => $result->total,
             ],
             'chart' => $chart
         ];
@@ -97,6 +167,12 @@ class QuejasController extends Controller{
     }
 
     public function data($data){
+
+        if (property_exists($data, 'get_structure')) {
+            
+            return self::DATA_STRUCTURE;
+
+        }
 
         $sq_proceso = SQProceso::where('rh_areas_codarea', $data->codarea)->first();
 

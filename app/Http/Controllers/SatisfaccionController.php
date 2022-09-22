@@ -12,6 +12,47 @@ use Illuminate\Support\Facades\DB;
 
 class SatisfaccionController extends Controller{
 
+    const DATA_STRUCTURE = [
+        'total' => 0,
+        'evaluaciones' => 0,
+        'no_conformes' => 0,
+        'bottom_detail' => [
+            [
+                "text" => 'Universo',
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableSatisfaccion'
+            ],
+            [
+                "text" => 'Aceptable',
+                "value" => [],
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableSatisfaccion'
+            ],
+            [
+                "text" => 'No Conforme',
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableSatisfaccion'
+            ],
+        ]
+    ];    
+
     public function create($indicador){
 
         try {
@@ -23,15 +64,35 @@ class SatisfaccionController extends Controller{
             $data = (object) [
                 'codarea' => $area->codarea,
                 'date' => $indicador->date,
-                'dependencia' => $dependencia
+                'dependencia' => $dependencia,
+                'data_controlador' => $indicador->data_controlador,
+                'controlador' => $indicador->controlador,
+                'id_proceso' => $proceso->id,
+                'id_indicador' => $indicador->id,
+                'config' => $indicador->config,
+                'nombre_historial' => $proceso->nombre_historial,
+                'subarea_historial' => 'SATISFACCION'
             ];
 
-            $result = (object) $this->data($data);
+            // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
+
+            $current_date = date('Y-m');
+
+            if (strtotime($indicador->date) < strtotime($current_date)) {
+                
+                $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
+
+            }else{
+
+                $result = (object) $this->data($data);
+
+            }
+
             $chart = $this->chart($result);
 
             $total = [
                 'total' => [
-                    'value' => $result->total . '%',
+                    'value' => $result->total,
                     'style' => ["text-h1", "font-weight-bold"],
                 ],
                 'chart' => $chart
@@ -100,6 +161,12 @@ class SatisfaccionController extends Controller{
     }
 
     public function data($data){
+
+        if (property_exists($data, 'get_structure')) {
+            
+            return self::DATA_STRUCTURE;
+
+        }
 
         $msa_procesos = MSAProceso::select('idproceso')->where('codarea', $data->codarea)->get()->pluck('idproceso');
 

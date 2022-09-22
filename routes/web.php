@@ -36,6 +36,9 @@ $router->post('/save_data', 'ConfigController@save_data');
 // * Ruta alternativa para acceder a los datos del dashboard
 $router->post('/get_dashboard_config', 'ConfigController@get_dashboard_data');
 
+// * Probar la construcción del objeto JSON que servirá para guardar la información antigua en el nuevo formato 
+$router->post('/test_cat', 'ConfigController@test_cat');
+
 $router->get('/test_view', function(){
 
     $result = Ticket::where('id', 9)->get();

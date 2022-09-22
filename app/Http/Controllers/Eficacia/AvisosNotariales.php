@@ -12,6 +12,62 @@ use Illuminate\Support\Facades\DB;
 
 class AvisosNotariales extends Controller{
 
+    const DATA_STRUCTURE = [
+        "total" => 0,
+        'carga_trabajo' => 0,
+        'total_resueltos' => 0,
+        'bottom_detail' => [
+            [
+                "text" => "Anteriores",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail',
+                'fullscreen' => true
+            ],
+            [
+                "text" => "Ingresados",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail',
+                'fullscreen' => true
+            ],
+            [
+                "text" => "Resueltos",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail',
+                'fullscreen' => true
+            ],
+            [
+                "text" => "Pendientes",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail',
+                'fullscreen' => true
+            ],
+        ]
+    ];
+
     public function data($data){
 
         try {
@@ -42,6 +98,9 @@ class AvisosNotariales extends Controller{
 
                     return $response;
                 }
+
+                // * Si no existe registro en el historico ejecutar la función que formar el historico en base al dashboard anterior
+                
 
             }
 

@@ -9,7 +9,7 @@ class CalidadController extends Controller{
     public function create($indicador){
 
         try {
-            
+
             $proceso = Proceso::find($indicador->id_proceso);
             $area = $proceso->area;
             $dependencia = $proceso->dependencia;
@@ -18,10 +18,34 @@ class CalidadController extends Controller{
                 'codarea' => $area->codarea,
                 'date' => $indicador->date,
                 'dependencia' => $dependencia,
-                'data_controlador' => $indicador->data_controlador
+                'data_controlador' => $indicador->data_controlador,
+                'controlador' => $indicador->controlador,
+                'id_proceso' => $proceso->id,
+                'id_indicador' => $indicador->id,
+                'config' => $indicador->config,
+                'nombre_historial' => $proceso->nombre_historial,
+                'subarea_historial' => 'CALIDAD'
             ];
 
-            $result = (object) $this->data($data);
+            // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
+
+            $current_date = date('Y-m');
+
+            if (strtotime($indicador->date) < strtotime($current_date)) {
+                
+                // * Agregar la estructura de columnas para obtener la información del dashboard anterior
+                $campos = ['campo_3', 'campo_1', 'campo_4', 'campo_2'];
+
+                $data->campos = $campos;
+
+                $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
+
+            }else{
+
+                $result = (object) $this->data($data);
+
+            }
+           
             $chart = $this->chart($result);
 
             $total = [
@@ -44,7 +68,9 @@ class CalidadController extends Controller{
         } catch (\Throwable $th) {
             
             $error = [
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
             ];
 
             $indicador->error = $error;
@@ -60,7 +86,7 @@ class CalidadController extends Controller{
 
         $bottom_detail = $data->bottom_detail;
 
-        $total = $bottom_detail[0];
+        $total =  $bottom_detail[0];
         $validas = $bottom_detail[1];
 
         $chart = [
@@ -98,7 +124,7 @@ class CalidadController extends Controller{
     }
 
     public function data($data){
-
+        
         $result = app('App\Http\Controllers' . $data->data_controlador)->data($data);
 
         return $result;
