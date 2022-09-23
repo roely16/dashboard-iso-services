@@ -27,7 +27,8 @@ class AvisosNotariales extends Controller{
                     ],
                 ],
                 'component' => 'tables/TableDetail',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'divide' => 'down'
             ],
             [
                 "text" => "Ingresados",
@@ -39,7 +40,8 @@ class AvisosNotariales extends Controller{
                     ],
                 ],
                 'component' => 'tables/TableDetail',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'divide' => 'down'
             ],
             [
                 "text" => "Resueltos",
@@ -51,7 +53,8 @@ class AvisosNotariales extends Controller{
                     ],
                 ],
                 'component' => 'tables/TableDetail',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'divide' => 'up'
             ],
             [
                 "text" => "Pendientes",
@@ -71,6 +74,12 @@ class AvisosNotariales extends Controller{
     public function data($data){
 
         try {
+            
+            if (property_exists($data, 'get_structure')) {
+            
+                return self::DATA_STRUCTURE;
+    
+            }
             
             $current_date = date('Y-m');
 

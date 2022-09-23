@@ -29,7 +29,8 @@ class QuejasController extends Controller{
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableSatisfaccion'
+                'component' => 'tables/TableSatisfaccion',
+                'divide' => 'down'
             ],
             [
                 "text" => "Quejas",
@@ -40,7 +41,8 @@ class QuejasController extends Controller{
                         'items' => []
                     ],
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 "text" => "Felicitaciones",

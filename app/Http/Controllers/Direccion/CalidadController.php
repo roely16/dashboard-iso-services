@@ -10,24 +10,55 @@ class CalidadController extends Controller{
 
     public function create($indicador){
 
+        $proceso = Proceso::find($indicador->id_proceso);
+        $area = $proceso->area;
+        $dependencia = $proceso->dependencia;
+        
         $data = (object) [
-            'date' => $indicador->date
+            'codarea' => $area->codarea,
+            'date' => $indicador->date,
+            'dependencia' => $dependencia,
+            'data_controlador' => $indicador->data_controlador,
+            'controlador' => $indicador->controlador,
+            'id_proceso' => $proceso->id,
+            'id_indicador' => $indicador->id,
+            'config' => $indicador->config,
+            'nombre_historial' => $proceso->nombre_historial,
+            'subarea_historial' => 'CALIDAD'
         ];
 
-        $result = (object) $this->data($data);
+        // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
+
+        $current_date = date('Y-m');
+
+        if (strtotime($indicador->date) < strtotime($current_date)) {
+            
+            // * Agregar la estructura de columnas para obtener la información del dashboard anterior
+            $campos = ['campo_3', 'campo_1', 'campo_4', 'campo_2'];
+
+            $data->campos = $campos;
+
+            $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
+
+        }else{
+
+            $result = (object) $this->data($data);
+
+        }
 
         $chart = $this->chart($result);
 
         $total = [
             'data' => $result,
             'total' => [
-                'value' =>  $result->total . "%",
+                'value' =>  $result->total,
             ],
             'chart' => $chart
         ];
 
         $indicador->content = $total;
         $indicador->bottom_detail = $result->bottom_detail;
+        $indicador->data = $result;
 
         return $indicador;
 
@@ -75,6 +106,12 @@ class CalidadController extends Controller{
     }
 
     public function data($data){
+
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('app.CALIDAD');
+
+        }
 
         // Obtener la lista de procesos que tienen un indicador de eficacia
         $indicadores = Indicador::where('tipo', 'calidad')

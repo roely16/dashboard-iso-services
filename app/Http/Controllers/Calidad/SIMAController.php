@@ -4,10 +4,17 @@ namespace App\Http\Controllers\Calidad;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 class SIMAController extends Controller{
 
     public function data($data){
+
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('app.CALIDAD');
+
+        }
 
         $total = DB::connection('catastrousr')->select("    SELECT
                                                                 CONCAT(DOC.DOCUMENTO, CONCAT('-', DOC.ANIO)) AS EXPEDIENTE,

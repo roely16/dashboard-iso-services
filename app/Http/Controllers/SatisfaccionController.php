@@ -26,7 +26,8 @@ class SatisfaccionController extends Controller{
                         'items' => []
                     ],
                 ],
-                'component' => 'tables/TableSatisfaccion'
+                'component' => 'tables/TableSatisfaccion',
+                'divide' => 'down'
             ],
             [
                 "text" => 'Aceptable',
@@ -37,7 +38,8 @@ class SatisfaccionController extends Controller{
                         'items' => []
                     ],
                 ],
-                'component' => 'tables/TableSatisfaccion'
+                'component' => 'tables/TableSatisfaccion',
+                'divide' => 'up' 
             ],
             [
                 "text" => 'No Conforme',

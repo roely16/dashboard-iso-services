@@ -388,8 +388,6 @@ class EficaciaController extends Controller{
 
         return $response;
 
-       
-
     }
 
 }

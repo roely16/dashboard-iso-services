@@ -14,6 +14,12 @@ class ConveniosController extends Controller{
 
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('app.CALIDAD');
+
+        }
+        
         // * Obtener los servicios no conformes
         $no_conformes = (object) app('App\Http\Controllers\NoConformesController')->process($data);
 

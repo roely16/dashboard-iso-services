@@ -11,6 +11,12 @@ class NomenclaturaController extends Controller{
 
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('app.CALIDAD');
+
+        }
+        
         $total = ISONomenclatura::select(
                         'lote',
                         DB::raw("to_char(fecha, 'DD/MM/YYYY HH24:MI:SS') as fecha"),
