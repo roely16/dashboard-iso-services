@@ -53,5 +53,75 @@ return [
                 'component' => 'tables/TableDetail'
             ],
         ]
+    ],
+    'EFICACIA_ATENCION' => [
+        'cumplimiento' => 0,
+        'mensual' => 0,
+        'trimestral' => 0,
+        'menor_10' => [
+            'value' => 0,
+            'detail' => [
+                'table' => [
+                    'headers' => [],
+                    'items' => []
+                ]
+            ],
+            'component' => 'tables/TableTicketTime'
+        ],
+        'menor_20' => [
+            'value' => 0,
+            'detail' => [
+                'table' => [
+                    'headers' => [],
+                    'items' => []
+                ]
+            ],
+            'component' => 'tables/TableTicketTime'
+        ],
+        'menor_45' => [
+            'value' => 0,
+            'detail' => [
+                'table' => [
+                    'headers' => [],
+                    'items' => []
+                ]
+            ],
+            'component' => 'tables/TableTicketTime'
+        ],  
+        'bottom_detail' => [
+            [
+                'text' => 'Total Tickets',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableTicketTime'
+            ],
+            [
+                'text' => 'Recepción Docs',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
+            ],
+            [
+                'text' => 'Cancelados',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
+            ]
+        ]
     ]
 ];

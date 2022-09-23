@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Atencion\Ticket;
 use App\Models\Atencion\IngresoExpediente;
+use App\Proceso;
 
 use Illuminate\Support\Facades\DB;
 
@@ -14,11 +15,37 @@ class EficaciaController extends Controller{
 
         try {
             
+            $proceso = Proceso::find($indicador->id_proceso);
+            $area = $proceso->area;
+            $dependencia = $proceso->dependencia;
+
             $data = (object) [
+                'codarea' => $area->codarea,
                 'date' => $indicador->date,
+                'dependencia' => $dependencia,
+                'data_controlador' => $indicador->data_controlador,
+                'controlador' => $indicador->controlador,
+                'id_proceso' => $proceso->id,
+                'id_indicador' => $indicador->id,
+                'config' => $indicador->config,
+                'nombre_historial' => $proceso->nombre_historial,
+                'estructura_controlador' => $indicador->estructura_controlador,
+                'subarea_historial' => 'EFICACIA'
             ];
 
-            $result = (object) $this->data($data);
+            // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
+
+            $current_date = date('Y-m');
+
+            if (strtotime($indicador->date) < strtotime($current_date)) {
+                
+                $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
+
+            }else{
+
+                $result = (object) $this->data($data);
+
+            }
 
             $indicador->data = $result;
 
@@ -38,6 +65,13 @@ class EficaciaController extends Controller{
     }
 
     public function data($data){
+
+        // * Retornar la estructura de datos vacia 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('app.EFICACIA_ATENCION');
+
+        }
 
         $split_date = explode('-', $data->date);
         $year = $split_date[0];

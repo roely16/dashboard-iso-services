@@ -201,6 +201,23 @@ class ConfigController extends Controller{
                                 ->where('sub_area', $data->subarea_historial)
                                 ->first();
 
+        // * Validar si es una función especifica la que deberá de colocar los datos en la estructura 
+
+        if (property_exists($data, 'estructura_controlador')) {
+            
+            $data_config = (object) [
+                'historial' => $historial_anterior,
+                'data_structure' => $data_structure,
+                'date' => $data->date
+            ];
+
+            $result = app('App\Http\Controllers' . $data->estructura_controlador)->create($data_config);
+
+            return $result;
+
+        }
+        
+
         $data_structure['total'] = $historial_anterior->porcentaje;
         
         $i = 1;
@@ -218,36 +235,6 @@ class ConfigController extends Controller{
         }
 
         return $data_structure;
-
-    }
-
-    public function test_cat(Request $request){
-
-        try {
-            
-            // * Ubicar el proceso
-            $proceso = Proceso::find($request->id_proceso);
-
-            $split_date = explode('-', $request->date);
-            $year = $split_date[0];
-            $month = intval($split_date[1]);
-
-            // * Obtener el historial anterior
-            $historial = Historial::where('area', $proceso->nombre_historial)
-                            ->where('anio', $year)
-                            ->where('mes', $month)
-                            ->get();
-
-            // * Obtener indicadores del proceso
-            $indicadores = Indicador::where('id_proceso', $proceso->id)->get();
-
-            return response()->json($indicadores);
-            
-        } catch (\Throwable $th) {
-            
-            return response()->json($th->getMessage());
-
-        }
 
     }
 
