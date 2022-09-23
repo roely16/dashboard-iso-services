@@ -9,22 +9,51 @@ use App\Models\Convenios\Bitacora;
 
 use Illuminate\Support\Facades\DB;
 
+use App\Proceso;
+
 class ConveniosController extends Controller{
 
     public function create($indicador){
 
         try {
-        
+            
+            $proceso = Proceso::find($indicador->id_proceso);
+            $area = $proceso->area;
+            $dependencia = $proceso->dependencia;
+
             $data = (object) [
+                'codarea' => $area->codarea,
                 'date' => $indicador->date,
+                'dependencia' => $dependencia,
+                'data_controlador' => $indicador->data_controlador,
+                'controlador' => $indicador->controlador,
+                'id_proceso' => $proceso->id,
+                'id_indicador' => $indicador->id,
+                'config' => $indicador->config,
+                'nombre_historial' => $indicador->nombre_historial,
+                'subarea_historial' => $indicador->subarea_historial,
+                'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
             ];
 
-            $result = (object) $this->data($data);
+            // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
+
+            $current_date = date('Y-m');
+
+            if (strtotime($indicador->date) < strtotime($current_date)) {
+                
+                $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
+
+            }else{
+
+                $result = (object) $this->data($data);
+
+            }
+            
             $chart = $this->chart($result);
             
             $total = [
                 'total' => [
-                    'value' => $result->total . "%",
+                    'value' => $result->total,
                 ],
                 'chart' => $chart
             ];

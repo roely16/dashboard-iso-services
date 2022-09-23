@@ -16,7 +16,7 @@ class LiquidacionesController extends Controller{
         $url = "http://172.23.25.36/indicadores_liquidaciones/resultadoLiquidacion.php";
         $curl = curl_init();
         
-        $date_start = date('Ymd', strtotime($data->date));;
+        $date_start = date('Ymd', strtotime($data->date));
         $date_end = date('Ymt', strtotime($data->date));
 
         curl_setopt($curl, CURLOPT_URL, $url);

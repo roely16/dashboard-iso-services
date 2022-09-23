@@ -23,8 +23,9 @@ class CalidadController extends Controller{
                 'id_proceso' => $proceso->id,
                 'id_indicador' => $indicador->id,
                 'config' => $indicador->config,
-                'nombre_historial' => $proceso->nombre_historial,
-                'subarea_historial' => 'CALIDAD'
+                'nombre_historial' => $indicador->nombre_historial,
+                'subarea_historial' => $indicador->subarea_historial,
+                'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
             ];
 
             // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
@@ -32,11 +33,6 @@ class CalidadController extends Controller{
             $current_date = date('Y-m');
 
             if (strtotime($indicador->date) < strtotime($current_date)) {
-                
-                // * Agregar la estructura de columnas para obtener la información del dashboard anterior
-                $campos = ['campo_3', 'campo_1', 'campo_4', 'campo_2'];
-
-                $data->campos = $campos;
 
                 $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
 

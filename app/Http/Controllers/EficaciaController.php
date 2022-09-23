@@ -27,8 +27,9 @@ class EficaciaController extends Controller{
                 'id_proceso' => $proceso->id,
                 'id_indicador' => $indicador->id,
                 'config' => $indicador->config,
-                'nombre_historial' => $proceso->nombre_historial,
-                'subarea_historial' => 'EFICACIA'
+                'nombre_historial' => $indicador->nombre_historial,
+                'subarea_historial' => $indicador->subarea_historial,
+                'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
             ];
 
             // * Validar la fecha, si es un mes anterior deberá de buscar en el historial

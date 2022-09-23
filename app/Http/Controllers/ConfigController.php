@@ -201,6 +201,13 @@ class ConfigController extends Controller{
                                 ->where('sub_area', $data->subarea_historial)
                                 ->first();
 
+        // * Validar si no existe registro en el historial
+        if (!$historial_anterior) {
+            
+            return $data_structure;
+
+        }
+
         // * Validar si es una función especifica la que deberá de colocar los datos en la estructura 
 
         if (property_exists($data, 'estructura_controlador')) {
@@ -225,7 +232,7 @@ class ConfigController extends Controller{
 
         foreach ($data_structure['bottom_detail'] as &$item) {
             
-            $current_field = property_exists($data, 'campos') ? $data->campos[$e] : ('campo_' . $i);
+            $current_field = $data->campos ? $data->campos[$e] : ('campo_' . $i);
 
             $item['value'] = $historial_anterior->{$current_field};
 
