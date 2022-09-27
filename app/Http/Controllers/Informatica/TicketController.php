@@ -57,6 +57,7 @@ class TicketController extends Controller {
 
         $indicador->content = $total;
         $indicador->bottom_detail = $result->bottom_detail;
+        $indicador->data = $result;
 
         return $indicador;
 

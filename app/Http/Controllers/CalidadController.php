@@ -31,12 +31,14 @@ class CalidadController extends Controller{
             // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
 
             $current_date = date('Y-m');
-
+            
             if (strtotime($indicador->date) < strtotime($current_date)) {
 
                 $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
 
             }else{
+
+                // * Verificar si aún siendo un mes actual existe un registro cogelado
 
                 $result = (object) $this->data($data);
 

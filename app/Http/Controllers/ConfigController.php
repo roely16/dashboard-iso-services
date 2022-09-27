@@ -91,10 +91,19 @@ class ConfigController extends Controller{
             $backup_data = $request->data;
 
             // * Actualizar el detalle inferior
-            $backup_data['bottom_detail'] = $request->bottom_detail;
+            if (property_exists($request, 'bottom_detail')) {
 
+                $backup_data['bottom_detail'] = $request->bottom_detail;
+
+            }
+            
             // * Actualizar el total 
-            $backup_data['total'] = $request->content['total']['value'];
+            if (property_exists($request, 'content') && $request->content != null) {
+                
+                $backup_data['total'] =  $request->content['total']['value'];
+
+            }
+            
 
             // Crear archivo JSON
             $json_name = uniqid() . '.json';
@@ -142,20 +151,6 @@ class ConfigController extends Controller{
         } catch (\Throwable $th) {
             
             return response()->json($th->getMessage());
-
-        }
-
-    }
-
-    public function get_preview_data(Request $request){
-
-        try {
-            
-            
-
-        } catch (\Throwable $th) {
-           
-            return response()->json();
 
         }
 
@@ -242,6 +237,12 @@ class ConfigController extends Controller{
         }
 
         return $data_structure;
+
+    }
+
+    public function check_history_record(){
+
+        
 
     }
 

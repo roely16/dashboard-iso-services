@@ -55,6 +55,7 @@ class EficaciaController extends Controller{
         $indicador->content = $total;
         $indicador->bottom_detail = $result->bottom_detail;
         $indicador->indicadores = $result->indicadores;
+        $indicador->data = $result;
 
         return $indicador;
 
