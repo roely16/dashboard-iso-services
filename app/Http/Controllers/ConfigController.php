@@ -234,7 +234,7 @@ class ConfigController extends Controller{
             
             $current_field = $data->campos ? $data->campos[$e] : ('campo_' . $i);
 
-            $item['value'] = $historial_anterior->{$current_field};
+            $item['value'] = intval($historial_anterior->{$current_field});
 
             $i++;
             $e++;
