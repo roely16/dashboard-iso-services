@@ -145,15 +145,6 @@ class EficaciaController extends Controller{
             
         }
 
-        // * Validar si es el mes actual o un mes anterior
-        $current_date = date('Y-m');
-
-        if ($current_date == $data->date) {
-            
-            return false;
-
-        }
-
         $codigo = $data->dependencia->codigo;
 
         // * Mes siguiente
