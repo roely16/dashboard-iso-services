@@ -123,5 +123,69 @@ return [
                 'component' => 'tables/TableDetail'
             ]
         ]
+    ],
+    'ACCIONES_DIRECCION' => [
+        'avance' => [
+            'text' => 'Avance',
+            'value' => 0
+        ],
+        'eficacia' => [
+            'text' => 'Eficacia',
+            'value' => 0,
+            'detail' => [
+                'table' => [
+                    'items' => [],
+                    'headers' => []
+                ]
+            ],
+            'component' => 'tables/TableAcciones'
+        ],
+        'bottom_detail' => [
+            [
+                'text' => 'Abiertas',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'items' => [],
+                        'headers' => []
+                    ]
+                ],
+                'component' => 'tables/TableAcciones'
+            ],
+            [
+                'text' => 'Cerradas',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'items' => [],
+                        'headers' => []
+                    ]
+                ],
+                'component' => 'tables/TableAcciones'
+            ],
+            [
+                'text' => 'Total',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'items' => [],
+                        'headers' => []
+                    ]
+                ],
+                'component' => 'tables/TableAcciones'
+            ],
+            [
+                'text' => 'Avance',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'items' => [],
+                        'headers' => []
+                    ]
+                ],
+                'component' => 'tables/TableAcciones'
+            ]
+        ]
     ]
+
 ];
