@@ -109,16 +109,14 @@ class AvisosNotariales extends Controller{
                     ];
 
                     return $response;
-                }
-
-                // * Si no existe registro en el historico ejecutar la función que formar el historico en base al dashboard anterior
-                
+                }                
 
             }
 
             // * Obtener el dato de anteriores desde el controlador ConfigController, tomando el dato del mes anterior
 
             // * Crear objeto con los parametros necesarios para realizar la consulta 
+            
             $data_history = (object) [
                 'date' => date('Y-m', strtotime($data->date . " -1 month")),
                 'id_proceso' => $data->id_proceso,
@@ -131,8 +129,6 @@ class AvisosNotariales extends Controller{
             ];
             
             $result = app('App\Http\Controllers\ConfigController')->get_history($data_history);
-
-            // dd($result);
 
             // * Obtener el dato de los pendientes del mes anterior (Congelado)
             $pendientes_congelado = $result['bottom_detail'][3]['value'];

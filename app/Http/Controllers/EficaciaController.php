@@ -44,6 +44,8 @@ class EficaciaController extends Controller{
 
                 $result = (object) $this->data($data);
                 
+                // * Actualizar el valor de Anteriores 
+
             }
 
             $chart = $this->chart($result);
@@ -141,6 +143,12 @@ class EficaciaController extends Controller{
 
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('app.EFICACIA');
+
+        }
+
         // * Definición de la estructura para el indicador
         
         // Validar si existe un función especifica para la data
@@ -158,41 +166,38 @@ class EficaciaController extends Controller{
     
         $date_after = date('Y-m', strtotime($data->date . ' +1 month'));
 
-        // * Obtener de la tabla ISO_DASHBOARD_HISTORIAL el campo CAMPO_4 que hace referencia a ANTERIORES 
+        // * Obtener el dato de anteriores desde el controlador ConfigController, tomando el dato del mes anterior
 
-        $anteriores = 0;
-        $split_date = explode('-', $data->date);
-        $month_before = intval($split_date[1]) - 1;
-        $year = $split_date[0];
+        // * Crear objeto con los parametros necesarios para realizar la consulta 
+        
+        $data_history = (object) [
+            'date' => date('Y-m', strtotime($data->date . " -1 month")),
+            'id_proceso' => $data->id_proceso,
+            'id_indicador' => $data->id_indicador,
+            'data_controlador' => $data->data_controlador,
+            'controlador' => $data->controlador,
+            'nombre_historial' => $data->nombre_historial,
+            'subarea_historial' => $data->subarea_historial,
+            'campos' => $data->campos,
+        ];
+        
+        $result = app('App\Http\Controllers\ConfigController')->get_history($data_history);
 
-        if ($data->nombre_historial) {
-            
-            $anteriores = Historial::select('campo_4 as total')
-                        ->where('area', $data->nombre_historial)
-                        ->where('mes', $month_before)
-                        ->where('anio', $year)
-                        ->where('sub_area', 'EFICACIA')
-                        ->first();
-
-            $total_anterior = 0;
-
-            if ($anteriores) {    
-                $total_anterior = $anteriores->total;
-            }
-
-        }
+        // * Obtener el dato de los pendientes del mes anterior (Congelado)
+        $pendientes_congelado = $result['bottom_detail'][3]['value'];
+        $items_pendientes_congelado = $result['bottom_detail'][3]['detail']['table']['items'];
 
         // Calculo en base a consultas
-        $anteriores = MCAProcesos::where('dependencia', $data->dependencia->codigo)
-                        ->whereRaw("(
-                            fecha_ingreso < to_date('$data->date', 'YYYY-MM')
-                        )")
-                        ->whereRaw("to_char(fecha_ingreso, 'YYYY') = '2022'")
-                        ->whereRaw("(
-                            fecha_finalizacion is null
-                            or to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
-                        )")
-                        ->get();
+        // $anteriores = MCAProcesos::where('dependencia', $data->dependencia->codigo)
+        //                 ->whereRaw("(
+        //                     fecha_ingreso < to_date('$data->date', 'YYYY-MM')
+        //                 )")
+        //                 ->whereRaw("to_char(fecha_ingreso, 'YYYY') = '2022'")
+        //                 ->whereRaw("(
+        //                     fecha_finalizacion is null
+        //                     or to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
+        //                 )")
+        //                 ->get();
 
         $anteriores = DB::connection('catastrousr')->select("SELECT
                                                                 concat(t1.documento, concat('-', t1.anio)) as expediente,
@@ -314,9 +319,7 @@ class EficaciaController extends Controller{
             ]
         ];
 
-        // $total_pendientes = ($total_ingresados + count($anteriores)) - $total_resueltos;
-
-        $carga_trabajo = count($ingresados) + ($data->nombre_historial ? $total_anterior : count($anteriores));
+        $carga_trabajo = count($ingresados) + $pendientes_congelado;
 
         if ($carga_trabajo > 0) {
            
@@ -336,7 +339,7 @@ class EficaciaController extends Controller{
             'bottom_detail' => [
                 [
                     "text" => "Anteriores",
-                    "value" => $data->nombre_historial ? $total_anterior : count($anteriores),
+                    "value" => $pendientes_congelado,
                     'detail' => [
                         'table' => [
                             'headers' => $headers_resueltos,
