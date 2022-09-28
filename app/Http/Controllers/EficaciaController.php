@@ -48,6 +48,13 @@ class EficaciaController extends Controller{
 
             $chart = $this->chart($result);
 
+            // * Validar que no sea mayor a 100
+            if ($result->total > 100) {
+                    
+                $result->total = 100;
+                
+            }
+
             $total = [
                 'total' => [
                     'value' => property_exists($result, 'total') ? $result->total : 0,
