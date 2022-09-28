@@ -29,7 +29,7 @@ class EficaciaController extends Controller{
                 'config' => $indicador->config,
                 'nombre_historial' => $indicador->nombre_historial,
                 'subarea_historial' => $indicador->subarea_historial,
-                'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
+                'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null,
             ];
 
             // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
@@ -43,7 +43,7 @@ class EficaciaController extends Controller{
             }else{
 
                 $result = (object) $this->data($data);
-
+                
             }
 
             $chart = $this->chart($result);

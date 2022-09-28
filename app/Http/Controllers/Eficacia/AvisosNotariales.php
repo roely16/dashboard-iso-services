@@ -85,6 +85,9 @@ class AvisosNotariales extends Controller{
 
             if (strtotime($data->date) < strtotime($current_date)) {
                 
+                // * Hacer llamado al controlador de Configuración y obtener el dato de Pendientes del mes anterior
+                $result = app('App\Http\Controllers\ConfigController')->create($data);
+
                 // * Es un mes anterior por lo que es necesario verificar en el historico
                 $historico = Historico::where('id_proceso', $data->id_proceso)
                                 ->where('id_indicador', $data->id_indicador)
@@ -112,6 +115,28 @@ class AvisosNotariales extends Controller{
                 
 
             }
+
+            // * Obtener el dato de anteriores desde el controlador ConfigController, tomando el dato del mes anterior
+
+            // * Crear objeto con los parametros necesarios para realizar la consulta 
+            $data_history = (object) [
+                'date' => date('Y-m', strtotime($data->date . " -1 month")),
+                'id_proceso' => $data->id_proceso,
+                'id_indicador' => $data->id_indicador,
+                'data_controlador' => $data->data_controlador,
+                'controlador' => $data->controlador,
+                'nombre_historial' => $data->nombre_historial,
+                'subarea_historial' => $data->subarea_historial,
+                'campos' => $data->campos,
+            ];
+            
+            $result = app('App\Http\Controllers\ConfigController')->get_history($data_history);
+
+            // dd($result);
+
+            // * Obtener el dato de los pendientes del mes anterior (Congelado)
+            $pendientes_congelado = $result['bottom_detail'][3]['value'];
+            $items_pendientes_congelado = $result['bottom_detail'][3]['detail']['table']['items'];
 
             $codigo = $data->dependencia->codigo;
 
@@ -319,7 +344,7 @@ class AvisosNotariales extends Controller{
                 'bottom_detail' => [
                     [
                         "text" => "Anteriores",
-                        "value" => $data->nombre_historial ? $total_anterior : count($anteriores),
+                        "value" => $pendientes_congelado,
                         'detail' => [
                             'table' => [
                                 'headers' => $headers_resueltos,
