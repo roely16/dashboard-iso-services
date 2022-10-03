@@ -25,7 +25,8 @@ class QuejasController extends Controller{
             'config' => $indicador->config,
             'nombre_historial' => $indicador->nombre_historial,
             'subarea_historial' => $indicador->subarea_historial,
-            'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
+            'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null,
+            'estructura_controlador' => $indicador->estructura_controlador
         ];
 
         // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
@@ -113,6 +114,12 @@ class QuejasController extends Controller{
     
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('app.QUEJAS');
+
+        }
+        
         $indicadores = Indicador::where('tipo', 'quejas')->get();
 
         foreach ($indicadores as $indicador) {

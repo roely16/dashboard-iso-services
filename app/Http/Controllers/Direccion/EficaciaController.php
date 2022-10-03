@@ -25,7 +25,8 @@ class EficaciaController extends Controller{
             'config' => $indicador->config,
             'nombre_historial' => $indicador->nombre_historial,
             'subarea_historial' => $indicador->subarea_historial,
-            'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
+            'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null,
+            'estructura_controlador' => $indicador->estructura_controlador
         ];
 
         // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
@@ -102,6 +103,12 @@ class EficaciaController extends Controller{
     }
 
     public function data($data){
+
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('app.EFICACIA');
+
+        }
 
         // Obtener la lista de procesos que tienen un indicador de eficacia
         $indicadores = Indicador::where('tipo', 'eficacia')->get();
@@ -191,6 +198,8 @@ class EficaciaController extends Controller{
         if ($carga_trabajo > 0) {
             
             $porcentaje = round(($total_resueltos / ($carga_trabajo) * 100), 1);
+
+            $porcentaje = $porcentaje > 100 ? 100 : $porcentaje;
 
         }
        

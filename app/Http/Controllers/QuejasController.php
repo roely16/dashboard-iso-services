@@ -174,7 +174,7 @@ class QuejasController extends Controller{
 
         if (property_exists($data, 'get_structure')) {
             
-            return self::DATA_STRUCTURE;
+            return config('app.QUEJAS');
 
         }
 

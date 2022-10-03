@@ -212,7 +212,8 @@ class ConfigController extends Controller{
             $data_config = (object) [
                 'historial' => $historial_anterior,
                 'data_structure' => $data_structure,
-                'date' => $data->date
+                'date' => $data->date,
+                'data' => $data
             ];
 
             $result = app('App\Http\Controllers' . $data->estructura_controlador)->create($data_config);
