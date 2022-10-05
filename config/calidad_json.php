@@ -93,5 +93,31 @@ return [
                 'component' => 'tables/TableDetail'
             ],
         ]
+    ],
+    'CALIDAD_DIRECCION' => [
+        'indicadores' => [],
+        'total' => 0,
+        'bottom_detail' => [
+            [
+                'text' => 'Total',
+                'value' => 0,
+                'component' => 'tables/TableProcesos',
+            ],
+            [
+                'text' => 'Válidas',
+                'value' => 0,
+                'component' => 'tables/TableProcesos',
+            ],
+            [
+                'text' => 'SNC',
+                'value' => 0,
+                'component' => 'tables/TableProcesos',
+            ],
+            [
+                'text' => 'Correcciones',
+                'value' => 0,
+                'component' => 'tables/TableProcesos',
+            ]
+        ],
     ]
 ];

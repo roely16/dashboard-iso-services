@@ -58,5 +58,35 @@ return [
                 'fullscreen' => true
             ],
         ]
+    ],
+    'EFICACIA_DIRECCION' => [
+        'indicadores' => [],
+        'total' => 0,
+        'bottom_detail' => [
+            [
+                'text' => 'Anteriores',
+                'value' => null,
+                'component' => 'tables/TableProcesos',
+                'fullscreen' => true
+            ],
+            [
+                'text' => 'Ingresados',
+                'value' => null,
+                'component' => 'tables/TableProcesos',
+                'fullscreen' => true
+            ],
+            [
+                'text' => 'Resueltos',
+                'value' => null,
+                'component' => 'tables/TableProcesos',
+                'fullscreen' => true
+            ],
+            [
+                'text' => 'Pendientes',
+                'value' => null,
+                'component' => 'tables/TableProcesos',
+                'fullscreen' => true
+            ]
+        ],
     ]
 ];

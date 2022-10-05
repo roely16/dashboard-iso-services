@@ -79,6 +79,12 @@ class SatisfaccionController extends Controller{
     
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('satisfaccion_json.SATISFACCION_DIRECCION');
+
+        }
+
         $indicadores = Indicador::where('tipo', 'satisfaccion')->get();
 
         foreach ($indicadores as $indicador) {

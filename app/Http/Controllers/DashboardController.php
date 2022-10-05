@@ -120,7 +120,8 @@ class DashboardController extends Controller{
             'config' => $indicador->config,
             'nombre_historial' => $indicador->nombre_historial,
             'subarea_historial' => $indicador->subarea_historial,
-            'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
+            'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null,
+            'estructura_controlador' => $indicador->estructura_controlador
         ];
         
         return $data;

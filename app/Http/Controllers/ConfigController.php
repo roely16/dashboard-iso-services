@@ -184,6 +184,8 @@ class ConfigController extends Controller{
 
         $controller = $data->data_controlador ? $data->data_controlador : $data->controlador;
 
+        // * Ejecuta el metodo data
+        
         $data_structure =  app('App\Http\Controllers' . $controller)->data($data);
 
         // * Obtener la información del historico del dashboard anterior
@@ -213,7 +215,7 @@ class ConfigController extends Controller{
 
         // * Validar si es una función especifica la que deberá de colocar los datos en la estructura 
 
-        if (property_exists($data, 'estructura_controlador')) {
+        if (property_exists($data, 'estructura_controlador') && $data->estructura_controlador != null) {
             
             $data_config = (object) [
                 'historial' => $historial_anterior,

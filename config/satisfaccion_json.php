@@ -20,7 +20,7 @@ return [
             ],
             [
                 "text" => 'Aceptable',
-                "value" => [],
+                "value" => 0,
                 'detail' => [
                     'table' => [
                         'headers' => [],
@@ -42,5 +42,26 @@ return [
                 'component' => 'tables/TableSatisfaccion'
             ],
         ]
+    ],
+    'SATISFACCION_DIRECCION' => [
+        'indicadores' => [],
+        'total' => 0,
+        'bottom_detail' => [
+            [
+                'text' => 'Universo',
+                'value' => 0,
+                'component' => 'tables/TableProcesos'
+            ],
+            [
+                'text' => 'Aceptable',
+                'value' => 0,
+                'component' => 'tables/TableProcesos'
+            ],
+            [
+                'text' => 'No Aceptable',
+                'value' => 0,
+                'component' => 'tables/TableProcesos'
+            ]
+        ],
     ]
 ];

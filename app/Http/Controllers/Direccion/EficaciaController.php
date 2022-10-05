@@ -80,7 +80,7 @@ class EficaciaController extends Controller{
 
         if (property_exists($data, 'get_structure')) {
             
-            return config('app.EFICACIA');
+            return config('eficacia_json.EFICACIA_DIRECCION');
 
         }
 

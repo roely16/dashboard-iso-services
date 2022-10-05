@@ -19,7 +19,7 @@ class DireccionHistorico extends Controller{
         $indicador = Indicador::find($request_data->id_indicador);
 
         // * Obtener la lista de indicadores en base al tipo
-        $lista_indicadores = Indicador::where('tipo', strtolower($indicador->nombre))
+        $lista_indicadores = Indicador::where('tipo', strtolower($indicador->subarea_historial))
                                 ->orderBy('id_proceso', 'asc')
                                 ->get();
 
@@ -28,13 +28,16 @@ class DireccionHistorico extends Controller{
             
             $indicador->date = $data->date;
 
+            // * Obtener la información para el indicador
+            $kpi_data = app('app\Http\Controllers\DashboardController')->get_info($indicador);
+
+            $indicador->kpi_data = $kpi_data;
+
             app('App\Http\Controllers' . $indicador->controlador)->{$indicador->funcion}($indicador);
 
         }
 
         $data_structure['lista_indicadores'] = $data->data_structure;
-
-        // dd($lista_indicadores);
 
         $i = 0;
 

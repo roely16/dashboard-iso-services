@@ -53,5 +53,31 @@ return [
                 'component' => 'tables/TableDetail'
             ],
         ]
+    ],
+    'QUEJAS_DIRECCION' => [
+        'indicadores' => [],
+        'total' => 0,
+        'bottom_detail' => [
+            [
+                'text' => 'Encuestas',
+                'value' => null,
+                'component' => 'tables/TableProcesos'
+            ],
+            [
+                'text' => 'Quejas',
+                'value' => null,
+                'component' => 'tables/TableProcesos'
+            ],
+            [
+                'text' => 'Felicitaciones',
+                'value' => null,
+                'component' => 'tables/TableProcesos'
+            ],
+            [
+                'text' => 'Sugerencias',
+                'value' => null,
+                'component' => 'tables/TableProcesos'
+            ]
+        ],
     ]
 ];

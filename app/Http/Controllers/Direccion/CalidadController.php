@@ -29,6 +29,7 @@ class CalidadController extends Controller{
 
         $indicador->content = $total;
         $indicador->bottom_detail = $result->bottom_detail;
+        $indicador->indicadores = $result->indicadores;
         $indicador->data = $result;
 
         return $indicador;
@@ -80,7 +81,7 @@ class CalidadController extends Controller{
 
         if (property_exists($data, 'get_structure')) {
             
-            return config('app.CALIDAD');
+            return config('calidad_json.CALIDAD_DIRECCION');
 
         }
 

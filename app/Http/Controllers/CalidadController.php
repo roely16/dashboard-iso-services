@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Proceso;
-
 class CalidadController extends Controller{
 
     public function create($indicador){
@@ -14,7 +12,7 @@ class CalidadController extends Controller{
 
             // * Validar si es una consulta de un mes posterior o actual 
             $result = (object) app('App\Http\Controllers\ValidationController')->check_case($indicador);
-
+            
             $result = $result->data ? $result->data : (object) $this->data($data);
            
             $chart = $this->chart($result);
