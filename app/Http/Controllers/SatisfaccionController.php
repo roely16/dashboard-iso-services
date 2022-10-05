@@ -44,7 +44,9 @@ class SatisfaccionController extends Controller{
         } catch (\Throwable $th) {
             
             $error = [
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
             ];
 
             $indicador->error = $error;
