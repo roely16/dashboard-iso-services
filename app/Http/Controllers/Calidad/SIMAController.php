@@ -12,7 +12,7 @@ class SIMAController extends Controller{
 
         if (property_exists($data, 'get_structure')) {
             
-            return config('app.CALIDAD');
+            return config('calidad_json.CALIDAD');
 
         }
 

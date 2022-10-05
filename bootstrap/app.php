@@ -60,6 +60,10 @@ $app->singleton(
 */
 
 $app->configure('app');
+$app->configure('quejas_json');
+$app->configure('satisfaccion_json');
+$app->configure('calidad_json');
+$app->configure('eficacia_json');
 
 /*
 |--------------------------------------------------------------------------

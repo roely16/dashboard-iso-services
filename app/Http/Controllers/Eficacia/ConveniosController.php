@@ -43,6 +43,13 @@ class ConveniosController extends Controller{
                 
                 $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
 
+                // * Si la respuesta indica que no existe historial hacer consulta con el método data
+                if (property_exists($result, 'history_empty')) {
+                    
+                    $result = (object) $this->data($data);
+                                        
+                }
+                
             }else{
 
                 $result = (object) $this->data($data);

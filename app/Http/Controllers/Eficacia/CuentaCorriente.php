@@ -24,19 +24,6 @@ class CuentaCorriente extends Controller{
 
         $anteriores = 0;
 
-        if ($data->nombre_historial) {
-            
-            // $anteriores = Historial::select('campo_4 as total')
-            //             ->where('area', $data->nombre_historial)
-            //             ->where('mes', $month_before)
-            //             ->where('anio', $year)
-            //             ->where('sub_area', 'EFICACIA')
-            //             ->first();
-
-            // $anteriores = $anteriores->total;
-
-        }
-
         // Calculo en base a consultas
         $anteriores = MCAProcesos::where('dependencia', $data->dependencia->codigo)
                         ->whereRaw("(

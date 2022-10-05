@@ -9,65 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class AvisosController extends Controller{
 
-    const DATA_STRUCTURE = [
-        'total' => 0,
-        'validas' => 0,
-        'total_calidad' => 0,
-        'bottom_detail' => [
-            [
-                "text" => "Total",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ]
-                ],
-                'component' => 'tables/TableDetail',
-                'divide' => 'down'
-            ],
-            [
-                "text" => "Válidas",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ]
-                ],
-                'component' => 'tables/TableDetail',
-                'divide' => 'up'
-            ],
-            [
-                "text" => "SNC",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ]
-                ],
-                'component' => 'tables/TableDetail'
-            ],
-            [
-                "text" => "Correcciones",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ]
-                ],
-                'component' => 'tables/TableDetail'
-            ],
-        ]
-    ];    
-
     public function data($data){
 
         if (property_exists($data, 'get_structure')) {
             
-            return self::DATA_STRUCTURE;
+            return config('calidad_json.CALIDAD');
 
         }
 

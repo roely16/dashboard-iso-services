@@ -1,30 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Eficacia;
-use App\Http\Controllers\Controller;
-
-use App\MCAProcesos;
-
-use Illuminate\Support\Facades\DB;
-
-class LiquidacionesPrediosController extends Controller{
-
-    public function data($data){
-
-        $bottom_detail = [
+return [
+    'QUEJAS' => [
+        'total' => 0,
+        'encuestas' => 0,
+        'quejas' => 0,
+        'bottom_detail' => [
             [
-                'text' => 'Anterior',
-                'value' => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ]
-                ],
-                'component' => 'tables/TableDetail'
-            ],
-            [
-                "text" => "Meta",
+                "text" => "Encuestas",
                 "value" => 0,
                 'detail' => [
                     'table' => [
@@ -32,43 +15,43 @@ class LiquidacionesPrediosController extends Controller{
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableSatisfaccion',
+                'divide' => 'down'
             ],
             [
-                "text" => "Ejecutado",
+                "text" => "Quejas",
                 "value" => 0,
                 'detail' => [
                     'table' => [
                         'headers' => [],
                         'items' => []
-                    ]
+                    ],
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
-                "text" => "Pendientes",
+                "text" => "Felicitaciones",
                 "value" => 0,
                 'detail' => [
                     'table' => [
                         'headers' => [],
                         'items' => []
-                    ]
+                    ],
                 ],
                 'component' => 'tables/TableDetail'
             ],
-        ];
-
-        $response = [
-            'total' => 0,
-            'validas' => 0,
-            'total_calidad' => 0,
-            'bottom_detail' => $bottom_detail
-        ];
-
-        return $response;
-
-    }
-
-}
-
-?>
+            [
+                "text" => "Sugerencias",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail'
+            ],
+        ]
+    ]
+];

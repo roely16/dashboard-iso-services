@@ -14,17 +14,13 @@ class CapacitacionesController extends Controller {
 
         try {
             
-            $proceso = Proceso::find($indicador->id_proceso);
-            $area = $proceso->area;
-            $dependencia = $proceso->dependencia;
-            
-            $data = (object) [
-                'codarea' => $area->codarea,
-                'date' => $indicador->date,
-                'dependencia' => $dependencia
-            ];
+            $data = $indicador->kpi_data;
 
-            $result = (object) $this->data($data);
+            // * Validar si es una consulta de un mes posterior o actual 
+            $result = (object) app('App\Http\Controllers\ValidationController')->check_case($indicador);
+
+            $result = $result->data ? $result->data : (object) $this->data($data);
+
             $chart = $this->chart($result);
 
             $total = [

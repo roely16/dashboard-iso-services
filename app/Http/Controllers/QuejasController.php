@@ -14,110 +14,48 @@ use Illuminate\Support\Facades\DB;
 
 class QuejasController extends Controller{
 
-    const DATA_STRUCTURE = [
-
-        'total' => 0,
-        'encuestas' => 0,
-        'quejas' => 0,
-        'bottom_detail' => [
-            [
-                "text" => "Encuestas",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ]
-                ],
-                'component' => 'tables/TableSatisfaccion',
-                'divide' => 'down'
-            ],
-            [
-                "text" => "Quejas",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableDetail',
-                'divide' => 'up'
-            ],
-            [
-                "text" => "Felicitaciones",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableDetail'
-            ],
-            [
-                "text" => "Sugerencias",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableDetail'
-            ],
-        ]
-    ]; 
-
     public function create($indicador){
 
-        $proceso = Proceso::find($indicador->id_proceso);
-        $area = $proceso->area;
-        $dependencia = $proceso->dependencia;
-        
-        $data = (object) [
-            'codarea' => $area->codarea,
-            'date' => $indicador->date,
-            'dependencia' => $dependencia,
-            'data_controlador' => $indicador->data_controlador,
-            'controlador' => $indicador->controlador,
-            'id_proceso' => $proceso->id,
-            'id_indicador' => $indicador->id,
-            'config' => $indicador->config,
-            'nombre_historial' => $indicador->nombre_historial,
-            'subarea_historial' => $indicador->subarea_historial,
-            'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
-        ];
-
-        $current_date = date('Y-m');
-
-        if (strtotime($indicador->date) < strtotime($current_date)) {
+        try {
             
-            $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
+            $data = $indicador->kpi_data;
+            
+            // * Validar si es una consulta de un mes posterior o actual 
+            $result = (object) app('App\Http\Controllers\ValidationController')->check_case($indicador);
 
-        }else{
+            $result = $result->data ? $result->data : (object) $this->data($data);
 
-            $result = (object) $this->data($data);
+            $chart = $this->chart($result);
+
+            $total = [
+                'total' => [
+                    'value' => $result->total,
+                ],
+                'chart' => $chart
+            ];
+
+            $indicador->content = $total;
+
+            $indicador->bottom_detail = $result->bottom_detail;
+            $indicador->encuestas = $result->encuestas;
+            $indicador->quejas = $result->quejas;
+            $indicador->data = $result;
+
+            return $indicador;
+
+        } catch (\Throwable $th) {
+            
+            $error = [
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
+            ];
+
+            $indicador->error = $error;
+
+            return $indicador;
 
         }
-
-        $chart = $this->chart($result);
-
-        $total = [
-            'total' => [
-                'value' => $result->total,
-            ],
-            'chart' => $chart
-        ];
-
-        $indicador->content = $total;
-
-        $indicador->bottom_detail = $result->bottom_detail;
-        $indicador->encuestas = $result->encuestas;
-        $indicador->quejas = $result->quejas;
-        $indicador->data = $result;
-
-        return $indicador;
 
     }
 
@@ -174,7 +112,7 @@ class QuejasController extends Controller{
 
         if (property_exists($data, 'get_structure')) {
             
-            return config('app.QUEJAS');
+            return config('quejas_json.QUEJAS');
 
         }
 

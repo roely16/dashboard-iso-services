@@ -13,54 +13,43 @@ class TicketController extends Controller {
 
     public function create($indicador){
 
-        $proceso = Proceso::find($indicador->id_proceso);
-        $area = $proceso->area;
-        $dependencia = $proceso->dependencia;
-        
-        $data = (object) [
-            'codarea' => $area->codarea,
-            'date' => $indicador->date,
-            'dependencia' => $dependencia,
-            'data_controlador' => $indicador->data_controlador,
-            'controlador' => $indicador->controlador,
-            'id_proceso' => $proceso->id,
-            'id_indicador' => $indicador->id,
-            'config' => $indicador->config,
-            'nombre_historial' => $indicador->nombre_historial,
-            'subarea_historial' => $indicador->subarea_historial,
-            'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
-        ];
-
-        // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
-
-        $current_date = date('Y-m');
-
-        if (strtotime($indicador->date) < strtotime($current_date)) {
+        try {
             
-            $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
+            $data = $indicador->kpi_data;
 
-        }else{
+            // * Validar si es una consulta de un mes posterior o actual 
+            $result = (object) app('App\Http\Controllers\ValidationController')->check_case($indicador);
 
-            $result = (object) $this->data($data);
+            $result = $result->data ? $result->data : (object) $this->data($data);
+
+            $chart = $this->chart($result);
+
+            $total = [
+                'data' => $result,
+                'total' => [
+                    'value' =>  $result->total,
+                ],
+                'chart' => $chart
+            ];
+
+            $indicador->content = $total;
+            $indicador->bottom_detail = $result->bottom_detail;
+            $indicador->data = $result;
+
+            return $indicador;
+
+        } catch (\Throwable $th) {
+            
+            $error = [
+                'message' => $th->getMessage()
+            ];
+
+            $indicador->error = $error;
+
+            return $indicador;
 
         }
-
-        $chart = $this->chart($result);
-
-        $total = [
-            'data' => $result,
-            'total' => [
-                'value' =>  $result->total,
-            ],
-            'chart' => $chart
-        ];
-
-        $indicador->content = $total;
-        $indicador->bottom_detail = $result->bottom_detail;
-        $indicador->data = $result;
-
-        return $indicador;
-
+        
     }
 
     public function chart($data){

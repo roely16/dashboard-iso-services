@@ -76,6 +76,9 @@ class DashboardController extends Controller{
 
             $indicador->title = $title;
 
+            // * Obtener la data necesario para generar la información de cada indicador
+            $indicador->kpi_data = $this->get_info($indicador);
+
             try {
                 
                 if ($indicador->controlador) {
@@ -86,6 +89,7 @@ class DashboardController extends Controller{
                 
                 $error = [
                     'message' => $th->getMessage(),
+                    'file' => $th->getFile(),
                     'line' => $th->getLine()
                 ];
 
@@ -96,6 +100,30 @@ class DashboardController extends Controller{
         }
 
         return $indicadores;
+
+    }
+
+    public function get_info($indicador){
+
+        $proceso = Proceso::find($indicador->id_proceso);
+        $area = $proceso->area;
+        $dependencia = $proceso->dependencia;
+            
+        $data = (object) [
+            'codarea' => $area->codarea,
+            'date' => $indicador->date,
+            'dependencia' => $dependencia,
+            'data_controlador' => $indicador->data_controlador,
+            'controlador' => $indicador->controlador,
+            'id_proceso' => $proceso->id,
+            'id_indicador' => $indicador->id,       
+            'config' => $indicador->config,
+            'nombre_historial' => $indicador->nombre_historial,
+            'subarea_historial' => $indicador->subarea_historial,
+            'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
+        ];
+        
+        return $data;
 
     }
 

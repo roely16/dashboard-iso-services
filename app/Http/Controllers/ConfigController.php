@@ -201,7 +201,13 @@ class ConfigController extends Controller{
         // * Validar si no existe registro en el historial
         if (!$historial_anterior) {
             
-            return $data_structure;
+            // * Si no existe registro en el nuevo historial ni en el anterior, enviar información en base a consulta normal
+            unset($data->get_structure);
+            $data->config = true;
+            $data->history_empty = true;
+            $data->data_structure = $data_structure;
+
+            return $data;
 
         }
 
@@ -240,12 +246,6 @@ class ConfigController extends Controller{
         }
 
         return $data_structure;
-
-    }
-
-    public function check_history_record(){
-
-        
 
     }
 

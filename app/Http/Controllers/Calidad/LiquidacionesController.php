@@ -11,6 +11,12 @@ class LiquidacionesController extends Controller{
 
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('calidad_json.CALIDAD');
+
+        }
+
         // Obtener la información de la RFC
         $url = "http://172.23.25.36/indicadores_liquidaciones/resultadoLiquidacion.php";
         $curl = curl_init();

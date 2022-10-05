@@ -12,72 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class AvisosNotariales extends Controller{
 
-    const DATA_STRUCTURE = [
-        "total" => 0,
-        'carga_trabajo' => 0,
-        'total_resueltos' => 0,
-        'bottom_detail' => [
-            [
-                "text" => "Anteriores",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableDetail',
-                'fullscreen' => true,
-                'divide' => 'down'
-            ],
-            [
-                "text" => "Ingresados",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableDetail',
-                'fullscreen' => true,
-                'divide' => 'down'
-            ],
-            [
-                "text" => "Resueltos",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableDetail',
-                'fullscreen' => true,
-                'divide' => 'up'
-            ],
-            [
-                "text" => "Pendientes",
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableDetail',
-                'fullscreen' => true
-            ],
-        ]
-    ];
-
     public function data($data){
 
         try {
             
             if (property_exists($data, 'get_structure')) {
             
-                return self::DATA_STRUCTURE;
+                return config('eficacia_json.EFICACIA');
     
             }
             
@@ -86,7 +27,7 @@ class AvisosNotariales extends Controller{
             if (strtotime($data->date) < strtotime($current_date)) {
                 
                 // * Hacer llamado al controlador de Configuración y obtener el dato de Pendientes del mes anterior
-                $result = app('App\Http\Controllers\ConfigController')->create($data);
+                //$result = app('App\Http\Controllers\ConfigController')->create($data);
 
                 // * Es un mes anterior por lo que es necesario verificar en el historico
                 $historico = Historico::where('id_proceso', $data->id_proceso)

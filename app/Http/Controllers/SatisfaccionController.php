@@ -11,92 +11,23 @@ use App\Models\Satisfaccion\ModeloDetalle;
 use Illuminate\Support\Facades\DB;
 
 class SatisfaccionController extends Controller{
-
-    const DATA_STRUCTURE = [
-        'total' => 0,
-        'evaluaciones' => 0,
-        'no_conformes' => 0,
-        'bottom_detail' => [
-            [
-                "text" => 'Universo',
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableSatisfaccion',
-                'divide' => 'down'
-            ],
-            [
-                "text" => 'Aceptable',
-                "value" => [],
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableSatisfaccion',
-                'divide' => 'up' 
-            ],
-            [
-                "text" => 'No Conforme',
-                "value" => 0,
-                'detail' => [
-                    'table' => [
-                        'headers' => [],
-                        'items' => []
-                    ],
-                ],
-                'component' => 'tables/TableSatisfaccion'
-            ],
-        ]
-    ];    
-
+   
     public function create($indicador){
 
         try {
             
-            $proceso = Proceso::find($indicador->id_proceso);
-            $area = $proceso->area;
-            $dependencia = $proceso->dependencia;
-            
-            $data = (object) [
-                'codarea' => $area->codarea,
-                'date' => $indicador->date,
-                'dependencia' => $dependencia,
-                'data_controlador' => $indicador->data_controlador,
-                'controlador' => $indicador->controlador,
-                'id_proceso' => $proceso->id,
-                'id_indicador' => $indicador->id,
-                'config' => $indicador->config,
-                'nombre_historial' => $indicador->nombre_historial,
-                'subarea_historial' => $indicador->subarea_historial,
-                'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null
-            ];
+            $data = $indicador->kpi_data;
 
-            // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
+            // * Validar si es una consulta de un mes posterior o actual 
+            $result = (object) app('App\Http\Controllers\ValidationController')->check_case($indicador);
 
-            $current_date = date('Y-m');
-
-            if (strtotime($indicador->date) < strtotime($current_date)) {
-                
-                $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
-
-            }else{
-
-                $result = (object) $this->data($data);
-
-            }
+            $result = $result->data ? $result->data : (object) $this->data($data);
 
             $chart = $this->chart($result);
 
             $total = [
                 'total' => [
                     'value' => $result->total,
-                    'style' => ["text-h1", "font-weight-bold"],
                 ],
                 'chart' => $chart
             ];
@@ -168,7 +99,7 @@ class SatisfaccionController extends Controller{
 
         if (property_exists($data, 'get_structure')) {
             
-            return self::DATA_STRUCTURE;
+            return config('satisfaccion_json.SATISFACCION');
 
         }
 
