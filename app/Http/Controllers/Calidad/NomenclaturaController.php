@@ -98,11 +98,20 @@ class NomenclaturaController extends Controller{
                         'items' => $total
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 'text' => 'Válidas',
-                'value' => count($filter_validos)
+                'value' => count($filter_validos),
+                'detail' => [
+                    'table' => [
+                        'headers' => $headers,
+                        'items' => $filter_validos
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 'text' => 'SNC',
@@ -113,11 +122,18 @@ class NomenclaturaController extends Controller{
                         'items' => $no_conformes
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
             ],
             [
                 'text' => 'Correcciones',
-                'value' => count($rechazados)
+                'value' => count($rechazados),
+                'detail' => [
+                    'table' => [
+                        'headers' => $headers,
+                        'items' => $rechazados
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
             ]
         ];
 

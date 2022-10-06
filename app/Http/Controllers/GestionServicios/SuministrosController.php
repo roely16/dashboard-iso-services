@@ -168,7 +168,8 @@ class SuministrosController extends Controller {
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 'text' => 'Ingresadas',
@@ -179,7 +180,8 @@ class SuministrosController extends Controller {
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 'text' => 'Resueltas',
@@ -190,7 +192,8 @@ class SuministrosController extends Controller {
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ]
         ];
 

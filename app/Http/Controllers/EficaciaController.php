@@ -322,7 +322,8 @@ class EficaciaController extends Controller{
                         ],
                     ],
                     'component' => 'tables/TableDetail',
-                    'fullscreen' => true
+                    'fullscreen' => true,
+                    'divide' => 'down'
                 ],
                 [
                     "text" => "Ingresados",
@@ -334,7 +335,8 @@ class EficaciaController extends Controller{
                         ],
                     ],
                     'component' => 'tables/TableDetail',
-                    'fullscreen' => true
+                    'fullscreen' => true,
+                    'divide' => 'down'
                 ],
                 [
                     "text" => "Resueltos",
@@ -346,7 +348,8 @@ class EficaciaController extends Controller{
                         ],
                     ],
                     'component' => 'tables/TableDetail',
-                    'fullscreen' => true
+                    'fullscreen' => true,
+                    'divide' => 'up'
                 ],
                 [
                     "text" => "Pendientes",

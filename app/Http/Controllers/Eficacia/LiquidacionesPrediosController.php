@@ -21,7 +21,8 @@ class LiquidacionesPrediosController extends Controller{
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 "text" => "Meta",
@@ -32,7 +33,8 @@ class LiquidacionesPrediosController extends Controller{
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 "text" => "Ejecutado",
@@ -43,7 +45,8 @@ class LiquidacionesPrediosController extends Controller{
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 "text" => "Pendientes",

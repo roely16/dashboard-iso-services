@@ -170,7 +170,8 @@ class ContribuyenteController extends Controller{
                         'items' => $historial_array
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 'text' => 'Válidas',
@@ -181,7 +182,8 @@ class ContribuyenteController extends Controller{
                         'items' => $filter_validos
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 'text' => 'SNC',

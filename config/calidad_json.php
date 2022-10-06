@@ -68,7 +68,8 @@ return [
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 "text" => "Válidas",
@@ -79,7 +80,8 @@ return [
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 "text" => "Correcciones",

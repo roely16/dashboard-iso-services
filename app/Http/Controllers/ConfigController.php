@@ -90,12 +90,12 @@ class ConfigController extends Controller{
 
             $backup_data = $request->data;
 
-            $backup_data['bottom_detail'] = $request->bottom_detail;
+            // $backup_data['bottom_detail'] = !property_exists($request, 'data') ?  $request->data['bottom_detail'] : $request->bottom_detail;
             
             // * Actualizar el detalle inferior
-            if (property_exists($request, 'bottom_detail')) {
+            if (isset($request->bottom_detail)) {
 
-                //$backup_data['bottom_detail'] = $request->bottom_detail;
+                $backup_data['bottom_detail'] = $request->bottom_detail;
 
             }
             

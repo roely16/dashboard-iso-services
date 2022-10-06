@@ -93,7 +93,8 @@ class LiquidacionesController extends Controller{
                         'items' => $total
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 "text" => "Válidas",
@@ -104,7 +105,8 @@ class LiquidacionesController extends Controller{
                         'items' => $validas
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 "text" => "SNC",

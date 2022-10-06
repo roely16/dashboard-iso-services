@@ -110,7 +110,8 @@ class SIMAController extends Controller{
                         'items' => $total
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 "text" => "Válidas",
@@ -121,7 +122,8 @@ class SIMAController extends Controller{
                         'items' => $filter_validos
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 "text" => "SNC",

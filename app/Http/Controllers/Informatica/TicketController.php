@@ -272,8 +272,8 @@ class TicketController extends Controller {
                     ],
                 ],
                 'component' => 'tables/TableTickets',
-                'fullscreen' => true
-                
+                'fullscreen' => true,
+                'divide' => 'down'
             ],
             [
                 'text' => 'Ingresados',
@@ -285,7 +285,8 @@ class TicketController extends Controller {
                     ],
                 ],
                 'component' => 'tables/TableTickets',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'divide' => 'down'
             ],
             [
                 'text' => 'Resueltos',
@@ -297,7 +298,8 @@ class TicketController extends Controller {
                     ],
                 ],
                 'component' => 'tables/TableTickets',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'divide' => 'up'
             ],
             [
                 'text' => 'Pendientes',

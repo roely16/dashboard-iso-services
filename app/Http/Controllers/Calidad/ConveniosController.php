@@ -103,7 +103,8 @@ class ConveniosController extends Controller{
                         'items' => $total
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 'text' => 'Válidas',
@@ -114,7 +115,8 @@ class ConveniosController extends Controller{
                         'items' => $validos
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 'text' => 'SNC',

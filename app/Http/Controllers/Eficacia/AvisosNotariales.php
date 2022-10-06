@@ -289,7 +289,8 @@ class AvisosNotariales extends Controller{
                             ],
                         ],
                         'component' => 'tables/TableDetail',
-                        'fullscreen' => true
+                        'fullscreen' => true,
+                        'divide' => 'down'
                     ],
                     [
                         "text" => "Ingresados",
@@ -301,7 +302,8 @@ class AvisosNotariales extends Controller{
                             ],
                         ],
                         'component' => 'tables/TableDetail',
-                        'fullscreen' => true
+                        'fullscreen' => true,
+                        'divide' => 'down'
                     ],
                     [
                         "text" => "Resueltos",
@@ -313,7 +315,8 @@ class AvisosNotariales extends Controller{
                             ],
                         ],
                         'component' => 'tables/TableDetail',
-                        'fullscreen' => true
+                        'fullscreen' => true,
+                        'divide' => 'up'
                     ],
                     [
                         "text" => "Pendientes",

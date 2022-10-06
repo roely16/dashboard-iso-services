@@ -70,7 +70,8 @@ class LiquidacionesController extends Controller{
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 "text" => "Meta",
@@ -81,7 +82,8 @@ class LiquidacionesController extends Controller{
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 "text" => "Real",
@@ -92,7 +94,8 @@ class LiquidacionesController extends Controller{
                         'items' => []
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 "text" => "Pendiente",

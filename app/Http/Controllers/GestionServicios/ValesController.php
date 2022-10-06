@@ -205,7 +205,8 @@ class ValesController extends Controller {
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 'text' => 'Recibido',
@@ -216,7 +217,8 @@ class ValesController extends Controller {
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 'text' => 'Finalizado',
@@ -227,7 +229,8 @@ class ValesController extends Controller {
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 'text' => 'Emitidos',

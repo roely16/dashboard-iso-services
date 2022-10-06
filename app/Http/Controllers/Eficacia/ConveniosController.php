@@ -215,10 +215,6 @@ class ConveniosController extends Controller{
             
         }
 
-        // echo json_encode($personas);
-
-        // exit;
-
         $headers = [
             [
                 'text' => 'ID Persona',
@@ -244,7 +240,8 @@ class ConveniosController extends Controller{
                         'items' => $personas
                     ],
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 'text' => 'En Tiempo',
@@ -255,7 +252,8 @@ class ConveniosController extends Controller{
                         'items' => $en_tiempo
                     ],
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 'text' => 'Fuera de Tiempo',

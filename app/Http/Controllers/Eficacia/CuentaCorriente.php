@@ -213,7 +213,8 @@ class CuentaCorriente extends Controller{
                         ],
                     ],
                     'component' => 'tables/TableDetail',
-                    'fullscreen' => true
+                    'fullscreen' => true,
+                    'divide' => 'down'
                 ],
                 [
                     "text" => "Ingresados",
@@ -225,7 +226,8 @@ class CuentaCorriente extends Controller{
                         ],
                     ],
                     'component' => 'tables/TableDetail',
-                    'fullscreen' => true
+                    'fullscreen' => true,
+                    'divide' => 'down'
                 ],
                 [
                     "text" => "Resueltos",
@@ -237,7 +239,8 @@ class CuentaCorriente extends Controller{
                         ],
                     ],
                     'component' => 'tables/TableDetail',
-                    'fullscreen' => true
+                    'fullscreen' => true,
+                    'divide' => 'up'
                 ],
                 [
                     "text" => "Pendientes",

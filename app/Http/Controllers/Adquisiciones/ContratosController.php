@@ -276,6 +276,8 @@ class ContratosController extends Controller{
 
         }
 
+        // TODO Agregar llaves para definir la formula para el calculo del porcentaje
+
         $bottom_detail = [
             [
                 'text' => 'Anteriores', 

@@ -168,7 +168,8 @@ class CapacitacionesController extends Controller {
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
             ],
             [
                 'text' => 'Realizadas',
@@ -179,7 +180,8 @@ class CapacitacionesController extends Controller {
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 'text' => 'Rechazadas',
@@ -190,7 +192,8 @@ class CapacitacionesController extends Controller {
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableDetail'
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
             ],
             [
                 'text' => 'Pendientes',
