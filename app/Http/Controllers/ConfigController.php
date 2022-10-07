@@ -251,4 +251,28 @@ class ConfigController extends Controller{
 
     }
 
+    public function get_freeze_list($data){
+
+        $list = Historico::select(
+                    'id_proceso', 
+                    'id_indicador', 
+                    'fecha', 
+                    'registrado_por', 
+                    DB::raw("to_char(created_at, 'DD/MM/YYYY HH24:MI:SS') as last_update")
+                )
+                ->where('id_proceso', $data->id_proceso)
+                ->where('id_indicador', $data->id_indicador)
+                ->where('fecha', $data->date)
+                ->orderBy('id', 'desc')
+                ->get();
+
+        $response = [
+            'list' => $list,
+            'last_update' => (count($list) > 0) ? $list[0]->last_update : 'No Disponible'
+        ];
+
+        return $response;
+
+    }
+
 }

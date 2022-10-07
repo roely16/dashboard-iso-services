@@ -79,6 +79,12 @@ class DashboardController extends Controller{
             // * Obtener la data necesario para generar la información de cada indicador
             $indicador->kpi_data = $this->get_info($indicador);
 
+            // * Obtener el listado de congelamientos
+            $request_list = (object) app('App\Http\Controllers\ConfigController')->get_freeze_list($indicador->kpi_data);
+
+            $indicador->list_freeze = $request_list->list;
+            $indicador->last_update = $request_list->last_update;
+
             try {
                 
                 if ($indicador->controlador) {

@@ -14,6 +14,12 @@ class CuentaCorriente extends Controller{
 
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('eficacia_json.EFICACIA');
+
+        }
+        
         $codigo = $data->dependencia->codigo;
 
         // * Mes siguiente

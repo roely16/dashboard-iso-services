@@ -99,6 +99,12 @@ class TicketController extends Controller {
 
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('eficacia_json.EFICACIA_TICKETS');
+
+        }
+
         $mes_anterior = date('Y-m', strtotime($data->date . ' -1 month'));
         $mes_posterior = date('Y-m', strtotime($data->date . ' +1 month'));
         $dos_meses_adelante = date('Y-m', strtotime($data->date . ' +2 month'));

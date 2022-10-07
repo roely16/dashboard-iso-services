@@ -94,6 +94,12 @@ class ValesController extends Controller {
 
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('eficacia_json.EFICACIA_SERVICIOS');
+
+        }
+
         $mes_anterior = date('Y-m', strtotime($data->date . ' -1 month'));
         $mes_posterior = date('Y-m', strtotime($data->date . ' +1 month'));
 
