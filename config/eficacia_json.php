@@ -129,7 +129,7 @@ return [
                 'divide' => 'up'
             ],
             [
-                'text' => 'Emitidos',
+                'text' => 'Pendientes',
                 'value' => 0,
                 'detail' => [
                     'table' => [
@@ -139,17 +139,17 @@ return [
                 ],
                 'component' => 'tables/TableDetail'
             ],
-            // [
-            //     'text' => 'Pendientes',
-            //     'value' => 0,
-            //     'detail' => [
-            //         'table' => [
-            //             'items' => 0,
-            //             'headers' => []
-            //         ]
-            //     ],
-            //     'component' => 'tables/TableDetail'
-            // ]
+            [
+                'text' => 'Emitidos',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'items' => 0,
+                        'headers' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
+            ]
         ]
     ],
     'EFICACIA_TICKETS' => [
@@ -207,6 +207,114 @@ return [
                 'component' => 'tables/TableTickets',
                 'fullscreen' => true
             ]
+        ]
+    ],
+    'LIQUIDACIONES' => [
+        'total' => 0,
+        'validas' => 0,
+        'total_calidad' => 0,
+        'bottom_detail' => [
+            [
+                'text' => 'Anterior',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
+            ],
+            [
+                "text" => "Meta",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
+            ],
+            [
+                "text" => "Real",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
+            ],
+            [
+                "text" => "Pendiente",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
+            ],
+        ]
+    ],
+    'LIQUIDACIONES_PREDIOS' => [
+        'total' => 0,
+        'validas' => 0,
+        'total_calidad' => 0,
+        'bottom_detail' => [
+            [
+                'text' => 'Anterior',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
+            ],
+            [
+                "text" => "Meta",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
+            ],
+            [
+                "text" => "Ejecutado",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
+            ],
+            [
+                "text" => "Pendiente",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
+            ],
         ]
     ]
 ];

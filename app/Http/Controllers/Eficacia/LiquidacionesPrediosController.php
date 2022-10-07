@@ -11,14 +11,25 @@ class LiquidacionesPrediosController extends Controller{
 
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('eficacia_json.LIQUIDACIONES_PREDIOS');
+
+        }
+
+        // ! Obtener el dato de los Anteriores
+        $result_anteriores = (object) app('App\Http\Controllers\PreviousController')->update_previous($data);
+        $pendientes_congelado = $result_anteriores->value;
+        $items_pendientes_congelado = $result_anteriores->items;
+
         $bottom_detail = [
             [
                 'text' => 'Anterior',
-                'value' => 0,
+                'value' => $pendientes_congelado,
                 'detail' => [
                     'table' => [
                         'headers' => [],
-                        'items' => []
+                        'items' => $items_pendientes_congelado
                     ]
                 ],
                 'component' => 'tables/TableDetail',
@@ -50,7 +61,7 @@ class LiquidacionesPrediosController extends Controller{
             ],
             [
                 "text" => "Pendientes",
-                "value" => 0,
+                "value" => $pendientes_congelado,
                 'detail' => [
                     'table' => [
                         'headers' => [],

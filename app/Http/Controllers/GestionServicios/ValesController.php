@@ -103,7 +103,13 @@ class ValesController extends Controller {
         $mes_anterior = date('Y-m', strtotime($data->date . ' -1 month'));
         $mes_posterior = date('Y-m', strtotime($data->date . ' +1 month'));
 
+        // ! Obtener el dato de los Anteriores
+        $result_anteriores = (object) app('App\Http\Controllers\PreviousController')->update_previous($data);
+        $pendientes_congelado = $result_anteriores->value;
+        $items_pendientes_congelado = $result_anteriores->items;
+
         // * Obtener los vales pendientes ingresados en el mes anterior donde la fecha de entrega sea null o del mes actual
+        /*
         $vales_anteriores = DB::connection('rrhh')->select("SELECT t1.*, CONCAT(t2.nombre, CONCAT(' ', t2.apellido)) as nombre_responsable
                                                             FROM adm_vales t1
                                                             INNER JOIN rh_empleados t2
@@ -115,6 +121,7 @@ class ValesController extends Controller {
                                                                 OR fecha_entrega IS NULL
                                                             )
                                                             ORDER BY t1.valeid ASC");
+        */
 
         // * Obtener los vales solicitados en el mes 
         $vales_ingresados = Vale::select(
@@ -200,14 +207,27 @@ class ValesController extends Controller {
                 'value' => 'nombre_responsable'
             ]
         ];
+
+        $total_resueltos = count($vales_finalizados);
+        $carga_trabajo = $pendientes_congelado + count($vales_ingresados);
+        
+        if ($carga_trabajo > 0) {
+            
+            $porcentaje = round((($total_resueltos / $carga_trabajo) * 100), 1);
+
+        }else{
+
+            $porcentaje = 100;
+
+        }
         
         $bottom_detail = [
             [
                 'text' => 'Anterior',
-                'value' => count($vales_anteriores),
+                'value' => $pendientes_congelado,
                 'detail' => [
                     'table' => [
-                        'items' => $vales_anteriores,
+                        'items' => $items_pendientes_congelado,
                         'headers' => $headers
                     ]
                 ],
@@ -239,17 +259,6 @@ class ValesController extends Controller {
                 'divide' => 'up'
             ],
             [
-                'text' => 'Emitidos',
-                'value' => count($vales_pendientes),
-                'detail' => [
-                    'table' => [
-                        'items' => $vales_pendientes,
-                        'headers' => $headers
-                    ]
-                ],
-                'component' => 'tables/TableDetail'
-            ],
-            [
                 'text' => 'Pendientes',
                 'value' => count($gestiones_pendientes),
                 'detail' => [
@@ -259,22 +268,19 @@ class ValesController extends Controller {
                     ]
                 ],
                 'component' => 'tables/TableDetail'
+            ],
+            [
+                'text' => 'Emitidos',
+                'value' => count($vales_pendientes),
+                'detail' => [
+                    'table' => [
+                        'items' => $vales_pendientes,
+                        'headers' => $headers
+                    ]
+                ],
+                'component' => 'tables/TableDetail'
             ]
         ];
-
-        $total_resueltos = count($vales_finalizados);
-        $carga_trabajo = count($vales_anteriores) + count($vales_ingresados);
-        
-        if ($carga_trabajo > 0) {
-            
-            $porcentaje = round((($total_resueltos / $carga_trabajo) * 100), 1);
-
-        }else{
-
-            $porcentaje = 100;
-
-        }
-        
 
         $response = [
             'total' => $porcentaje,

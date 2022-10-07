@@ -26,10 +26,12 @@ class CuentaCorriente extends Controller{
     
         $date_after = date('Y-m', strtotime($data->date . ' +1 month'));
 
-        // * Obtener de la tabla ISO_DASHBOARD_HISTORIAL el campo CAMPO_4 que hace referencia a ANTERIORES 
+        // ! Obtener el dato de los Anteriores
+        $result_anteriores = (object) app('App\Http\Controllers\PreviousController')->update_previous($data);
+        $pendientes_congelado = $result_anteriores->value;
+        $items_pendientes_congelado = $result_anteriores->items;
 
-        $anteriores = 0;
-
+        /*
         // Calculo en base a consultas
         $anteriores = MCAProcesos::where('dependencia', $data->dependencia->codigo)
                         ->whereRaw("(
@@ -64,7 +66,8 @@ class CuentaCorriente extends Controller{
                                                             and t1.codigoclase = 3
                                                             and t1.tramite in (322)
                                                             order by t1.fecha_ingreso");
-        
+        */
+
         $ingresados = DB::connection('catastrousr')->select("   SELECT 
                                                                     concat(t1.documento, concat('-', t1.anio)) as expediente,
                                                                     to_char(t1.fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso,
@@ -193,7 +196,7 @@ class CuentaCorriente extends Controller{
 
         // $total_pendientes = ($total_ingresados + count($anteriores)) - $total_resueltos;
 
-        $carga_trabajo = count($ingresados) + count($anteriores);
+        $carga_trabajo = count($ingresados) + $pendientes_congelado;
 
         if ($carga_trabajo > 0) {
            
@@ -211,11 +214,11 @@ class CuentaCorriente extends Controller{
             'bottom_detail' => [
                 [
                     "text" => "Anteriores",
-                    "value" => count($anteriores),
+                    "value" => $pendientes_congelado,
                     'detail' => [
                         'table' => [
                             'headers' => $headers_resueltos,
-                            'items' => $anteriores
+                            'items' => $items_pendientes_congelado
                         ],
                     ],
                     'component' => 'tables/TableDetail',

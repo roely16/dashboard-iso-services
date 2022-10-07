@@ -141,30 +141,35 @@ class EficaciaController extends Controller{
 
             foreach ($indicador->bottom_detail as $detalle) {
                 
-                $bottom_detail[$i]['value'] += $detalle['value'];
+                if ($i < count($bottom_detail)) {
+                
+                    $bottom_detail[$i]['value'] += $detalle['value'];
 
-                $areas = [];
+                    $areas = [];
 
-                foreach ($indicadores_p as $indicador_p) {
-                    
-                    $area = Proceso::find($indicador_p->id_proceso)->area;
+                    foreach ($indicadores_p as $indicador_p) {
+                        
+                        $area = Proceso::find($indicador_p->id_proceso)->area;
 
-                    $empty_table = [
-                        'table' => [
-                            'headers' => [],
-                            'items' => []
-                        ]
-                    ];
+                        $empty_table = [
+                            'table' => [
+                                'headers' => [],
+                                'items' => []
+                            ]
+                        ];
 
-                    $area->bottom_detail = array_key_exists('detail', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['detail'] : $empty_table;
-                    $area->component = array_key_exists('component', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['component'] : null;
+                        
+                        $area->bottom_detail = array_key_exists('detail', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['detail'] : $empty_table;
+                        $area->component = array_key_exists('component', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['component'] : null;
 
-                    $areas [] = $area;
+                        $areas [] = $area;
+
+                    }
+
+                    $bottom_detail[$i]['detail'] = $areas;
+                    $i++;
 
                 }
-
-                $bottom_detail[$i]['detail'] = $areas;
-                $i++;
 
             }
 

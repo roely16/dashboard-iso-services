@@ -44,13 +44,17 @@ class DireccionHistorico extends Controller{
         // * Por cada indicador obtener los valores necesarios para realizar la sumatoria
         foreach ($lista_indicadores as &$indicador) {
 
-            foreach ($indicador->bottom_detail as $detalle) {
-                
-                $data_structure['bottom_detail'][$i]['value'] += $detalle['value'];
+                foreach ($indicador->bottom_detail as $detalle) {
+                    
+                    if ($i < count($data_structure['bottom_detail'])) {
 
-                $i++;
+                        $data_structure['bottom_detail'][$i]['value'] += $detalle['value'];
 
-            }
+                        $i++;
+
+                    }
+
+                }
 
             $i = 0;
         }

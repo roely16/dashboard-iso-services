@@ -110,7 +110,12 @@ class TicketController extends Controller {
         $dos_meses_adelante = date('Y-m', strtotime($data->date . ' +2 month'));
 
         // * Los tickets pendientes en el mes actual son aquellos que fueron ingresados en el mes anterior y que fueron finalizados en el mes actual o bien que aún no han sido finalizados
-            
+        
+        // ! Obtener el dato de los Anteriores
+        $result_anteriores = (object) app('App\Http\Controllers\PreviousController')->update_previous($data);
+        $pendientes_congelado = $result_anteriores->value;
+        $items_pendientes_congelado = $result_anteriores->items;
+
         // Tickets pendientes del mes anterior
         $anteriores = DB::connection('tickets')->select("SELECT 
                                                             tk.id,
@@ -267,14 +272,27 @@ class TicketController extends Controller {
             ]
         ];
 
+        $carga_trabajo = $pendientes_congelado + count($ingresados);
+        $pendientes = $carga_trabajo - count($resueltos);
+
+        if ($carga_trabajo > 0) {
+            
+            $porcentaje = round(count($resueltos) / $carga_trabajo * 100, 1);
+
+        }else{
+
+            $porcentaje = 0;
+
+        }
+
         $bottom_detail = [
             [
                 'text' => 'Anteriores',
-                'value' => count($anteriores),
+                'value' => $pendientes_congelado,
                 'detail' => [
                     'table' => [
                         'headers' => $headers,
-                        'items' => $anteriores
+                        'items' => $items_pendientes_congelado
                     ],
                 ],
                 'component' => 'tables/TableTickets',
@@ -309,32 +327,18 @@ class TicketController extends Controller {
             ],
             [
                 'text' => 'Pendientes',
-                'value' => count($pendientes),
+                'value' => $pendientes,
                 'component' => 'tables/TableProcesos',
                 'detail' => [
                     'table' => [
                         'headers' => $headers,
-                        'items' => $pendientes
+                        'items' => []
                     ],
                 ],
                 'component' => 'tables/TableTickets',
                 'fullscreen' => true
             ]
         ];
-
-        $carga_trabajo = count($anteriores) + count($ingresados);
-
-        if ($carga_trabajo > 0) {
-            
-            $porcentaje = round(count($resueltos) / $carga_trabajo * 100, 1);
-
-        }else{
-
-            $porcentaje = 0;
-
-        }
-
-        $porcentaje = $porcentaje;
 
         $response = [
             'total' => $porcentaje,

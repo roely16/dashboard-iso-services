@@ -140,28 +140,13 @@ class EficaciaController extends Controller{
         // * Mes siguiente
     
         $date_after = date('Y-m', strtotime($data->date . ' +1 month'));
-
-        // * Obtener el dato de anteriores desde el controlador ConfigController, tomando el dato del mes anterior
-
-        // * Crear objeto con los parametros necesarios para realizar la consulta 
         
-        $data_history = (object) [
-            'date' => date('Y-m', strtotime($data->date . " -1 month")),
-            'id_proceso' => $data->id_proceso,
-            'id_indicador' => $data->id_indicador,
-            'data_controlador' => $data->data_controlador,
-            'controlador' => $data->controlador,
-            'nombre_historial' => $data->nombre_historial,
-            'subarea_historial' => $data->subarea_historial,
-            'campos' => $data->campos,
-        ];
-        
-        $result = app('App\Http\Controllers\ConfigController')->get_history($data_history);
+        // ! Obtener el dato de los Anteriores
+        $result_anteriores = (object) app('App\Http\Controllers\PreviousController')->update_previous($data);
+        $pendientes_congelado = $result_anteriores->value;
+        $items_pendientes_congelado = $result_anteriores->items;
 
-        // * Obtener el dato de los pendientes del mes anterior (Congelado)
-        $pendientes_congelado = $result['bottom_detail'][3]['value'];
-        $items_pendientes_congelado = $result['bottom_detail'][3]['detail']['table']['items'];
-
+        /*
         // Calculo en base a consultas
         // $anteriores = MCAProcesos::where('dependencia', $data->dependencia->codigo)
         //                 ->whereRaw("(
@@ -195,6 +180,8 @@ class EficaciaController extends Controller{
                                                             )
                                                             order by t1.fecha_ingreso");
         
+        */        
+                                                
         $ingresados = DB::connection('catastrousr')->select("   SELECT 
                                                                     concat(t1.documento, concat('-', t1.anio)) as expediente,
                                                                     to_char(t1.fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso,
@@ -318,7 +305,7 @@ class EficaciaController extends Controller{
                     'detail' => [
                         'table' => [
                             'headers' => $headers_resueltos,
-                            'items' => $anteriores
+                            'items' => $items_pendientes_congelado
                         ],
                     ],
                     'component' => 'tables/TableDetail',
