@@ -33,59 +33,30 @@ class AvisosNotariales extends Controller{
         
             $date_after = date('Y-m', strtotime($data->date . ' +1 month'));
 
-            // Calculo en base a consultas
-            /*
-            $anteriores = MCAProcesos::where('dependencia', $data->dependencia->codigo)
-                            ->whereRaw("(
-                                fecha_ingreso < to_date('$data->date', 'YYYY-MM')
-                            )")
-                            ->whereRaw("to_char(fecha_ingreso, 'YYYY') = '2022'")
-                            ->whereRaw("(
-                                fecha_finalizacion is null
-                                or to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
-                            )")
-                            ->get();
-
-            $anteriores = DB::connection('catastrousr')->select("SELECT
-                                                                    concat(t1.documento, concat('-', t1.anio)) as expediente,
-                                                                    to_char(t1.fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso,
-                                                                    to_char(t1.fecha_fin_tarea, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion,
-                                                                    t1.usuario,
-                                                                    t2.descripcion as estado,
-                                                                    t3.descripcion as tipo
-                                                                from sgc.mca_procesos_vw t1
-                                                                inner join catastro.cdo_status_docto t2
-                                                                on t1.status_documento = t2.codigo
-                                                                inner join catastro.cdo_clasedocto t3
-                                                                on t1.codigoclase = t3.codigoclase
-                                                                where fecha_ingreso < to_date('$data->date', 'YYYY-MM')
-                                                                and dependencia = '$codigo'
-                                                                and to_char(fecha_ingreso, 'YYYY') = '2022'
-                                                                and (
-                                                                    fecha_fin_tarea is null
-                                                                    or to_char(fecha_fin_tarea, 'YYYY-MM') = '$data->date'
-                                                                )
-                                                                and t1.status_tarea <> 1
-                                                                order by t1.fecha_ingreso");
-            
-            */
-
-            $ingresados = DB::connection('catastrousr')->select("   SELECT 
+            $ingresados = DB::connection('catastrousr')->select("   SELECT
                                                                         concat(t1.documento, concat('-', t1.anio)) as expediente,
                                                                         to_char(t1.fecha_ingreso, 'DD/MM/YYYY HH24:MI:SS') as fecha_ingreso,
                                                                         to_char(t1.fecha_finalizacion, 'DD/MM/YYYY HH24:MI:SS') as fecha_finalizacion,
                                                                         t1.usuario,
                                                                         t2.descripcion as estado,
                                                                         t3.descripcion as tipo
-                                                                    from sgc.mca_procesos_vw t1
+                                                                    FROM SGC.MCA_PROCESOS_VW T1
                                                                     inner join catastro.cdo_status_docto t2
                                                                     on t1.status_documento = t2.codigo
                                                                     inner join catastro.cdo_clasedocto t3
                                                                     on t1.codigoclase = t3.codigoclase
-                                                                    where to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
-                                                                    and dependencia = '$codigo'
-                                                                    and t1.status_tarea <> 1
-                                                                    order by t1.fecha_ingreso");
+                                                                    WHERE T1.DEPENDENCIA IN (18)
+                                                                    AND TO_CHAR(T1.FECHA_ASIGNA_TAREA, 'YYYY-MM') = '$data->date'
+                                                                    AND T1.STATUS_DOCUMENTO <> 3
+                                                                    and T1.STATUS_TAREA <> 1
+                                                                    and TRUNC(FECHA_ASIGNA_TAREA) = (
+                                                                        SELECT MAX(TRUNC(FECHA_ASIGNACION)) 
+                                                                        FROM CDO_BANDEJA 
+                                                                        WHERE DOCUMENTO = T1.DOCUMENTO 
+                                                                        AND ANIO = T1.ANIO 
+                                                                        AND CODIGOCLASE = T1.CODIGOCLASE 
+                                                                        AND DEPENDENCIA IN (18)
+                                                                    )");
 
             $resueltos = DB::connection('catastrousr')->select("SELECT 
                                                                     concat(t1.documento, concat('-', t1.anio)) as expediente,
@@ -94,22 +65,15 @@ class AvisosNotariales extends Controller{
                                                                     t1.usuario,
                                                                     t2.descripcion as estado,
                                                                     t3.descripcion as tipo
-                                                                from sgc.mca_procesos_vw t1
+                                                                FROM SGC.MCA_PROCESOS_VW t1
                                                                 inner join catastro.cdo_status_docto t2
                                                                 on t1.status_documento = t2.codigo
                                                                 inner join catastro.cdo_clasedocto t3
                                                                 on t1.codigoclase = t3.codigoclase
-                                                                where (
-                                                                    fecha_ingreso < to_date('$data->date', 'YYYY-MM')
-                                                                    or to_char(fecha_ingreso, 'YYYY-MM') = '$data->date'
-                                                                )
-                                                                and dependencia = '$codigo'
-                                                                and to_char(fecha_ingreso, 'YYYY') = '2022'
-                                                                and (
-                                                                    to_char(fecha_finalizacion, 'YYYY-MM') = '$data->date'
-                                                                )
-                                                                and t1.status_tarea <> 1
-                                                                order by t1.fecha_ingreso");
+                                                                WHERE DEPENDENCIA IN (18)
+                                                                AND TO_CHAR(FECHA_ASIGNA_TAREA, 'YYYY-MM') = '$data->date'
+                                                                AND TO_CHAR(FECHA_FIN_TAREA, 'YYYY-MM') = '$data->date'
+                                                                AND STATUS_DOCUMENTO <> 3");
 
             $pendientes = DB::connection('catastrousr')->select("SELECT
                                                                     concat(t1.documento, concat('-', t1.anio)) as expediente,
@@ -256,7 +220,7 @@ class AvisosNotariales extends Controller{
                         'detail' => [
                             'table' => [
                                 'headers' => $headers_resueltos,
-                                'items' => $pendientes
+                                'items' => []
                             ],
                         ],
                         'component' => 'tables/TableDetail',
