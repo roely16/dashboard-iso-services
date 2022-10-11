@@ -131,12 +131,20 @@ class CalidadController extends Controller{
         ];
 
         $indicadores_p = $indicadores;
+        $suma_porcentajes = 0;
+        $num_indicadores = 0;
 
         // Por cada indicador obtener los valores necesarios para realizar la sumatoria
         foreach ($indicadores as $indicador) {
             
             $total += $indicador->total_calidad;
             $validas += $indicador->validas;
+
+            $suma_porcentajes += $indicador->data->total;
+            $num_indicadores++;
+
+            // * Tamaño de bottom_detail
+            $count_bottom_detail = count($indicador->bottom_detail);
 
             foreach ($indicador->bottom_detail as $detalle) {
                 
@@ -148,17 +156,21 @@ class CalidadController extends Controller{
                     
                     $area = Proceso::find($indicador_p->id_proceso)->area;
 
-                    if (array_key_exists('detail', $indicador_p->bottom_detail[$i])) {
-
-                        $area->bottom_detail = $indicador_p->bottom_detail[$i]['detail'];
-                        $area->component = $indicador_p->bottom_detail[$i]['component'];
+                    if ($i < count($indicador_p->bottom_detail)) {
                         
-                        if (count($area->bottom_detail['table']['items']) > 0) {
-      
-                            $areas [] = $area;
+                        if (array_key_exists('detail', $indicador_p->bottom_detail[$i])) {
+
+                            $area->bottom_detail = $indicador_p->bottom_detail[$i]['detail'];
+                            $area->component = $indicador_p->bottom_detail[$i]['component'];
+                            
+                            if (count($area->bottom_detail['table']['items']) > 0) {
+        
+                                $areas [] = $area;
+                                
+                            }
                             
                         }
-                        
+
                     }
 
                 }
@@ -171,9 +183,9 @@ class CalidadController extends Controller{
             $i = 0;
         }
 
-        if ($total > 0) {
+        if ($suma_porcentajes > 0) {
             
-            $porcentaje = round(($validas / $total) * 100, 1);
+            $porcentaje = round($suma_porcentajes / $num_indicadores, 1);
 
         }else{
             
@@ -184,7 +196,7 @@ class CalidadController extends Controller{
         $response = [
             'indicadores' => $indicadores,
             'total' => $porcentaje,
-            'bottom_detail' => $bottom_detail,
+            'bottom_detail' => $bottom_detail
         ];
 
         return $response;

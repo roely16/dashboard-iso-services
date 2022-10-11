@@ -132,12 +132,16 @@ class EficaciaController extends Controller{
         ];
 
         $indicadores_p = $indicadores;
+        $suma_porcentajes = 0;
+        $num_indicadores = 0;
 
         // Por cada indicador obtener los valores necesarios para realizar la sumatoria
         foreach ($indicadores as &$indicador) {
             
             $carga_trabajo += $indicador->carga_trabajo;
             $total_resueltos += $indicador->total_resueltos;
+            $suma_porcentajes += $indicador->data->total;
+            $num_indicadores++;
 
             foreach ($indicador->bottom_detail as $detalle) {
                 
@@ -159,9 +163,13 @@ class EficaciaController extends Controller{
                         ];
 
                         
-                        $area->bottom_detail = array_key_exists('detail', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['detail'] : $empty_table;
-                        $area->component = array_key_exists('component', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['component'] : null;
+                        if ($i < count($indicador_p->bottom_detail)) {
 
+                            $area->bottom_detail = array_key_exists('detail', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['detail'] : $empty_table;
+                            $area->component = array_key_exists('component', $indicador_p->bottom_detail[$i]) ? $indicador_p->bottom_detail[$i]['component'] : null;
+                        
+                        }
+                        
                         $areas [] = $area;
 
                     }
@@ -181,7 +189,7 @@ class EficaciaController extends Controller{
 
         if ($carga_trabajo > 0) {
             
-            $porcentaje = round(($total_resueltos / ($carga_trabajo) * 100), 1);
+            $porcentaje = round($suma_porcentajes / $num_indicadores, 1);
 
             $porcentaje = $porcentaje > 100 ? 100 : $porcentaje;
 
@@ -191,6 +199,7 @@ class EficaciaController extends Controller{
             'indicadores' => $indicadores,
             'total' => $porcentaje,
             'bottom_detail' => $bottom_detail,
+            'suma_porcentajes' => $suma_porcentajes
         ];
 
         return $response;
