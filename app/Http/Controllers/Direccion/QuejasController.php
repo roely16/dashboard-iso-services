@@ -100,6 +100,10 @@ class QuejasController extends Controller{
             
             $indicador->date = $data->date;
 
+            // * Obtener el nombre del proceso 
+            $proceso = Proceso::find($indicador->id_proceso);
+            $indicador->proceso = $proceso->nombre;
+
             // * Obtener la información para el indicador
             $kpi_data = app('app\Http\Controllers\DashboardController')->get_info($indicador);
 
@@ -117,22 +121,26 @@ class QuejasController extends Controller{
             [
                 'text' => 'Encuestas',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Quejas',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Felicitaciones',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Sugerencias',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
         ];
 
@@ -152,6 +160,8 @@ class QuejasController extends Controller{
             foreach ($indicador->bottom_detail as $detalle) {
                 
                 $bottom_detail[$i]['value'] += $detalle['value'];
+
+                array_push($bottom_detail[$i]['tooltip'], ['title' => $indicador->proceso, 'value' => $detalle['value']]);
 
                 $areas = [];
 

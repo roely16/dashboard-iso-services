@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Estructura;
 use App\Http\Controllers\Controller;
 
 use App\Indicador;
+use App\Proceso;
 
 class DireccionHistorico extends Controller{
 
     public function create($data){
 
         $data_structure = $data->data_structure;
+
         $historial = $data->historial;
         $request_data = $data->data;
 
@@ -27,6 +29,10 @@ class DireccionHistorico extends Controller{
         foreach ($lista_indicadores as &$indicador) {
             
             $indicador->date = $data->date;
+
+            // * Obtener el nombre del proceso 
+            $proceso = Proceso::find($indicador->id_proceso);
+            $indicador->proceso = $proceso->nombre;
 
             // * Obtener la información para el indicador
             $kpi_data = app('app\Http\Controllers\DashboardController')->get_info($indicador);
@@ -47,6 +53,8 @@ class DireccionHistorico extends Controller{
                 foreach ($indicador->bottom_detail as $detalle) {
                     
                     if ($i < count($data_structure['bottom_detail'])) {
+
+                        array_push($data_structure['bottom_detail'][$i]['tooltip'], ['title' => $indicador->proceso, 'value' => $detalle['value']]);
 
                         $data_structure['bottom_detail'][$i]['value'] += $detalle['value'];
 

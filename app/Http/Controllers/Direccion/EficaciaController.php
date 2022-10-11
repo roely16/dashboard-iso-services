@@ -85,11 +85,17 @@ class EficaciaController extends Controller{
         }
 
         // Obtener la lista de procesos que tienen un indicador de eficacia
-        $indicadores = Indicador::where('tipo', 'eficacia')->get();
+        $indicadores = Indicador::where('tipo', 'eficacia')
+                        ->orderBy('id_proceso', 'asc')
+                        ->get();
 
         foreach ($indicadores as $indicador) {
             
             $indicador->date = $data->date;
+
+            // * Obtener el nombre del proceso 
+            $proceso = Proceso::find($indicador->id_proceso);
+            $indicador->proceso = $proceso->nombre;
 
             // * Obtener la información para el indicador
             $kpi_data = app('app\Http\Controllers\DashboardController')->get_info($indicador);
@@ -109,25 +115,29 @@ class EficaciaController extends Controller{
                 'text' => 'Anteriores',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'tooltip' => []
             ],
             [
                 'text' => 'Ingresados',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'tooltip' => []
             ],
             [
                 'text' => 'Resueltos',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'tooltip' => []
             ],
             [
                 'text' => 'Pendientes',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'tooltip' => []
             ]
         ];
 
@@ -148,6 +158,8 @@ class EficaciaController extends Controller{
                 if ($i < count($bottom_detail)) {
                 
                     $bottom_detail[$i]['value'] += $detalle['value'];
+                    
+                    array_push($bottom_detail[$i]['tooltip'], ['title' => $indicador->proceso, 'value' => $detalle['value']]);
 
                     $areas = [];
 

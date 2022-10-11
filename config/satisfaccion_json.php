@@ -50,17 +50,20 @@ return [
             [
                 'text' => 'Universo',
                 'value' => 0,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Aceptable',
                 'value' => 0,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'No Aceptable',
                 'value' => 0,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ]
         ],
     ]

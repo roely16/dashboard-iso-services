@@ -91,6 +91,10 @@ class SatisfaccionController extends Controller{
             
             $indicador->date = $data->date;
 
+            // * Obtener el nombre del proceso 
+            $proceso = Proceso::find($indicador->id_proceso);
+            $indicador->proceso = $proceso->nombre;
+
             // * Obtener la información para el indicador
             $kpi_data = app('app\Http\Controllers\DashboardController')->get_info($indicador);
 
@@ -108,17 +112,20 @@ class SatisfaccionController extends Controller{
             [
                 'text' => 'Universo',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Aceptable',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'No Aceptable',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
         ];
 
@@ -138,6 +145,8 @@ class SatisfaccionController extends Controller{
             foreach ($indicador->bottom_detail as $detalle) {
                 
                 $bottom_detail[$i]['value'] += $detalle['value'];
+
+                array_push($bottom_detail[$i]['tooltip'], ['title' => $indicador->proceso, 'value' => $detalle['value']]);
 
                 $areas = [];
 

@@ -99,7 +99,7 @@ class ConveniosController extends Controller{
         
         if (property_exists($data, 'get_structure')) {
             
-            return config('eficacia_json.EFICACIA');
+            return config('eficacia_json.CONVENIOS');
 
         }
 
@@ -253,8 +253,8 @@ class ConveniosController extends Controller{
 
         $response = [
             'total' => $porcentaje,
-            'carga_trabajo' => 100,
-            'total_resueltos' => 100,
+            'carga_trabajo' => 0,
+            'total_resueltos' => 0,
             'bottom_detail' => $bottom_detail
         ];
 

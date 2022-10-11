@@ -94,6 +94,10 @@ class CalidadController extends Controller{
             
             $indicador->date = $data->date;
 
+            // * Obtener el nombre del proceso 
+            $proceso = Proceso::find($indicador->id_proceso);
+            $indicador->proceso = $proceso->nombre;
+
             // * Obtener la información para el indicador
             $kpi_data = app('app\Http\Controllers\DashboardController')->get_info($indicador);
 
@@ -112,21 +116,25 @@ class CalidadController extends Controller{
                 'text' => 'Total',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Válidas',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'SNC',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Correcciones',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ]
         ];
 
@@ -143,12 +151,11 @@ class CalidadController extends Controller{
             $suma_porcentajes += $indicador->data->total;
             $num_indicadores++;
 
-            // * Tamaño de bottom_detail
-            $count_bottom_detail = count($indicador->bottom_detail);
-
             foreach ($indicador->bottom_detail as $detalle) {
                 
                 $bottom_detail[$i]['value'] += $detalle['value'];
+
+                array_push($bottom_detail[$i]['tooltip'], ['title' => $indicador->proceso, 'value' => $detalle['value']]);
 
                 $areas = [];
 
@@ -165,9 +172,11 @@ class CalidadController extends Controller{
                             
                             if (count($area->bottom_detail['table']['items']) > 0) {
         
-                                $areas [] = $area;
+                                
                                 
                             }
+
+                            $areas [] = $area;
                             
                         }
 

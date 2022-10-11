@@ -67,25 +67,29 @@ return [
                 'text' => 'Anteriores',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'tooltip' => []
             ],
             [
                 'text' => 'Ingresados',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'tooltip' => []
             ],
             [
                 'text' => 'Resueltos',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'tooltip' => []
             ],
             [
                 'text' => 'Pendientes',
                 'value' => null,
                 'component' => 'tables/TableProcesos',
-                'fullscreen' => true
+                'fullscreen' => true,
+                'tooltip' => []
             ]
         ],
     ],
@@ -315,6 +319,48 @@ return [
                 ],
                 'component' => 'tables/TableDetail'
             ],
+        ]
+    ],
+    'CONVENIOS' => [
+        'total' => 0,
+        'carga_trabajo' => 0,
+        'total_resueltos' => 0,
+        'bottom_detail' => [
+            [
+                'text' => 'Total',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
+            ],
+            [
+                'text' => 'En Tiempo',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
+            ],
+            [
+                'text' => 'Fuera de Tiempo',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ],
+                ],
+                'component' => 'tables/TableDetail'
+            ]
         ]
     ]
 ];

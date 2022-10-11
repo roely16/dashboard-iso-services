@@ -104,21 +104,25 @@ return [
                 'text' => 'Total',
                 'value' => 0,
                 'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Válidas',
                 'value' => 0,
                 'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'SNC',
                 'value' => 0,
                 'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Correcciones',
                 'value' => 0,
                 'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ]
         ],
     ]

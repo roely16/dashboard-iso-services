@@ -61,22 +61,26 @@ return [
             [
                 'text' => 'Encuestas',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Quejas',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Felicitaciones',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ],
             [
                 'text' => 'Sugerencias',
                 'value' => null,
-                'component' => 'tables/TableProcesos'
+                'component' => 'tables/TableProcesos',
+                'tooltip' => []
             ]
         ],
     ]
