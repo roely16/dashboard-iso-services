@@ -142,6 +142,8 @@ class CalidadController extends Controller{
         $suma_porcentajes = 0;
         $num_indicadores = 0;
 
+        $total_detail = [];
+
         // Por cada indicador obtener los valores necesarios para realizar la sumatoria
         foreach ($indicadores as $indicador) {
             
@@ -149,6 +151,9 @@ class CalidadController extends Controller{
             $validas += $indicador->validas;
 
             $suma_porcentajes += $indicador->data->total;
+
+            array_push($total_detail, ['title' => $indicador->proceso, 'value' => $indicador->data->total]);
+
             $num_indicadores++;
 
             foreach ($indicador->bottom_detail as $detalle) {
@@ -205,7 +210,11 @@ class CalidadController extends Controller{
         $response = [
             'indicadores' => $indicadores,
             'total' => $porcentaje,
-            'bottom_detail' => $bottom_detail
+            'bottom_detail' => $bottom_detail,
+            'tooltip' => $total_detail,
+            'value' => $porcentaje,
+            'component' => 'tables/DireccionDetalle',
+            'text' => $indicador->nombre
         ];
 
         return $response;

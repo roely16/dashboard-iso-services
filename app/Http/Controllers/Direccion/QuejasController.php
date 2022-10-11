@@ -148,6 +148,8 @@ class QuejasController extends Controller{
         $suma_porcentajes = 0;
         $num_indicadores = 0;
 
+        $total_detail = [];
+
         // Por cada indicador obtener los valores necesarios para realizar la sumatoria
         foreach ($indicadores as $indicador) {
             
@@ -156,6 +158,8 @@ class QuejasController extends Controller{
 
             $suma_porcentajes += $indicador->data->total;
             $num_indicadores++;
+
+            array_push($total_detail, ['title' => $indicador->proceso, 'value' => $indicador->data->total]);
 
             foreach ($indicador->bottom_detail as $detalle) {
                 
@@ -198,6 +202,10 @@ class QuejasController extends Controller{
             'indicadores' => $indicadores,
             'total' => $porcentaje > 0 ? $porcentaje : 0,
             'bottom_detail' => $bottom_detail,
+            'tooltip' => $total_detail,
+            'value' => $porcentaje,
+            'component' => 'tables/DireccionDetalle',
+            'text' => $indicador->nombre
         ];
 
         return $response;
