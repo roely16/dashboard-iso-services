@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\Indicador;
 use App\Proceso;
+use App\IndicadorExcept;
 
 class EficaciaController extends Controller{
 
@@ -86,6 +87,7 @@ class EficaciaController extends Controller{
 
         // Obtener la lista de procesos que tienen un indicador de eficacia
         $indicadores = Indicador::where('tipo', 'eficacia')
+                        ->whereNotIn('id', IndicadorExcept::where('mes', $data->date)->pluck('id_indicador')->toArray())
                         ->orderBy('id_proceso', 'asc')
                         ->get();
 
@@ -155,7 +157,7 @@ class EficaciaController extends Controller{
             $suma_porcentajes += $indicador->data->total;
             $num_indicadores++;
 
-            array_push($total_detail, ['title' => $indicador->proceso, 'value' => $indicador->data->total]);
+            array_push($total_detail, ['name' => $indicador->nombre, 'title' => $indicador->proceso, 'value' => $indicador->data->total]);
 
             foreach ($indicador->bottom_detail as $detalle) {
                 
@@ -163,7 +165,7 @@ class EficaciaController extends Controller{
                 
                     $bottom_detail[$i]['value'] += $detalle['value'];
                     
-                    array_push($bottom_detail[$i]['tooltip'], ['title' => $indicador->proceso, 'value' => $detalle['value']]);
+                    array_push($bottom_detail[$i]['tooltip'], ['name' => $indicador->nombre, 'title' => $indicador->proceso, 'value' => $detalle['value']]);
 
                     $areas = [];
 

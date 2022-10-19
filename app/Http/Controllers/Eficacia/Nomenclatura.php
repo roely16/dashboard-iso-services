@@ -10,7 +10,7 @@ use App\Historico;
 
 use Illuminate\Support\Facades\DB;
 
-class AvisosNotariales extends Controller{
+class Nomenclatura extends Controller{
 
     public function data($data){
 
@@ -45,7 +45,7 @@ class AvisosNotariales extends Controller{
                                                                     on t1.status_documento = t2.codigo
                                                                     inner join catastro.cdo_clasedocto t3
                                                                     on t1.codigoclase = t3.codigoclase
-                                                                    WHERE T1.DEPENDENCIA IN (18)
+                                                                    WHERE T1.DEPENDENCIA IN (90)
                                                                     AND TO_CHAR(T1.FECHA_ASIGNA_TAREA, 'YYYY-MM') = '$data->date'
                                                                     AND T1.STATUS_DOCUMENTO <> 3
                                                                     and T1.STATUS_TAREA <> 1
@@ -55,7 +55,7 @@ class AvisosNotariales extends Controller{
                                                                         WHERE DOCUMENTO = T1.DOCUMENTO 
                                                                         AND ANIO = T1.ANIO 
                                                                         AND CODIGOCLASE = T1.CODIGOCLASE 
-                                                                        AND DEPENDENCIA IN (18)
+                                                                        AND DEPENDENCIA IN (90)
                                                                     )");
 
             $resueltos = DB::connection('catastrousr')->select("SELECT 
@@ -70,7 +70,7 @@ class AvisosNotariales extends Controller{
                                                                 on t1.status_documento = t2.codigo
                                                                 inner join catastro.cdo_clasedocto t3
                                                                 on t1.codigoclase = t3.codigoclase
-                                                                WHERE DEPENDENCIA IN (18)
+                                                                WHERE DEPENDENCIA IN (90)
                                                                 AND TO_CHAR(FECHA_ASIGNA_TAREA, 'YYYY-MM') = '$data->date'
                                                                 AND TO_CHAR(FECHA_FIN_TAREA, 'YYYY-MM') = '$data->date'
                                                                 AND STATUS_DOCUMENTO <> 3");
@@ -248,7 +248,7 @@ class AvisosNotariales extends Controller{
             return $th->getMessage();
 
         }
-     
+
     }
-    
+
 }

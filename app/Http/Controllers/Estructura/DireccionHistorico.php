@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\Indicador;
 use App\Proceso;
+use App\IndicadorExcept;
 
 class DireccionHistorico extends Controller{
 
@@ -22,6 +23,7 @@ class DireccionHistorico extends Controller{
 
         // * Obtener la lista de indicadores en base al tipo
         $lista_indicadores = Indicador::where('tipo', strtolower($indicador->subarea_historial))
+                                ->whereNotIn('id', IndicadorExcept::where('mes', $data->date)->pluck('id_indicador')->toArray())
                                 ->orderBy('id_proceso', 'asc')
                                 ->get();
 

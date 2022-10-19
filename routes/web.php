@@ -36,6 +36,18 @@ $router->post('/save_data', 'ConfigController@save_data');
 // * Ruta alternativa para acceder a los datos del dashboard
 $router->post('/get_dashboard_config', 'ConfigController@get_dashboard_data');
 
+// * Massive freeze
+$router->get('massive_freeze[/{date}]', 'FreezeController@massive_freeze');
+
+// * Lista de rutas para la configuración de indicadores en meses especificos
+$router->get('get_list', 'IndicadoresConfigController@get_list');
+
+// * Obtener los procesos para una nueva configuración
+$router->get('new_config', 'IndicadoresConfigController@new_config');
+
+// * Registrar indicadores en tabla de configuración 
+$router->post('create_config', 'IndicadoresConfigController@create');
+
 // * Probar la construcción del objeto JSON que servirá para guardar la información antigua en el nuevo formato 
 $router->post('/test_cat', 'ConfigController@test_cat');
 

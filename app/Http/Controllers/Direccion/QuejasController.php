@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\Indicador;
 use App\Proceso;
+use App\IndicadorExcept;
 
 class QuejasController extends Controller{
 
@@ -94,7 +95,9 @@ class QuejasController extends Controller{
 
         }
         
-        $indicadores = Indicador::where('tipo', 'quejas')->get();
+        $indicadores = Indicador::where('tipo', 'quejas')
+                        ->whereNotIn('id', IndicadorExcept::where('mes', $data->date)->pluck('id_indicador')->toArray())
+                        ->get();
 
         foreach ($indicadores as $indicador) {
             
@@ -159,13 +162,13 @@ class QuejasController extends Controller{
             $suma_porcentajes += $indicador->data->total;
             $num_indicadores++;
 
-            array_push($total_detail, ['title' => $indicador->proceso, 'value' => $indicador->data->total]);
+            array_push($total_detail, ['name' => $indicador->nombre, 'title' => $indicador->proceso, 'value' => $indicador->data->total]);
 
             foreach ($indicador->bottom_detail as $detalle) {
                 
                 $bottom_detail[$i]['value'] += $detalle['value'];
 
-                array_push($bottom_detail[$i]['tooltip'], ['title' => $indicador->proceso, 'value' => $detalle['value']]);
+                array_push($bottom_detail[$i]['tooltip'], ['name' => $indicador->nombre, 'title' => $indicador->proceso, 'value' => $detalle['value']]);
 
                 $areas = [];
 

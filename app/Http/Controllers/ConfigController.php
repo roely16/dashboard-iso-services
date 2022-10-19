@@ -89,8 +89,6 @@ class ConfigController extends Controller{
             $registrado_por = $request->registrado_por;
 
             $backup_data = $request->data;
-
-            // $backup_data['bottom_detail'] = !property_exists($request, 'data') ?  $request->data['bottom_detail'] : $request->bottom_detail;
             
             // * Actualizar el detalle inferior
             if (isset($request->bottom_detail)) {
@@ -106,7 +104,6 @@ class ConfigController extends Controller{
 
             }
             
-
             // Crear archivo JSON
             $json_name = uniqid() . '.json';
             $file = fopen('json/' . $json_name, "w");

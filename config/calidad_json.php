@@ -84,6 +84,18 @@ return [
                 'divide' => 'up'
             ],
             [
+                "text" => "SNC",
+                "value" => 0,
+                'detail' => [
+                    'table' => [
+                        'headers' => [],
+                        'items' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
+            ],
+            [
                 "text" => "Correcciones",
                 "value" => 0,
                 'detail' => [

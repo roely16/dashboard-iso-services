@@ -57,6 +57,18 @@ return [
                 'component' => 'tables/TableDetail',
                 'fullscreen' => true
             ],
+            // [
+            //     "text" => "Pendientes",
+            //     "value" => 0,
+            //     'detail' => [
+            //         'table' => [
+            //             'headers' => [],
+            //             'items' => []
+            //         ],
+            //     ],
+            //     'component' => 'tables/TableDetail',
+            //     'fullscreen' => true
+            // ],
         ]
     ],
     'EFICACIA_DIRECCION' => [

@@ -13,39 +13,13 @@ class AccionesController extends Controller{
 
         try {
             
-            $proceso = Proceso::find($indicador->id_proceso);
-            $area = $proceso->area;
-            $dependencia = $proceso->dependencia;
+            $data = $indicador->kpi_data;
+
+            // * Validar si es una consulta de un mes posterior o actual 
+            $result = (object) app('App\Http\Controllers\ValidationController')->check_case($indicador);
+
+            $result = $result->data ? $result->data : (object) $this->data($data);
             
-            $data = (object) [
-                'codarea' => $area->codarea,
-                'date' => $indicador->date,
-                'dependencia' => $dependencia,
-                'data_controlador' => $indicador->data_controlador,
-                'controlador' => $indicador->controlador,
-                'id_proceso' => $proceso->id,
-                'id_indicador' => $indicador->id,
-                'config' => $indicador->config,
-                'nombre_historial' => $indicador->nombre_historial,
-                'subarea_historial' => $indicador->subarea_historial,
-                'campos' => $indicador->orden_campos ? explode(',', $indicador->orden_campos) : null,
-                'estructura_controlador' => $indicador->estructura_controlador,
-            ];
-
-            // * Validar la fecha, si es un mes anterior deberá de buscar en el historial
-
-            $current_date = date('Y-m');
-
-            if (strtotime($indicador->date) < strtotime($current_date)) {
-
-                $result = (object) app('App\Http\Controllers\ConfigController')->get_history($data);
-
-            }else{
-
-                $result = (object) $this->data($data);
-
-            }
-
             $chart = $this->chart($result);
 
             $content = [
@@ -185,7 +159,7 @@ class AccionesController extends Controller{
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableAcciones'
+                'component' => 'tables/TableAcciones',
             ],
             [
                 'text' => 'Cerradas',
@@ -196,7 +170,8 @@ class AccionesController extends Controller{
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableAcciones'
+                'component' => 'tables/TableAcciones',
+                'divide' => 'up'
             ],
             [
                 'text' => 'Total',
@@ -207,7 +182,8 @@ class AccionesController extends Controller{
                         'headers' => $headers
                     ]
                 ],
-                'component' => 'tables/TableAcciones'
+                'component' => 'tables/TableAcciones',
+                'divide' => 'down'
             ],
             [
                 'text' => 'Avance',
