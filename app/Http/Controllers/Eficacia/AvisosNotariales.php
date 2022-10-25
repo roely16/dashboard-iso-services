@@ -223,21 +223,9 @@ class AvisosNotariales extends Controller{
                                 'items' => []
                             ],
                         ],
-                        'component' => 'tables/TableDetail',
-                        'fullscreen' => true
-                    ],
-                    // [
-                    //     "text" => "Pendientes",
-                    //     "value" => $total_pendientes,
-                    //     'detail' => [
-                    //         'table' => [
-                    //             'headers' => $headers_resueltos,
-                    //             'items' => []
-                    //         ],
-                    //     ],
-                    //     'component' => 'tables/TableDetail',
-                    //     'fullscreen' => true
-                    // ],
+                        'component' => 'tables/PendientesDetalle',
+                        'fullscreen' => false
+                    ]
                 ]
             ];
 
