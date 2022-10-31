@@ -88,6 +88,7 @@ return [
             ],
             'component' => 'tables/TableTicketTime'
         ],  
+        'total' => 0,
         'bottom_detail' => [
             [
                 'text' => 'Total Tickets',

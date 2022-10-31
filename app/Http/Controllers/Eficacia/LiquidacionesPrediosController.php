@@ -3,10 +3,6 @@
 namespace App\Http\Controllers\Eficacia;
 use App\Http\Controllers\Controller;
 
-use App\MCAProcesos;
-
-use Illuminate\Support\Facades\DB;
-
 class LiquidacionesPrediosController extends Controller{
 
     public function data($data){

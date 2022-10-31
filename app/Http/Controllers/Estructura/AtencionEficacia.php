@@ -10,12 +10,15 @@ class AtencionEficacia extends Controller{
     public function create($data){
 
         $data_structure = $data->data_structure;
+
         $historial = $data->historial;
 
         $data_structure['cumplimiento'] = round(($historial['campo_2'] / $historial['campo_1']) * 100, 1);
+
+        $data_structure['total'] = round(($historial['campo_2'] / $historial['campo_1']) * 100, 1);
+
         $data_structure['mensual'] = round(($historial['campo_3'] / $historial['campo_1']) * 100, 1);
         $data_structure['trimestral'] = round(($historial['campo_4'] / $historial['campo_1']) * 100, 1);
-
 
         $data_structure['menor_10']['value'] = $historial['campo_2'];
         $data_structure['menor_20']['value'] = $historial['campo_3'];

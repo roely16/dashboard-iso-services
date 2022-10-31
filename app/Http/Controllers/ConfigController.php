@@ -118,7 +118,7 @@ class ConfigController extends Controller{
             $historico->fecha = $fecha;
             $historico->registrado_por = $registrado_por;
             $historico->path = 'json/' . $json_name;
-            $historico->save();
+            //$historico->save();
 
             return response()->json($historico, 200);
 
@@ -159,10 +159,10 @@ class ConfigController extends Controller{
 
         // * Es un mes anterior por lo que es necesario verificar en el historico
         $historico = Historico::where('id_proceso', $data->id_proceso)
-                        ->where('id_indicador', $data->id_indicador)
-                        ->where('fecha', $data->date)
-                        ->orderBy('id', 'desc')
-                        ->first();
+                    ->where('id_indicador', $data->id_indicador)
+                    ->where('fecha', $data->date)
+                    ->orderBy('id', 'desc')
+                    ->first();
 
         // * Si se encuentra un registro historico
         if ($historico) {
@@ -182,7 +182,7 @@ class ConfigController extends Controller{
         $controller = $data->data_controlador ? $data->data_controlador : $data->controlador;
 
         // * Ejecuta el metodo data
-        
+
         $data_structure =  app('App\Http\Controllers' . $controller)->data($data);
 
         // * Obtener la información del historico del dashboard anterior
@@ -199,26 +199,28 @@ class ConfigController extends Controller{
 
         // * Validar si no existe registro en el historial
         if (!$historial_anterior) {
-            
+
             // * Si no existe registro en el nuevo historial ni en el anterior, enviar información en base a consulta normal
             unset($data->get_structure);
             $data->config = true;
             $data->history_empty = true;
             $data->data_structure = $data_structure;
 
-            return $data;
+            // ! Se retorna la estructura preestablecida del indicador
+
+            return $data_structure;
 
         }
 
         // * Validar si es una función especifica la que deberá de colocar los datos en la estructura 
 
         if (property_exists($data, 'estructura_controlador') && $data->estructura_controlador != null) {
-            
+
             $data_config = (object) [
-                'historial' => $historial_anterior,
-                'data_structure' => $data_structure,
-                'date' => $data->date,
-                'data' => $data
+            'historial' => $historial_anterior,
+            'data_structure' => $data_structure,
+            'date' => $data->date,
+            'data' => $data
             ];
 
             $result = app('App\Http\Controllers' . $data->estructura_controlador)->create($data_config);
@@ -226,15 +228,15 @@ class ConfigController extends Controller{
             return $result;
 
         }
-        
+
 
         $data_structure['total'] = $historial_anterior->porcentaje;
-        
+
         $i = 1;
         $e = 0;
 
         foreach ($data_structure['bottom_detail'] as &$item) {
-            
+
             $current_field = $data->campos ? $data->campos[$e] : ('campo_' . $i);
 
             $item['value'] = intval($historial_anterior->{$current_field});

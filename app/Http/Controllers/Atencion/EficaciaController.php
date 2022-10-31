@@ -22,6 +22,14 @@ class EficaciaController extends Controller{
 
             $result = $result->data ? $result->data : (object) $this->data($data);
 
+            if ($result->cumplimiento > 100) {
+                    
+                $result->cumplimiento = 100;
+                
+            }
+
+            $indicador->total = $result->cumplimiento;
+            $indicador->bottom_detail = [];
             $indicador->data = $result;
 
             return $result;
@@ -29,7 +37,9 @@ class EficaciaController extends Controller{
         } catch (\Throwable $th) {
             
             $error = [
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
             ];
 
             $indicador->error = $error;
@@ -336,7 +346,8 @@ class EficaciaController extends Controller{
                 ],
                 'component' => 'tables/TableTicketTime'
             ],  
-            'bottom_detail' => $bottom_detail
+            'bottom_detail' => $bottom_detail,
+            'total' => $cumplimiento
         ];
 
         return $response;

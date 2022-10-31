@@ -38,6 +38,7 @@ class ConveniosController extends Controller{
             $indicador->carga_trabajo = $result->carga_trabajo;
             $indicador->total_resueltos = $result->total_resueltos;
             $indicador->data = $result;
+            $indicador->not_sum_bottom = true;
 
             return $indicador;
 

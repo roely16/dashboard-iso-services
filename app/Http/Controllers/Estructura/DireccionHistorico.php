@@ -51,27 +51,37 @@ class DireccionHistorico extends Controller{
 
         $total_detail = [];
 
+        $total_calculado = 0;
+
         // * Por cada indicador obtener los valores necesarios para realizar la sumatoria
         foreach ($lista_indicadores as &$indicador) {
 
             array_push($total_detail, ['title' => $indicador->proceso, 'value' => $indicador->data->total]);
 
-            foreach ($indicador->bottom_detail as $detalle) {
+            $total_calculado += $indicador->data->total;
+
+            if (!$indicador->not_sum_bottom) {
                 
-                if ($i < count($data_structure['bottom_detail'])) {
-
-                    array_push($data_structure['bottom_detail'][$i]['tooltip'], ['title' => $indicador->proceso, 'value' => $detalle['value']]);
-
-                    $data_structure['bottom_detail'][$i]['value'] += $detalle['value'];
-
-                    $i++;
-
+                foreach ($indicador->bottom_detail as $detalle) {
+                
+                    if ($i < count($data_structure['bottom_detail'])) {
+    
+                        array_push($data_structure['bottom_detail'][$i]['tooltip'], ['title' => $indicador->proceso, 'value' => $detalle['value']]);
+    
+                        $data_structure['bottom_detail'][$i]['value'] += $detalle['value'];
+    
+                        $i++;
+    
+                    }
+    
                 }
-
+                
             }
 
             $i = 0;
         }
+
+        $data_structure['total'] = round($total_calculado / count($lista_indicadores), 1);
 
         // * Agregar las llaves correspondientes para mostrar el detalle del cálculo del porcentaje
         $data_structure['tooltip'] = $total_detail;

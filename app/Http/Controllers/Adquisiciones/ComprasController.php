@@ -255,7 +255,7 @@ class ComprasController extends Controller{
         }
 
         $response = [
-            'total' => $porcentaje,
+            'total' => $porcentaje > 100 ? 100 : $porcentaje,
             'bottom_detail' => $bottom_detail
         ];
 

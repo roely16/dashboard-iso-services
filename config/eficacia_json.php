@@ -361,6 +361,7 @@ return [
                 ],
                 'component' => 'tables/TableDetail'
             ]
-        ]
+        ],
+        'not_sum_bottom' => true
     ]
 ];
