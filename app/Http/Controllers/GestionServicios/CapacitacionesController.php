@@ -96,6 +96,12 @@ class CapacitacionesController extends Controller {
 
     public function data($data){
         
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('gestion_servicios.CAPACITACIONES');
+
+        }
+        
         // * Obtener el total de capacitacion programadas para el trimestre
         $trimestres = [
             [1,2,3],

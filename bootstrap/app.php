@@ -64,6 +64,7 @@ $app->configure('quejas_json');
 $app->configure('satisfaccion_json');
 $app->configure('calidad_json');
 $app->configure('eficacia_json');
+$app->configure('gestion_servicios');
 
 $app->configure('mail');
 

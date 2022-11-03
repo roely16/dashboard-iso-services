@@ -118,7 +118,7 @@ class ConfigController extends Controller{
             $historico->fecha = $fecha;
             $historico->registrado_por = $registrado_por;
             $historico->path = 'json/' . $json_name;
-            //$historico->save();
+            $historico->save();
 
             return response()->json($historico, 200);
 
@@ -217,10 +217,10 @@ class ConfigController extends Controller{
         if (property_exists($data, 'estructura_controlador') && $data->estructura_controlador != null) {
 
             $data_config = (object) [
-            'historial' => $historial_anterior,
-            'data_structure' => $data_structure,
-            'date' => $data->date,
-            'data' => $data
+                'historial' => $historial_anterior,
+                'data_structure' => $data_structure,
+                'date' => $data->date,
+                'data' => $data
             ];
 
             $result = app('App\Http\Controllers' . $data->estructura_controlador)->create($data_config);
@@ -236,8 +236,8 @@ class ConfigController extends Controller{
         $e = 0;
 
         foreach ($data_structure['bottom_detail'] as &$item) {
-
-            $current_field = $data->campos ? $data->campos[$e] : ('campo_' . $i);
+            
+            $current_field = $data->campos ? (array_key_exists($e, $data->campos) ? $data->campos[$e] : null) : ('campo_' . $i);
 
             $item['value'] = intval($historial_anterior->{$current_field});
 
