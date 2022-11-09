@@ -112,7 +112,7 @@ class QuejasController extends Controller{
 
         if (property_exists($data, 'get_structure')) {
             
-            return config('quejas_json.QUEJAS');
+            //return config('quejas_json.QUEJAS');
 
         }
 
@@ -165,7 +165,7 @@ class QuejasController extends Controller{
 
         $modelos_encabezado = ModeloEncabezado::select('id_medicion')
                                 ->whereIn('idproceso', $msa_procesos)
-                                ->where('nombre_medicion', 'ENCUESTA TELEFONICA')
+                                ->whereIn('nombre_medicion', ['ENCUESTA TELEFONICA', 'ENCUESTA ELECTRONICA'])
                                 ->get()
                                 ->pluck('id_medicion');
 

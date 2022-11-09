@@ -11,6 +11,8 @@ class ValidationController extends Controller{
             $current_date = date('Y-m');
             $data = $indicador->kpi_data;
 
+            // * Para procesar un mes anterior cambiar la dirección de la validación
+
             if (strtotime($indicador->date) < strtotime($current_date)) {
                 
                 // * Si es un mes posterior realizar solicitud al controlador encargado de obtener el historial, desde la fuente que aplique

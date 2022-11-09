@@ -1,0 +1,149 @@
+{
+  "total": 100,
+  "bottom_detail": [
+    {
+      "text": "Ingresado",
+      "value": 2,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "ID",
+              "value": "id_fondo_compra",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Detalle",
+              "value": "detalle_compra",
+              "sortable": false,
+              "width": "65%"
+            },
+            {
+              "text": "Fecha",
+              "value": "fecha_elaboracion",
+              "sortable": false,
+              "width": "25%"
+            }
+          ],
+          "items": [
+            {
+              "id_fondo_compra": 131,
+              "detalle_compra": "Compra de 20 licencias de autocad ",
+              "modalidad_compra": "COMPRA DIRECTA",
+              "fecha_elaboracion": "18/01/2022 14:03:08"
+            },
+            {
+              "id_fondo_compra": 140,
+              "detalle_compra": "seguro de mapeo movil",
+              "modalidad_compra": "COMPRA DIRECTA",
+              "fecha_elaboracion": "24/08/2022 16:23:59"
+            }
+          ]
+        }
+      },
+      "component": "tables/TableDetail"
+    },
+    {
+      "text": "Proceso",
+      "value": 0,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "ID",
+              "value": "id_fondo_compra",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Detalle",
+              "value": "detalle_compra",
+              "sortable": false,
+              "width": "30%"
+            },
+            {
+              "text": "Gestión",
+              "value": "gestionid",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Fecha",
+              "value": "fecha",
+              "sortable": false,
+              "width": "25%"
+            },
+            {
+              "text": "Título",
+              "value": "titulo",
+              "sortable": false,
+              "width": "30%"
+            }
+          ],
+          "items": [
+            
+          ]
+        }
+      },
+      "component": "tables/TableDetail"
+    },
+    {
+      "text": "Finalizado",
+      "value": 2,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "ID",
+              "value": "id_fondo_compra",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Detalle",
+              "value": "detalle_compra",
+              "sortable": false,
+              "width": "30%"
+            },
+            {
+              "text": "Gesti\u00f3n",
+              "value": "gestionid",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Fecha",
+              "value": "fecha",
+              "sortable": false,
+              "width": "25%"
+            },
+            {
+              "text": "T\u00edtulo",
+              "value": "titulo",
+              "sortable": false,
+              "width": "30%"
+            }
+          ],
+          "items": [
+            {
+              "id_fondo_compra": 131,
+              "detalle_compra": "Renovación de Licencias de AutoCad",
+              "gestionid": 12169,
+              "fecha": "2022-10-26 19:15:20",
+              "titulo": "Renovación de Licencias de AutoCad"
+          },
+          {
+              "id_fondo_compra": 140,
+              "detalle_compra": "Seguro para equipo de mapeo móvil Trimble MX7 y accesorios",
+              "gestionid": 11862,
+              "fecha": "2022-10-26 19:15:20",
+              "titulo": "Seguro para equipo de mapeo móvil Trimble MX7 y accesorios"
+          }
+          ]
+        }
+      },
+      "component": "tables/TableDetail"
+    }
+  ]
+}

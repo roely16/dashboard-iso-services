@@ -83,5 +83,9 @@ return [
                 'tooltip' => []
             ]
         ],
+        // 'tooltip' => [],
+        // 'value' => null,
+        // 'component' => 'tables/DireccionDetalle',
+        // 'text' => null
     ]
 ];

@@ -1,0 +1,341 @@
+{
+  "total": 0,
+  "encuestas": 33,
+  "quejas": 0,
+  "bottom_detail": [
+    {
+      "text": "Encuestas",
+      "value": 33,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "Correlativo",
+              "value": "correlativo",
+              "width": "25%",
+              "sortable": false
+            },
+            {
+              "text": "Usuario",
+              "value": "colaborador",
+              "width": "25%",
+              "sortable": false
+            },
+            {
+              "text": "Fecha de Opini\u00f3n",
+              "value": "fecha_opinion",
+              "width": "25%",
+              "sortable": false
+            },
+            {
+              "text": "Total",
+              "value": "total",
+              "width": "25%",
+              "align": "center",
+              "sortable": false
+            },
+            { "text": "", "value": "data-table-expand" }
+          ],
+          "items": [
+            
+                {
+                  "correlativo": 97350,
+                  "colaborador": "NEVASQUEZ",
+                  "fecha_opinion": "2022-10-24 13:34:16"
+                },
+                {
+                  "correlativo": 97370,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-25 08:06:45"
+                },
+                {
+                  "correlativo": 96874,
+                  "colaborador": "NROLDAN",
+                  "fecha_opinion": "2022-10-05 11:51:49"
+                },
+                {
+                  "correlativo": 97108,
+                  "colaborador": "GEMARTINEZ",
+                  "fecha_opinion": "2022-10-14 06:10:10"
+                },
+                {
+                  "correlativo": 96806,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-03 08:42:02"
+                },
+                {
+                  "correlativo": 96856,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-04 10:42:17"
+                },
+                {
+                  "correlativo": 96989,
+                  "colaborador": "SJMARROQUIN",
+                  "fecha_opinion": "2022-10-10 14:39:40"
+                },
+                {
+                  "correlativo": 96990,
+                  "colaborador": "SJMARROQUIN",
+                  "fecha_opinion": "2022-10-10 14:19:01"
+                },
+                {
+                  "correlativo": 96909,
+                  "colaborador": "GEMARTINEZ",
+                  "fecha_opinion": "2022-10-05 15:16:54"
+                },
+                {
+                  "correlativo": 96988,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-10 12:14:09"
+                },
+                {
+                  "correlativo": 96997,
+                  "colaborador": "SJMARROQUIN",
+                  "fecha_opinion": "2022-10-13 08:59:41"
+                },
+                {
+                  "correlativo": 97368,
+                  "colaborador": "KEGONZALEZ",
+                  "fecha_opinion": "2022-10-25 08:30:38"
+                },
+                {
+                  "correlativo": 96883,
+                  "colaborador": "SJMARROQUIN",
+                  "fecha_opinion": "2022-10-05 10:30:48"
+                },
+                {
+                  "correlativo": 97182,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-17 14:58:59"
+                },
+                {
+                  "correlativo": 97209,
+                  "colaborador": "KEGONZALEZ",
+                  "fecha_opinion": "2022-10-18 08:13:02"
+                },
+                {
+                  "correlativo": 97286,
+                  "colaborador": "GEMARTINEZ",
+                  "fecha_opinion": "2022-10-21 11:35:24"
+                },
+                {
+                  "correlativo": 97072,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-13 14:04:20"
+                },
+                {
+                  "correlativo": 97238,
+                  "colaborador": "SJMARROQUIN",
+                  "fecha_opinion": "2022-10-18 14:39:45"
+                },
+                {
+                  "correlativo": 97293,
+                  "colaborador": "GEMARTINEZ",
+                  "fecha_opinion": "2022-10-21 12:28:15"
+                },
+                {
+                  "correlativo": 97245,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-18 16:22:08"
+                },
+                {
+                  "correlativo": 97369,
+                  "colaborador": "KEGONZALEZ",
+                  "fecha_opinion": "2022-10-26 06:29:13"
+                },
+                {
+                  "correlativo": 96922,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-06 11:17:47"
+                },
+                {
+                  "correlativo": 96995,
+                  "colaborador": "JBARRIOS",
+                  "fecha_opinion": "2022-10-12 07:07:14"
+                },
+                {
+                  "correlativo": 97252,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-19 11:37:48"
+                },
+                {
+                  "correlativo": 97063,
+                  "colaborador": "JBARRIOS",
+                  "fecha_opinion": "2022-10-13 09:29:20"
+                },
+                {
+                  "correlativo": 97113,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-14 10:07:48"
+                },
+                {
+                  "correlativo": 96987,
+                  "colaborador": "KEGONZALEZ",
+                  "fecha_opinion": "2022-10-10 06:41:40"
+                },
+                {
+                  "correlativo": 97062,
+                  "colaborador": "GEMARTINEZ",
+                  "fecha_opinion": "2022-10-13 08:29:32"
+                },
+                {
+                  "correlativo": 97138,
+                  "colaborador": "JBARRIOS",
+                  "fecha_opinion": "2022-10-19 07:10:43"
+                },
+                {
+                  "correlativo": 97289,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-24 11:22:59"
+                },
+                {
+                  "correlativo": 96986,
+                  "colaborador": "NROLDAN",
+                  "fecha_opinion": "2022-10-07 10:14:13"
+                },
+                {
+                  "correlativo": 97025,
+                  "colaborador": "NEVASQUEZ",
+                  "fecha_opinion": "2022-10-12 11:58:23"
+                },
+                {
+                  "correlativo": 97064,
+                  "colaborador": "JURAYMUNDO",
+                  "fecha_opinion": "2022-10-14 08:45:08"
+                }
+              
+          ]
+        }
+      },
+      "component": "tables/TableSatisfaccion",
+      "divide": "down"
+    },
+    {
+      "text": "Quejas",
+      "value": 0,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "Fecha",
+              "value": "fecha_acuse_recibo",
+              "width": "25%",
+              "sortable": false
+            },
+            {
+              "text": "Usuario",
+              "value": "dirigido_a",
+              "width": "25%",
+              "sortable": false
+            },
+            {
+              "text": "Descripci\u00f3n",
+              "value": "descripcion",
+              "width": "50%",
+              "sortable": false
+            }
+          ],
+          "items": []
+        }
+      },
+      "component": "tables/TableDetail",
+      "divide": "up"
+    },
+    {
+      "text": "Felicitaciones",
+      "value": 5,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "Fecha",
+              "value": "fecha_acuse_recibo",
+              "width": "25%",
+              "sortable": false
+            },
+            {
+              "text": "Usuario",
+              "value": "dirigido_a",
+              "width": "25%",
+              "sortable": false
+            },
+            {
+              "text": "Descripci\u00f3n",
+              "value": "descripcion",
+              "width": "50%",
+              "sortable": false
+            }
+          ],
+          "items": [
+            {
+              "id_queja": "3157",
+              "descripcion": "Ticket No. 7DY-U7G-TBGQ\tACTUALIZACION DE FORMA RAPIDA\r\n",
+              "clasificacion": "FELICITACION",
+              "dirigido_a": "JBARRIOS",
+              "fecha_acuse_recibo": "13/10/2022"
+            },
+            {
+              "id_queja": "3150",
+              "descripcion": "Ticket No.9JA-89N-3RDT gracias siempre est\u00e1n cuando se les solicita el apoyo\r\n",
+              "clasificacion": "FELICITACION",
+              "dirigido_a": "SJMARROQUIN",
+              "fecha_acuse_recibo": "11/10/2022"
+            },
+            {
+              "id_queja": "3151",
+              "descripcion": "Ticket No. EPJ-83D-5ARL El compa\u00f1ero realizo la actividad r\u00e1pida y ordenadamente.\r\n\t",
+              "clasificacion": "FELICITACION",
+              "dirigido_a": "SJMARROQUIN",
+              "fecha_acuse_recibo": "11/10/2022"
+            },
+            {
+              "id_queja": "3152",
+              "descripcion": "Ticket No. X8A-USV-23B1  SE REALIZO LA ACTUALIZACI\u00d3N DE FORMA R\u00c1PIDO\r\n",
+              "clasificacion": "FELICITACION",
+              "dirigido_a": "NROLDAN",
+              "fecha_acuse_recibo": "11/10/2022"
+            },
+            {
+              "id_queja": "3158",
+              "descripcion": "Ticket No. U87-8RR-1BLU LA ACTUALIZACION SE REALIZA DE UNA FORMA RAPIDA\r\n",
+              "clasificacion": "FELICITACION",
+              "dirigido_a": "JBARRIOS",
+              "fecha_acuse_recibo": "13/10/2022"
+            }
+          ]
+        }
+      },
+      "component": "tables/TableDetail"
+    },
+    {
+      "text": "Sugerencias",
+      "value": 0,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "Fecha",
+              "value": "fecha_acuse_recibo",
+              "width": "25%",
+              "sortable": false
+            },
+            {
+              "text": "Usuario",
+              "value": "dirigido_a",
+              "width": "25%",
+              "sortable": false
+            },
+            {
+              "text": "Descripci\u00f3n",
+              "value": "descripcion",
+              "width": "50%",
+              "sortable": false
+            }
+          ],
+          "items": []
+        }
+      },
+      "component": "tables/TableDetail"
+    }
+  ]
+}

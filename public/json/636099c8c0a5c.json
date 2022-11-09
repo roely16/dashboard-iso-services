@@ -1,1 +1,106 @@
-{"cumplimiento":84.7,"mensual":77.3,"trimestral":58.2,"menor_10":{"value":5104,"detail":{"table":{"headers":[{"text":"ID","value":"id_transaccion","sortable":false},{"text":"Usuario","value":"usuario","sortable":false},{"text":"Tiempo de Atenci\u00f3n","value":"tiempo_atencion","sortable":false},{"text":"","value":"data-table-expand"}],"items":[]}},"component":"tables\/TableTicketTime"},"menor_20":{"value":4653,"detail":{"table":{"headers":[{"text":"ID","value":"id_transaccion","sortable":false},{"text":"Usuario","value":"usuario","sortable":false},{"text":"Tiempo en Cola","value":"tiempo_cola","sortable":false},{"text":"","value":"data-table-expand"}],"items":[]}},"component":"tables\/TableTicketTime"},"menor_45":{"value":3694,"detail":{"table":{"headers":[{"text":"ID","value":"id_transaccion","sortable":false},{"text":"Usuario","value":"usuario","sortable":false},{"text":"Tiempo en Cola","value":"tiempo_cola","sortable":false},{"text":"","value":"data-table-expand"}],"items":[]}},"component":"tables\/TableTicketTime"},"bottom_detail":[],"total":84.7}
+{
+  "cumplimiento": 84.7,
+  "mensual": 77.3,
+  "trimestral": 58.2,
+  "menor_10": {
+    "value": 5104,
+    "detail": {
+      "table": {
+        "headers": [
+          { "text": "ID", "value": "id_transaccion", "sortable": false },
+          { "text": "Usuario", "value": "usuario", "sortable": false },
+          {
+            "text": "Tiempo de Atenci\u00f3n",
+            "value": "tiempo_atencion",
+            "sortable": false
+          },
+          { "text": "", "value": "data-table-expand" }
+        ],
+        "items": []
+      }
+    },
+    "component": "tables/TableTicketTime"
+  },
+  "menor_20": {
+    "value": 4653,
+    "detail": {
+      "table": {
+        "headers": [
+          { "text": "ID", "value": "id_transaccion", "sortable": false },
+          { "text": "Usuario", "value": "usuario", "sortable": false },
+          {
+            "text": "Tiempo en Cola",
+            "value": "tiempo_cola",
+            "sortable": false
+          },
+          { "text": "", "value": "data-table-expand" }
+        ],
+        "items": []
+      }
+    },
+    "component": "tables/TableTicketTime"
+  },
+  "menor_45": {
+    "value": 3694,
+    "detail": {
+      "table": {
+        "headers": [
+          { "text": "ID", "value": "id_transaccion", "sortable": false },
+          { "text": "Usuario", "value": "usuario", "sortable": false },
+          {
+            "text": "Tiempo en Cola",
+            "value": "tiempo_cola",
+            "sortable": false
+          },
+          { "text": "", "value": "data-table-expand" }
+        ],
+        "items": []
+      }
+    },
+    "component": "tables/TableTicketTime"
+  },
+  "bottom_detail": [
+    {
+        "text": "Total Tickets",
+        "value": 6023
+    },
+    {
+        "text": "Recepción Docs",
+        "value": 1434,
+        "detail": {
+            "table": {
+                "items": [],
+                "headers": [
+                    {
+                        "text": "ID",
+                        "value": "id_ingreso_expediente",
+                        "sortable": false
+                    },
+                    {
+                        "text": "Expediente",
+                        "value": "expediente",
+                        "sortable": false
+                    },
+                    {
+                        "text": "Fecha",
+                        "value": "fecha",
+                        "sortable": false
+                    },
+                    {
+                        "text": "Usuario",
+                        "value": "usuario",
+                        "sortable": false
+                    }
+                ]
+            }
+        },
+        "component": "tables/TableDetail",
+        "editable": false
+    },
+    {
+        "text": "Cancelados",
+        "value": 269
+    }
+  ],
+  "total": 84.7
+}

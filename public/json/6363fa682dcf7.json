@@ -1,0 +1,27 @@
+{
+  "total": "97.7",
+  "evaluaciones": 0,
+  "no_conformes": 0,
+  "bottom_detail": [
+    {
+      "text": "Universo",
+      "value": 19,
+      "detail": { "table": { "headers": [], "items": [] } },
+      "component": "tables/TableSatisfaccion",
+      "divide": "down"
+    },
+    {
+      "text": "Aceptable",
+      "value": 18,
+      "detail": { "table": { "headers": [], "items": [] } },
+      "component": "tables/TableSatisfaccion",
+      "divide": "up"
+    },
+    {
+      "text": "No Conforme",
+      "value": 1,
+      "detail": { "table": { "headers": [], "items": [] } },
+      "component": "tables/TableSatisfaccion"
+    }
+  ]
+}
