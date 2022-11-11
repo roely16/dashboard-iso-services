@@ -89,6 +89,51 @@ class DireccionHistorico extends Controller{
             $data_structure['component'] = 'tables/DireccionDetalle';
             $data_structure['text'] = $indicador->nombre;
 
+            // Validar si es el indicador de quejas y se deberán de agregar las de los demás procesos que no tienen indicador de quejas 
+
+            if ($indicador->nombre === 'Quejas') {
+                
+                $exceptions = [
+                    [
+                        'name' => 'Liquidaciones',
+                        'codarea' => 38,
+                        'date' => $data->date
+                    ],
+                    [
+                        'name' => 'Adquisiciones',
+                        'codarea' => 28,
+                        'date' => $data->date
+                    ]
+                ];
+    
+                // * Por cada proceso realizar el proceso de busqueda de quejas 
+                foreach ($exceptions as &$exception) {
+                    
+                    $exception = (object) $exception;
+
+                    $result = app('App\Http\Controllers\QuejasController')->data($exception);
+
+                    // * Por cada dato obtenido, agregar al detalle del indicador 
+                    foreach ($result['bottom_detail'] as $item) {
+                        
+                        foreach ($data_structure['bottom_detail'] as &$detail) {
+                        
+                            if($item['text'] == $detail['text']){
+
+                                $detail['value'] += intval($item['value']);
+
+                                array_push($detail['tooltip'], ['title' => $exception->name, 'value' => $item['value']]);
+
+                            }
+
+                        }
+
+                    }
+                    
+                }
+
+            }
+            
             return $data_structure;
 
         } catch (\Throwable $th) {

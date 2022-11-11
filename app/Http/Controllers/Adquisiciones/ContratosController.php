@@ -96,6 +96,12 @@ class ContratosController extends Controller{
 
     public function data($data){
         
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('adquisiciones.CONTRATOS');
+
+        }
+
         // Programado
         $programado = DB::connection('rrhh')->select("  SELECT 
                                                             t1.id_programacion,

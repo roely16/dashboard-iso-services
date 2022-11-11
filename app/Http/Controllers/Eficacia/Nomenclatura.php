@@ -71,7 +71,7 @@ class Nomenclatura extends Controller{
                                                                 inner join catastro.cdo_clasedocto t3
                                                                 on t1.codigoclase = t3.codigoclase
                                                                 WHERE DEPENDENCIA IN (90)
-                                                                AND TO_CHAR(FECHA_ASIGNA_TAREA, 'YYYY-MM') = '$data->date'
+                                                                -- AND TO_CHAR(FECHA_ASIGNA_TAREA, 'YYYY-MM') = '$data->date'
                                                                 AND TO_CHAR(FECHA_FIN_TAREA, 'YYYY-MM') = '$data->date'
                                                                 AND STATUS_DOCUMENTO <> 3");
 

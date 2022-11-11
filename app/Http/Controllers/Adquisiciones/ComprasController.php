@@ -98,6 +98,12 @@ class ComprasController extends Controller{
 
     public function data($data){
         
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('adquisiciones.COMPRAS');
+
+        }
+
         $split_date = explode('-', $data->date);
         $year = $split_date[0];
         $month = intval($split_date[1]);

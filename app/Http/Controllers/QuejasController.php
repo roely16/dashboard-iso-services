@@ -112,7 +112,7 @@ class QuejasController extends Controller{
 
         if (property_exists($data, 'get_structure')) {
             
-            //return config('quejas_json.QUEJAS');
+            return config('quejas_json.QUEJAS');
 
         }
 

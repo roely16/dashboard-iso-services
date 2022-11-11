@@ -1,0 +1,102 @@
+{
+    "total": 14.81,
+    "bottom_detail": [
+        { "text": "Anteriores", "value": 0 },
+        {
+            "text": "Ingresado",
+            "value": 0,
+            "detail": {
+                "table": {
+                    "headers": [
+                        {
+                            "text": "Gesti\u00f3n",
+                            "value": "gestionid",
+                            "sortable": false,
+                            "width": "10%"
+                        },
+                        {
+                            "text": "Fecha",
+                            "value": "fecha",
+                            "sortable": false,
+                            "width": "25%"
+                        },
+                        {
+                            "text": "Titulo",
+                            "value": "titulo",
+                            "sortable": false,
+                            "width": "65%"
+                        }
+                    ],
+                    "items": []
+                }
+            },
+            "component": "tables/TableDetail"
+        },
+        {
+            "text": "Proceso",
+            "value": 0,
+            "detail": {
+                "table": {
+                    "headers": [
+                        {
+                            "text": "Gesti\u00f3n",
+                            "value": "gestionid",
+                            "sortable": false,
+                            "width": "10%"
+                        },
+                        {
+                            "text": "Fecha",
+                            "value": "fecha",
+                            "sortable": false,
+                            "width": "25%"
+                        },
+                        {
+                            "text": "Titulo",
+                            "value": "titulo",
+                            "sortable": false,
+                            "width": "65%"
+                        }
+                    ],
+                    "items": []
+                }
+            },
+            "component": "tables/TableDetail"
+        },
+        {
+            "text": "Finalizado",
+            "value": 0,
+            "detail": {
+                "table": {
+                    "headers": [
+                        {
+                            "text": "Gesti\u00f3n",
+                            "value": "gestionid",
+                            "sortable": false,
+                            "width": "10%"
+                        },
+                        {
+                            "text": "Fecha",
+                            "value": "fecha",
+                            "sortable": false,
+                            "width": "25%"
+                        },
+                        {
+                            "text": "Titulo",
+                            "value": "titulo",
+                            "sortable": false,
+                            "width": "40%"
+                        },
+                        {
+                            "text": "Finalizaci\u00f3n",
+                            "value": "fecha_finalizacion",
+                            "sortable": false,
+                            "width": "25%"
+                        }
+                    ],
+                    "items": []
+                }
+            },
+            "component": "tables/TableDetail"
+        }
+    ]
+}

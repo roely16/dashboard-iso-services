@@ -95,6 +95,12 @@ class InfraestructuraController extends Controller{
 
     public function data($data){
 
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('adquisiciones.INFRAESTRUCTURA');
+
+        }
+
         // * Obtener las gestiones de infraestructura ingresadas 
         $ingresado = Gestion::select(
                             'gestionid',

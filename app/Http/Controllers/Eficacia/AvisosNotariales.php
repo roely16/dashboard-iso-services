@@ -48,7 +48,7 @@ class AvisosNotariales extends Controller{
                                                                     WHERE T1.DEPENDENCIA IN (18)
                                                                     AND TO_CHAR(T1.FECHA_ASIGNA_TAREA, 'YYYY-MM') = '$data->date'
                                                                     AND T1.STATUS_DOCUMENTO <> 3
-                                                                    and T1.STATUS_TAREA <> 1
+                                                                    -- and T1.STATUS_TAREA <> 1
                                                                     and TRUNC(FECHA_ASIGNA_TAREA) = (
                                                                         SELECT MAX(TRUNC(FECHA_ASIGNACION)) 
                                                                         FROM CDO_BANDEJA 

@@ -1,0 +1,119 @@
+{
+  "total": 0.57,
+  "bottom_detail": [
+    {
+      "text": "Ingresado",
+      "value": 0,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "ID",
+              "value": "id_fondo_compra",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Detalle",
+              "value": "detalle_compra",
+              "sortable": false,
+              "width": "65%"
+            },
+            {
+              "text": "Fecha",
+              "value": "fecha_elaboracion",
+              "sortable": false,
+              "width": "25%"
+            }
+          ],
+          "items": []
+        }
+      },
+      "component": "tables/TableDetail"
+    },
+    {
+      "text": "Proceso",
+      "value": 0,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "ID",
+              "value": "id_fondo_compra",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Detalle",
+              "value": "detalle_compra",
+              "sortable": false,
+              "width": "30%"
+            },
+            {
+              "text": "Gesti\u00f3n",
+              "value": "gestionid",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Fecha",
+              "value": "fecha",
+              "sortable": false,
+              "width": "25%"
+            },
+            {
+              "text": "T\u00edtulo",
+              "value": "titulo",
+              "sortable": false,
+              "width": "30%"
+            }
+          ],
+          "items": []
+        }
+      },
+      "component": "tables/TableDetail"
+    },
+    {
+      "text": "Finalizado",
+      "value": 0,
+      "detail": {
+        "table": {
+          "headers": [
+            {
+              "text": "ID",
+              "value": "id_fondo_compra",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Detalle",
+              "value": "detalle_compra",
+              "sortable": false,
+              "width": "30%"
+            },
+            {
+              "text": "Gesti\u00f3n",
+              "value": "gestionid",
+              "sortable": false,
+              "width": "10%"
+            },
+            {
+              "text": "Fecha",
+              "value": "fecha",
+              "sortable": false,
+              "width": "25%"
+            },
+            {
+              "text": "T\u00edtulo",
+              "value": "titulo",
+              "sortable": false,
+              "width": "30%"
+            }
+          ],
+          "items": []
+        }
+      },
+      "component": "tables/TableDetail"
+    }
+  ]
+}

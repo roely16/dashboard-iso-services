@@ -208,11 +208,11 @@ class ConfigController extends Controller{
 
             // ! Se retorna la estructura preestablecida del indicador
 
-            // if (!property_exists($data, 'estructura_controlador') || $data->estructura_controlador == null) {
+            if (!property_exists($data, 'estructura_controlador') || $data->estructura_controlador == null) {
 
-            //     return $data_structure;
+                return $data_structure;
 
-            // }
+            }
             
 
         }

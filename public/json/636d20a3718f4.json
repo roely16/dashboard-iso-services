@@ -1,0 +1,23 @@
+{
+  "total": 0.06,
+  "bottom_detail": [
+    {
+      "text": "Ingresado",
+      "value": 0,
+      "detail": { "table": { "headers": [], "items": [] } },
+      "component": "tables/TableDetail"
+    },
+    {
+      "text": "Proceso",
+      "value": 0,
+      "detail": { "table": { "headers": [], "items": [] } },
+      "component": "tables/TableDetail"
+    },
+    {
+      "text": "Finalizado",
+      "value": 0,
+      "detail": { "table": { "headers": [], "items": [] } },
+      "component": "tables/TableDetail"
+    }
+  ]
+}
