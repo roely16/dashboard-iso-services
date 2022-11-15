@@ -143,7 +143,7 @@ class AvisosController extends Controller{
 
         if (count($total) > 0) {
             
-            $porcentaje = round((count($filter_validos) / count($total)) * 100, 1);
+            $porcentaje = round((count($filter_validos) / count($total)) * 100, 2);
 
         }else{
 

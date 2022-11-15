@@ -211,7 +211,7 @@ class ContribuyenteController extends Controller{
 
         if (count($historial_array) > 0) {
             
-            $porcentaje = round((count($validas) / count($historial_array)) * 100, 1);
+            $porcentaje = round((count($validas) / count($historial_array)) * 100, 2);
 
         }else{
 
