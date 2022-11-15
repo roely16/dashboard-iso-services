@@ -256,7 +256,7 @@ class EficaciaController extends Controller{
                                                             FROM SGC.INDICADOR_TICKETS_FINAL A
                                                             WHERE (F_LLAMADA - F_ENTRADA)*24*60 <= 20
                                                             AND F_LLAMADA IS NOT NULL AND ITIEMPO IS NOT NULL
-                                                            AND CODIGO_STATUS IN (4) AND UPPER(DESCRIPCION) IN ('CATASTRO','IUSI')
+                                                            AND UPPER(DESCRIPCION) IN ('CATASTRO','IUSI')
                                                             AND TO_CHAR(ITIEMPO,'YYYY-MM') = '$data->date'");
 
         $menor_45 = DB::connection('catastrousr')->select(" SELECT *
