@@ -240,7 +240,7 @@ class InfraestructuraController extends Controller{
 
         if (count($ingresado) > 0) {
             
-            $porcentaje = round((count($finalizadas) / count($ingresado)) * 100, 1);
+            $porcentaje = round((count($finalizadas) / count($ingresado)) * 100, 2);
         
         }else{
 

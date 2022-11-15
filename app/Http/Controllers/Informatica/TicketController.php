@@ -277,7 +277,7 @@ class TicketController extends Controller {
 
         if ($carga_trabajo > 0) {
             
-            $porcentaje = round(count($resueltos) / $carga_trabajo * 100, 1);
+            $porcentaje = round(count($resueltos) / $carga_trabajo * 100, 2);
 
         }else{
 

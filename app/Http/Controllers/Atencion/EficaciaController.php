@@ -312,7 +312,7 @@ class EficaciaController extends Controller{
             
             $cumplimiento = round((count($menor_10) / count($total)) * 100, 2);
             $mensual = round((count($menor_20) / count($total)) * 100, 2);
-            $trimestral = in_array(intval($month), $trimestre_vencimiento) ? round((count($menor_45) / count($ingresados)) * 100, 2) : 0;
+            $trimestral = in_array(intval($month), $trimestre_vencimiento) ? round((count($menor_45) / count($total)) * 100, 2) : 0;
 
         }else{
 

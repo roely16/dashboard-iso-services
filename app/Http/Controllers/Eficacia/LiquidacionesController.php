@@ -127,7 +127,7 @@ class LiquidacionesController extends Controller{
             
             if ($meta->cantidad_meta > 0) {
             
-                $porcentaje = round((count($validas) / $meta->cantidad_meta) * 100, 1);
+                $porcentaje = round((count($validas) / $meta->cantidad_meta) * 100, 2);
     
             }else{
     

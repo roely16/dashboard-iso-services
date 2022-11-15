@@ -1,0 +1,169 @@
+{
+  "cumplimiento": 84.34,
+  "mensual": 77.33,
+  "trimestral": 94.57,
+  "menor_10": {
+    "value": 5737,
+    "detail": {
+      "table": {
+        "headers": [
+          { "text": "ID", "value": "id_transaccion", "sortable": false },
+          { "text": "Usuario", "value": "usuario", "sortable": false },
+          {
+            "text": "Tiempo de Atenci\u00f3n",
+            "value": "tiempo_atencion",
+            "sortable": false
+          },
+          { "text": "", "value": "data-table-expand" }
+        ],
+        "items": []
+      }
+    },
+    "component": "tables/TableTicketTime"
+  },
+  "menor_20": {
+    "value": 5260,
+    "detail": {
+      "table": {
+        "headers": [
+          { "text": "ID", "value": "id_transaccion", "sortable": false },
+          { "text": "Usuario", "value": "usuario", "sortable": false },
+          {
+            "text": "Tiempo en Cola",
+            "value": "tiempo_cola",
+            "sortable": false
+          },
+          { "text": "", "value": "data-table-expand" }
+        ],
+        "items": []
+      }
+    },
+    "component": "tables/TableTicketTime"
+  },
+  "menor_45": {
+    "value": 6744,
+    "detail": {
+      "table": {
+        "headers": [
+          { "text": "ID", "value": "id_transaccion", "sortable": false },
+          { "text": "Usuario", "value": "usuario", "sortable": false },
+          {
+            "text": "Tiempo en Cola",
+            "value": "tiempo_cola",
+            "sortable": false
+          },
+          { "text": "", "value": "data-table-expand" }
+        ],
+        "items": []
+      }
+    },
+    "component": "tables/TableTicketTime"
+  },
+  "bottom_detail": [
+    {
+        "text": "Total Tickets",
+        "value": 6802,
+        "detail": {
+          "table": {
+            "headers": [
+              {
+                "text": "ID",
+                "value": "id_transaccion",
+                "sortable": false
+              },
+              {
+                "text": "Usuario",
+                "value": "usuario",
+                "sortable": false
+              },
+              {
+                "text": "Tiempo de Atención",
+                "value": "tiempo_atencion",
+                "sortable": false
+              },
+              {
+                "text": "Tiempo en Cola",
+                "value": "tiempo_cola",
+                "sortable": false
+              },
+              {
+                "text": "",
+                "value": "data-table-expand"
+              }
+            ],
+            "items": []
+          }
+        },
+        "component": "tables/TableTicketTime"
+      },
+      {
+        "text": "Recepción Docs",
+        "value": 1434,
+        "detail": {
+          "table": {
+            "headers": [
+              {
+                "text": "ID",
+                "value": "id_ingreso_expediente",
+                "sortable": false
+              },
+              {
+                "text": "Expediente",
+                "value": "expediente",
+                "sortable": false
+              },
+              {
+                "text": "Fecha",
+                "value": "fecha",
+                "sortable": false
+              },
+              {
+                "text": "Usuario",
+                "value": "usuario",
+                "sortable": false
+              }
+            ],
+            "items": []
+          }
+        },
+        "component": "tables/TableDetail"
+      },
+      {
+        "text": "Cancelados",
+        "value": 324,
+        "detail": {
+          "table": {
+            "headers": [
+              {
+                "text": "ID",
+                "value": "id_transaccion",
+                "sortable": false
+              },
+              {
+                "text": "Usuario",
+                "value": "usuario",
+                "sortable": false
+              },
+              {
+                "text": "Tiempo de Atención",
+                "value": "tiempo_atencion",
+                "sortable": false
+              },
+              {
+                "text": "Tiempo en Cola",
+                "value": "tiempo_cola",
+                "sortable": false
+              },
+              {
+                "text": "",
+                "value": "data-table-expand"
+              }
+            ],
+            "items": []
+          }
+        },
+        "component": "tables/TableDetail"
+      }
+  ],
+  "total": 84.34
+}

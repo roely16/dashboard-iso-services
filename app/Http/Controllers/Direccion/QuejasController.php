@@ -199,7 +199,7 @@ class QuejasController extends Controller{
             $i = 0;
         }
 
-        $porcentaje = round($suma_porcentajes / $num_indicadores, 1);
+        $porcentaje = round($suma_porcentajes / $num_indicadores, 2);
 
         $response = [
             'indicadores' => $indicadores,

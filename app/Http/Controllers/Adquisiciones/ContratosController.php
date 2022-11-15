@@ -337,7 +337,7 @@ class ContratosController extends Controller{
 
         if (count($programado) > 0) {
             
-            $porcentaje = round((count($finalizados) / count($programado)) * 100, 1);
+            $porcentaje = round((count($finalizados) / count($programado)) * 100, 2);
         
         }else{
 

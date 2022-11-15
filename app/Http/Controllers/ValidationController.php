@@ -13,7 +13,7 @@ class ValidationController extends Controller{
 
             // * Para procesar un mes anterior cambiar la dirección de la validación
 
-            if (strtotime($indicador->date) > strtotime($current_date)) {
+            if (strtotime($indicador->date) < strtotime($current_date)) {
                 
                 // * Si es un mes posterior realizar solicitud al controlador encargado de obtener el historial, desde la fuente que aplique
 

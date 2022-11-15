@@ -203,7 +203,7 @@ class CalidadController extends Controller{
 
         if ($suma_porcentajes > 0) {
             
-            $porcentaje = round($suma_porcentajes / $num_indicadores, 1);
+            $porcentaje = round($suma_porcentajes / $num_indicadores, 2);
 
         }else{
             

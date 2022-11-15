@@ -227,7 +227,7 @@ class CapacitacionesController extends Controller {
 
         if(count($capacitaciones) > 0){
 
-            $porcentaje = round(((count($cap['finalizado']) + count($cap['rechazado'])) / count($capacitaciones)) * 100, 1);
+            $porcentaje = round(((count($cap['finalizado']) + count($cap['rechazado'])) / count($capacitaciones)) * 100, 2);
 
         }else{
 

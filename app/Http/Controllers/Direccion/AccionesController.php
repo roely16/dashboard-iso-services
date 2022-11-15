@@ -144,8 +144,8 @@ class AccionesController extends Controller{
 
         if (count($gestiones) > 0) {
             
-            $avance = round((count($cerradas) / count($gestiones)) * 100, 1);
-            $eficacia = round(($en_tiempo / count($gestiones)) * 100, 1);
+            $avance = round((count($cerradas) / count($gestiones)) * 100, 2);
+            $eficacia = round(($en_tiempo / count($gestiones)) * 100, 2);
 
         }
 

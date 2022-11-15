@@ -144,7 +144,7 @@ class ConveniosController extends Controller{
 
         if (count($total) > 0) {
             
-            $porcentaje = round((count($validos) / count($total)) * 100, 1);
+            $porcentaje = round((count($validos) / count($total)) * 100, 2);
 
         }else{
 

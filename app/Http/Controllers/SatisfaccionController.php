@@ -240,7 +240,7 @@ class SatisfaccionController extends Controller{
         ];
 
         $response = [
-            'total' => count($evaluaciones) > 0 ? round(100 - ((count($no_conformes) / count($evaluaciones)) * 100), 1) : 100,
+            'total' => count($evaluaciones) > 0 ? round(100 - ((count($no_conformes) / count($evaluaciones)) * 100), 2) : 100,
             'evaluaciones' => count($evaluaciones),
             'no_conformes' => count($no_conformes),
             'bottom_detail' => $bottom_detail

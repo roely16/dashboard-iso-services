@@ -207,7 +207,7 @@ class EficaciaController extends Controller{
 
         if ($carga_trabajo > 0) {
             
-            $porcentaje = round($suma_porcentajes / $num_indicadores, 1);
+            $porcentaje = round($suma_porcentajes / $num_indicadores, 2);
 
             $porcentaje = $porcentaje > 100 ? 100 : $porcentaje;
 

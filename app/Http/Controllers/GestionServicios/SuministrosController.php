@@ -202,7 +202,7 @@ class SuministrosController extends Controller {
 
         if ($carga_trabajo > 0) {
 
-            $porcentaje = round((count($resueltas) / $carga_trabajo) * 100, 1);
+            $porcentaje = round((count($resueltas) / $carga_trabajo) * 100, 2);
 
         }else{
 

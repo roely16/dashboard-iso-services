@@ -134,7 +134,7 @@ class LiquidacionesController extends Controller{
 
         if (count($total) > 0) {
             
-            $porcentaje = round((count($validas) / count($total)) * 100, 1);
+            $porcentaje = round((count($validas) / count($total)) * 100, 2);
 
         }else{
 
