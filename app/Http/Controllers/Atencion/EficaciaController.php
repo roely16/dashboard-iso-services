@@ -94,11 +94,14 @@ class EficaciaController extends Controller{
         foreach ($ingresados as $ingresado) {
             
             $f_entrada_time = strtotime($ingresado->f_entrada);
+            $f_llamada = strtotime($ingresado->f_llamada);
+
             $itiempo_time = strtotime($ingresado->itiempo);
             $ftiempo_time = strtotime($ingresado->ftiempo);
             
             // * Calcular aquellos que se demoran 10 minutos o menos en la atención
             $ingresado->minutos_atencion = (abs($itiempo_time - $ftiempo_time) / 60);
+            $ingresado->minutos_cola = (abs($f_llamada - $f_entrada_time) / 60);
             
             // * Crear el texto descriptivo del tiempo de atención
             $minutos = intval($ingresado->minutos_atencion) . ' minutos';
@@ -107,13 +110,13 @@ class EficaciaController extends Controller{
             $ingresado->atencion_tiempo = $minutos . ' y ' . $segundos;
 
             // * Calcular aquellos que se demoran 20 minutos o menos desde que entra el ticket hasta iniciar la atención
-            $ingresado->minutos_cola = (abs($itiempo_time - $f_entrada_time) / 60);
+            //$ingresado->minutos_cola = (abs($itiempo_time - $f_entrada_time) / 60);
 
             // * Calcular el texto descriptivo del tiempo en cola
             $minutos = intval($ingresado->minutos_cola) . ' minutos';
             $segundos = intval(($ingresado->minutos_cola - intval($ingresado->minutos_cola)) * 60) . ' segundos';
 
-            $ingresado->cola_tiempo = $minutos . ' y ' . $segundos;
+            //$ingresado->cola_tiempo = $minutos . ' y ' . $segundos;
 
             if ($ingresado->minutos_atencion <= 10 && in_array(intval($ingresado->id_grupo), $id_grupo, true)) {
                 
@@ -256,6 +259,13 @@ class EficaciaController extends Controller{
                                                             AND CODIGO_STATUS IN (4) AND UPPER(DESCRIPCION) IN ('CATASTRO','IUSI')
                                                             AND TO_CHAR(ITIEMPO,'YYYY-MM') = '$data->date'");
 
+        $menor_45 = DB::connection('catastrousr')->select(" SELECT *
+                                                                FROM SGC.INDICADOR_TICKETS_FINAL A
+                                                                WHERE (F_LLAMADA - F_ENTRADA) * 24 * 60 <= 45
+                                                                AND F_LLAMADA IS NOT NULL AND ITIEMPO IS NOT NULL
+                                                                AND CODIGO_STATUS IN (4) AND UPPER(DESCRIPCION) IN ('CATASTRO','IUSI')
+                                                                AND TO_CHAR(ITIEMPO,'YYYY-MM') = '$data->date'");
+
         $cancelados = DB::connection('catastrousr')->select("   SELECT *
                                                                 FROM SGC.INDICADOR_TICKETS_FINAL A
                                                                 WHERE TO_CHAR(F_ENTRADA, 'YYYY-MM') = '$data->date'
@@ -300,9 +310,9 @@ class EficaciaController extends Controller{
 
         if (count($total) > 0) {
             
-            $cumplimiento = round((count($menor_10) / count($total)) * 100, 1);
-            $mensual = round((count($menor_20) / count($total)) * 100, 1);
-            $trimestral = in_array(intval($month), $trimestre_vencimiento) ? round((count($tickets_menor_45) / count($ingresados)) * 100, 1) : 0;
+            $cumplimiento = round((count($menor_10) / count($total)) * 100, 2);
+            $mensual = round((count($menor_20) / count($total)) * 100, 2);
+            $trimestral = in_array(intval($month), $trimestre_vencimiento) ? round((count($menor_45) / count($ingresados)) * 100, 2) : 0;
 
         }else{
 
@@ -337,7 +347,7 @@ class EficaciaController extends Controller{
                 'component' => 'tables/TableTicketTime'
             ],
             'menor_45' => [
-                'value' => in_array(intval($month), $trimestre_vencimiento) ? count($tickets_menor_45) : 0,
+                'value' => in_array(intval($month), $trimestre_vencimiento) ? count($menor_45) : 0,
                 'detail' => [
                     'table' => [
                         'headers' => $headers_cola,
