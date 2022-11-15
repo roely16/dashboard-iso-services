@@ -211,7 +211,7 @@ class SatisfaccionController extends Controller{
                         'items' => $evaluaciones
                     ],
                 ],
-                'component' => 'tables/TableSatisfaccion',
+                'component' => 'tables/SatisfaccionDetalle',
                 'divide' => 'down'
             ],
             [
