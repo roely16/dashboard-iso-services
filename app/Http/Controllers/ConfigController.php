@@ -18,7 +18,7 @@ class ConfigController extends Controller{
 
         try {
             
-            $access_users = ['HECHUR', 'JGUTIERREZ'];
+            $access_users = ['HECHUR', 'JGUTIERREZ', 'ANPEREZ'];
 
             // * Validar que el usuario exista dentro de la lista de permitidos
             if (!in_array(strtoupper($request->user), $access_users)) {
