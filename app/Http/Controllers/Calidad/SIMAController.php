@@ -28,18 +28,19 @@ class SIMAController extends Controller{
                                                             AND DOC.CODIGOCLASE = 3
                                                             AND DET.CODTRAMITE = 192
                                                             AND TO_CHAR(DOC.FECHA_ISO, 'YYYY-MM') = '$data->date'
-                                                            AND DOC.CALIDAD = 2
+                                                            -- AND DOC.CALIDAD = 2
                                                             ORDER BY DOC.DOCUMENTO ASC
                                                         ");
 
         $validos = [];
         $rechazados = [];  
+        $total_finalizados = [];
 
         foreach ($total as $item) {
             
             // Verificar el resultado
             $result = DB::connection('catastrousr')->select("SELECT 
-                                                                (CASE WHEN SUM(NVL(ERROR, 0)) = 0 THEN 'ACIERTO' ELSE 'ERROR' END) AS RESULTADO
+                                                                COUNT(ACIERTO) AS ACIERTO, COUNT(ERROR) AS ERROR
                                                             FROM CDO_Q_DOCUMENTO
                                                             WHERE CONCAT(DOCUMENTO, CONCAT('-', ANIO)) = '$item->expediente'
                                                             ");
@@ -48,13 +49,26 @@ class SIMAController extends Controller{
                 
                 $result = $result[0];
 
-                if ($result->resultado === 'ACIERTO') {
+                // if ($result->resultado === 'ACIERTO') {
+                    
+                //     $validos [] = $item;
+
+                // }else{
+                    
+                //     $rechazados [] = $item;
+
+                // }
+
+                // * Es válido cuando tiene dos ciertos y 0 errores
+                if ($result->acierto == 2 && $result->error == 0) {
                     
                     $validos [] = $item;
+                    $total_finalizados [] = $item;
 
-                }else{
-                    
+                }elseif($result->error > 0){
+
                     $rechazados [] = $item;
+                    $total_finalizados [] = $item;
 
                 }
 
@@ -103,11 +117,11 @@ class SIMAController extends Controller{
         $bottom_detail = [
             [
                 "text" => "Total",
-                "value" => count($total),
+                "value" => count($total_finalizados),
                 'detail' => [
                     'table' => [
                         'headers' => $headers,
-                        'items' => $total
+                        'items' => $total_finalizados
                     ]
                 ],
                 'component' => 'tables/TableDetail',
@@ -149,9 +163,9 @@ class SIMAController extends Controller{
             ],
         ];
 
-        if (count($total) > 0) {
+        if (count($total_finalizados) > 0) {
             
-            $porcentaje = round((count($filter_validos) / count($total)) * 100, 1);
+            $porcentaje = round((count($filter_validos) / count($total_finalizados)) * 100, 2);
 
         }else{
 
@@ -162,7 +176,7 @@ class SIMAController extends Controller{
         $response = [
             'total' => $porcentaje,
             'validas' => count($filter_validos),
-            'total_calidad' => count($total),
+            'total_calidad' => count($total_finalizados),
             'bottom_detail' => $bottom_detail
         ];
 
