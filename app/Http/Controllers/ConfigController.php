@@ -31,7 +31,7 @@ class ConfigController extends Controller{
             // * Validar contraseña
             $colaborador = Empleado::select('nombre', 'apellido', 'nit', 'codarea', 'usuario')
                             ->whereRaw(DB::raw("upper(usuario) like upper('$request->user')"))
-                            ->whereRaw(DB::raw("DESENCRIPTAR(pass) = upper('$request->password')"))
+                            ->whereRaw(DB::raw("upper(DESENCRIPTAR(pass)) = upper('$request->password')"))
                             ->first();
 
 
