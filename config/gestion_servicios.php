@@ -63,5 +63,48 @@ return [
                 'component' => 'tables/TableDetail'
             ]
         ]
+    ],
+    'SUMINISTROS' => [
+        'total' => 0,
+        'bottom_detail' => [
+            [
+                'text' => 'Anterior',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'items' => [],
+                        'headers' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
+            ],
+            [
+                'text' => 'Ingresadas',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'items' => [],
+                        'headers' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'down'
+            ],
+            [
+                'text' => 'Resueltas',
+                'value' => 0,
+                'detail' => [
+                    'table' => [
+                        'items' => [],
+                        'headers' => []
+                    ]
+                ],
+                'component' => 'tables/TableDetail',
+                'divide' => 'up'
+            ]
+        ],
+        'resueltas' => 0,
+        'pendientes' => 0
     ]
 ];
