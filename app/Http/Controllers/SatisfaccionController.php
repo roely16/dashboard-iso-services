@@ -345,8 +345,9 @@ class SatisfaccionController extends Controller{
                             'items' => $aceptables
                         ],
                     ],
-                    'component' => 'tables/TableSatisfaccion',
-                    'divide' => 'up'
+                    'component' => 'tables/SatisfaccionDetalle',
+                    'divide' => 'up',
+                    'resumen' => $detalle_satisfaccion
                 ],
                 [
                     "text" => 'No Conforme',
@@ -357,7 +358,8 @@ class SatisfaccionController extends Controller{
                             'items' => $no_conformes
                         ],
                     ],
-                    'component' => 'tables/TableSatisfaccion'
+                    'component' => 'tables/SatisfaccionDetalle',
+                    'resumen' => $detalle_satisfaccion
                 ],
             ];
     
