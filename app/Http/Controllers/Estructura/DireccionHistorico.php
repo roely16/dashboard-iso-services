@@ -81,7 +81,7 @@ class DireccionHistorico extends Controller{
                 $i = 0;
             }
 
-            $data_structure['total'] = round($total_calculado / count($lista_indicadores), 1);
+            $data_structure['total'] = round($total_calculado / count($lista_indicadores), 2);
 
             // * Agregar las llaves correspondientes para mostrar el detalle del cálculo del porcentaje
             $data_structure['tooltip'] = $total_detail;
