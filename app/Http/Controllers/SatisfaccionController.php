@@ -247,7 +247,7 @@ class SatisfaccionController extends Controller{
 
                 }
 
-                $temp->promedio = round($temp_promedio / count($preguntas_catalog), 2);
+                $temp->promedio = round(($temp_promedio / count($preguntas_catalog) * 10), 2);
                 $table_detail [] = $temp;
 
                 $promedio_general += $temp->promedio;
@@ -263,36 +263,32 @@ class SatisfaccionController extends Controller{
                                                 'width' => '25%',
                                                 'sortable' => false
                                             ],
-                                            [
-                                                'text' => 'Pregunta 1',
-                                                'value' => 'pregunta_1',
-                                                'width' => '15%',
-                                                'sortable' => false,
-                                                'align' => 'center'
-                                            ],
-                                            [
-                                                'text' => 'Pregunta 2',
-                                                'value' => 'pregunta_2',
-                                                'width' => '15%',
-                                                'sortable' => false,
-                                                'align' => 'center'
-                                            ],
-                                            [
-                                                'text' => 'Pregunta 3',
-                                                'value' => 'pregunta_3',
-                                                'width' => '15%',
-                                                'sortable' => false,
-                                                'align' => 'center'
-                                            ],
-                                            [
-                                                'text' => 'Promedio',
-                                                'value' => 'promedio',
-                                                'width' => '25%',
-                                                'sortable' => false,
-                                                'align' => 'center'
-                                            ],
                                         ]
                                     ]];
+
+            foreach ($preguntas_catalog as $key => $pregunta) {
+                
+                $temp = [
+                    'text' => 'Pregunta ' . ($key + 1),
+                    'value' => $pregunta,
+                    'width' => '15%',
+                    'sortable' => false,
+                    'align' => 'center'
+                ];
+
+                array_push($detalle_satisfaccion['table']['headers'], $temp);
+
+            }
+
+            $temp = [
+                'text' => 'Promedio',
+                'value' => 'promedio',
+                'width' => '25%',
+                'sortable' => false,
+                'align' => 'center'
+            ];
+
+            array_push($detalle_satisfaccion['table']['headers'], $temp);
 
             $headers = [
                 [
@@ -367,7 +363,7 @@ class SatisfaccionController extends Controller{
     
             $response = [
                 // 'total' => count($evaluaciones) > 0 ? round(100 - ((count($no_conformes) / count($evaluaciones)) * 100), 2) : 100,
-                'total' => round(($promedio_general / count($table_detail) * 10), 2),
+                'total' => round(($promedio_general / count($table_detail)), 2),
                 'evaluaciones' => count($evaluaciones),
                 'no_conformes' => count($no_conformes),
                 'bottom_detail' => $bottom_detail,
@@ -378,10 +374,6 @@ class SatisfaccionController extends Controller{
 
         } catch (\Throwable $th) {
             
-            // echo json_encode($modelos_encabezado->toArray());
-
-            // die();
-
             dd(['message' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile()]);
 
         }
