@@ -212,6 +212,9 @@ class SatisfaccionController extends Controller{
                 $temp = (object) [];
                 $temp->nombre = $colaborador->colaborador;
                 $temp_promedio = 0;
+
+                $num_preguntas = 0;
+                $num_no_satisfactorias = 0;
     
                 foreach ($preguntas_catalog as $key=>$pregunta) {
                     
@@ -223,14 +226,19 @@ class SatisfaccionController extends Controller{
                     // * Sacar el promedio de todos las evaluaciones del colaborador por cada pregunta
                     foreach ($evaluaciones as &$evaluacion) {
                         
-                        // $e = 1;
-
                         if ($colaborador->colaborador == $evaluacion->colaborador) {
                             
                             // $e++;
+                            $num_preguntas++;
 
                             if (count($evaluacion->eva_num) == count($preguntas_catalog)) {
                                 
+                                if ($evaluacion->eva_num[$key]->valor <= 7) {
+                                    
+                                    $num_no_satisfactorias++;
+
+                                }
+
                                 $total += $evaluacion->eva_num[$key]->valor;
                                 $notas [] = $evaluacion->eva_num[$key]->valor;
 
@@ -247,10 +255,12 @@ class SatisfaccionController extends Controller{
 
                 }
 
-                $temp->promedio = round(($temp_promedio / count($preguntas_catalog) * 10), 2);
+                $temp->promedio = round(($temp_promedio / count($preguntas_catalog)), 2);
+                $temp->satisfaccion = round((($num_preguntas - $num_no_satisfactorias) / $num_preguntas) * 100, 2);
+
                 $table_detail [] = $temp;
 
-                $promedio_general += $temp->promedio;
+                $promedio_general += $temp->satisfaccion;
     
             }
             
@@ -281,9 +291,19 @@ class SatisfaccionController extends Controller{
             }
 
             $temp = [
-                'text' => 'Promedio',
+                'text' => 'Calificación',
                 'value' => 'promedio',
-                'width' => '25%',
+                'width' => '15%',
+                'sortable' => false,
+                'align' => 'center'
+            ];
+
+            array_push($detalle_satisfaccion['table']['headers'], $temp);
+
+            $temp = [
+                'text' => 'Satisfacción',
+                'value' => 'satisfaccion',
+                'width' => '15%',
                 'sortable' => false,
                 'align' => 'center'
             ];
