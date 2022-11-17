@@ -93,6 +93,12 @@ class SuministrosController extends Controller {
 
     public function data($data){
         
+        if (property_exists($data, 'get_structure')) {
+            
+            return config('gestion_servicios.SUMINISTROS');
+
+        }
+
         $mes_anterior = date('Y-m', strtotime($data->date . ' -1 month'));
 
         // * Ordenes ingresadas en el mes anterior y que no fueron atendidas o que fueron atendidas hasta el mes siguiente
