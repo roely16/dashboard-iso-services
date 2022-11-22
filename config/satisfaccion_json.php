@@ -15,7 +15,7 @@ return [
                         'items' => []
                     ],
                 ],
-                'component' => 'tables/TableSatisfaccion',
+                'component' => 'tables/SatisfaccionDetalle',
                 'divide' => 'down'
             ],
             [
@@ -27,7 +27,7 @@ return [
                         'items' => []
                     ],
                 ],
-                'component' => 'tables/TableSatisfaccion',
+                'component' => 'tables/SatisfaccionDetalle',
                 'divide' => 'up' 
             ],
             [
@@ -39,7 +39,7 @@ return [
                         'items' => []
                     ],
                 ],
-                'component' => 'tables/TableSatisfaccion'
+                'component' => 'tables/SatisfaccionDetalle'
             ],
         ]
     ],

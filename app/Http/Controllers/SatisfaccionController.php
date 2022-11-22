@@ -107,23 +107,31 @@ class SatisfaccionController extends Controller{
     
             }
     
-            $msa_procesos = MSAProceso::select('idproceso')->where('codarea', $data->codarea)->get()->pluck('idproceso');
-    
+            $msa_procesos = MSAProceso::select('idproceso')
+                            ->where('codarea', $data->codarea)
+                            ->orderBy('idproceso', 'asc')
+                            ->get()
+                            ->pluck('idproceso');
+            
             $modelos_encabezado = ModeloEncabezado::select('id_medicion')
                                     ->whereIn('idproceso', $msa_procesos)
                                     ->where('estado', 'A')
                                     ->get()
                                     ->pluck('id_medicion');
-    
+        
+            // * Obtener el campo de fecha a utilizar
+            $fecha_proceso = MSAProceso::where('codarea', $data->codarea)->first();
+
             $evaluaciones = Encabezado::select(
                                 'correlativo', 
                                 'colaborador', 
-                                DB::raw("to_char(fecha_opinion, 'DD/MM/YYYY HH24:MI:SS') as fecha_opinion")
+                                DB::raw("to_char(fecha_opinion, 'DD/MM/YYYY HH24:MI:SS') as fecha_opinion"),
+                                'id_medicion'
                             )
                             ->whereIn('id_medicion', $modelos_encabezado)
-                            ->whereRaw("to_char(fecha_opinion, 'YYYY-MM') = '$data->date'")
+                            ->whereRaw("to_char($fecha_proceso->data_fecha, 'YYYY-MM') = '$data->date'")
                             ->get();
-    
+
             $colaboradores = Encabezado::select(
                                 'colaborador'
                             )
@@ -159,7 +167,7 @@ class SatisfaccionController extends Controller{
     
                 $evaluacion->eva_num = $eva_num;
     
-                $nota = round($total / count($eva_num), 2);
+                $nota = count($eva_num) > 0 ? round($total / count($eva_num), 2) : 0;
     
                 // Validar si es mayor que 8 para tomarla como ACEPTABLE
                 if ($nota >= 8) {
@@ -180,90 +188,111 @@ class SatisfaccionController extends Controller{
     
             }
     
-            $preguntas_catalog = [];
+            // * Realizar el proceso por cada uno de los tipos de evaluación
 
-            // Obtener el catalogo de preguntas para el proceso en cuestión
-            $procesos_array = $msa_procesos->toArray();
-            $procesos = implode(",", $procesos_array);
+            $promedio_total = 0;
+            $procesos_validos = 0;
 
-            $consulta_preguntas = DB::connection('rrhh')->select("  SELECT *
-                                                                    FROM MSA_MODELO_DETALLE
-                                                                    WHERE ID_MEDICION IN (
-                                                                        SELECT ID_MEDICION
-                                                                        FROM MSA_MODELO_ENCABEZADO
-                                                                        WHERE IDPROCESO IN ($procesos)
-                                                                        AND ESTADO = 'A'
-                                                                        AND NOMBRE_MEDICION = '$data->nombre_medicion'
-                                                                    )
-                                                                    AND TIPO_OBJETO = 'RADIO'");
+            foreach ($modelos_encabezado as $proceso) {
 
-            foreach ($consulta_preguntas as $key => &$pregunta) {
+                $preguntas_catalog = [];
+
+                $consulta_preguntas = DB::connection('rrhh')->select("  SELECT *
+                                                                        FROM MSA_MODELO_DETALLE
+                                                                        WHERE ID_MEDICION IN (
+                                                                            SELECT ID_MEDICION
+                                                                            FROM MSA_MODELO_ENCABEZADO
+                                                                            WHERE id_medicion = $proceso
+                                                                            AND ESTADO = 'A'
+                                                                        )
+                                                                        AND TIPO_OBJETO = 'RADIO'");
                 
-                $preguntas_catalog [] = 'pregunta_' . ($key + 1);
-
-            }
-
-            $table_detail = [];
-            $promedio_general = 0;
-
-            // * Armar el objeto para sacar promedios de promedios
-            foreach ($colaboradores as &$colaborador) {
-                                        
-                $temp = (object) [];
-                $temp->nombre = $colaborador->colaborador;
-                $temp_promedio = 0;
-
-                $num_preguntas = 0;
-                $num_no_satisfactorias = 0;
-    
-                foreach ($preguntas_catalog as $key=>$pregunta) {
+                foreach ($consulta_preguntas as $key => &$pregunta) {
                     
-                    $total = 0;
-                    $notas = [];
-                    
-                    $temp->{$pregunta} = 1;
+                    $preguntas_catalog [] = 'pregunta_' . ($key + 1);
 
-                    // * Sacar el promedio de todos las evaluaciones del colaborador por cada pregunta
-                    foreach ($evaluaciones as &$evaluacion) {
+                }
+
+                $table_detail = [];
+                $promedio_general = 0;
+
+                // * Armar el objeto para sacar promedios de promedios
+
+                foreach ($colaboradores as &$colaborador) {
+                                            
+                    $temp = (object) [];
+                    $temp->nombre = $colaborador->colaborador;
+                    $temp_promedio = 0;
+
+                    $num_preguntas = 0;
+                    $num_no_satisfactorias = 0;
+        
+                    foreach ($preguntas_catalog as $key=>$pregunta) {
                         
-                        if ($colaborador->colaborador == $evaluacion->colaborador) {
-                            
-                            // $e++;
-                            $num_preguntas++;
+                        $total = 0;
+                        $notas = [];
+                        
+                        $temp->{$pregunta} = 1;
 
-                            if (count($evaluacion->eva_num) == count($preguntas_catalog)) {
+                        // * Sacar el promedio de todos las evaluaciones del colaborador por cada pregunta
+                        foreach ($evaluaciones as &$evaluacion) {
+                            
+                            if ($colaborador->colaborador == $evaluacion->colaborador && $evaluacion->id_medicion == $proceso) {
                                 
-                                if ($evaluacion->eva_num[$key]->valor <= 7) {
+                                $num_preguntas++;
+                                
+                                if (array_key_exists($key, $evaluacion->eva_num)) {
                                     
+                                    if ($evaluacion->eva_num[$key]->valor <= 7) {
+                                        
+                                        $num_no_satisfactorias++;
+    
+                                    }
+    
+                                    $total += $evaluacion->eva_num[$key]->valor;
+                                    $notas [] = $evaluacion->eva_num[$key]->valor;
+
+
+                                }else{
+
+                                    $notas [] = 0;
                                     $num_no_satisfactorias++;
 
                                 }
 
-                                $total += $evaluacion->eva_num[$key]->valor;
-                                $notas [] = $evaluacion->eva_num[$key]->valor;
-
                             }
-                            
-                            
+            
                         }
-        
+
+                        $temp->{$pregunta} = count($notas) > 0 ? round($total / count($notas), 2) : 0; 
+
+                        $temp_promedio += $temp->{$pregunta}; 
+
                     }
 
-                    $temp->{$pregunta} = count($notas) > 0 ? round($total / count($notas), 2) : 0; 
+                    if ($num_preguntas > 0) {
+                        
+                        $temp->promedio = round(($temp_promedio / count($preguntas_catalog)), 2);
+                        $temp->satisfaccion = round((($num_preguntas - $num_no_satisfactorias) / $num_preguntas) * 100, 2);
 
-                    $temp_promedio += $temp->{$pregunta}; 
+                        $table_detail [] = $temp;
+
+                        $promedio_general += $temp->satisfaccion;
+
+                    }
+        
+                }
+
+                // * Realizar el cálculo del promedio por cada tipo de evaluación
+                if (count($table_detail) > 0) {
+                    
+                    $promedio_total += round(($promedio_general / count($table_detail)), 2);
+                    $procesos_validos++;
 
                 }
 
-                $temp->promedio = round(($temp_promedio / count($preguntas_catalog)), 2);
-                $temp->satisfaccion = round((($num_preguntas - $num_no_satisfactorias) / $num_preguntas) * 100, 2);
-
-                $table_detail [] = $temp;
-
-                $promedio_general += $temp->satisfaccion;
-    
             }
-            
+
             $detalle_satisfaccion = ['table' => [
                                         'items' => $table_detail,
                                         'headers' => [
@@ -342,6 +371,10 @@ class SatisfaccionController extends Controller{
                 ]
             ];
     
+            $aceptable = round(count($evaluaciones) * (($promedio_total / $procesos_validos) / 100)) == count($evaluaciones) && round($promedio_total / $procesos_validos, 2) < 100 ? round(count($evaluaciones) * (($promedio_total / $procesos_validos) / 100)) - 1 : round(count($evaluaciones) * (($promedio_total / $procesos_validos) / 100)) ;
+
+            $no_aceptable = count($evaluaciones) - $aceptable;
+
             $bottom_detail = [
                 [
                     "text" => 'Universo',
@@ -358,7 +391,7 @@ class SatisfaccionController extends Controller{
                 ],
                 [
                     "text" => 'Aceptable',
-                    "value" => count($aceptables),
+                    "value" => $aceptable,
                     'detail' => [
                         'table' => [
                             'headers' => $headers,
@@ -371,7 +404,7 @@ class SatisfaccionController extends Controller{
                 ],
                 [
                     "text" => 'No Conforme',
-                    "value" => count($no_conformes),
+                    "value" => $no_aceptable,
                     'detail' => [
                         'table' => [
                             'headers' => $headers,
@@ -384,8 +417,7 @@ class SatisfaccionController extends Controller{
             ];
     
             $response = [
-                // 'total' => count($evaluaciones) > 0 ? round(100 - ((count($no_conformes) / count($evaluaciones)) * 100), 2) : 100,
-                'total' => round(($promedio_general / count($table_detail)), 2),
+                'total' => round($promedio_total / $procesos_validos, 2),
                 'evaluaciones' => count($evaluaciones),
                 'no_conformes' => count($no_conformes),
                 'bottom_detail' => $bottom_detail,
