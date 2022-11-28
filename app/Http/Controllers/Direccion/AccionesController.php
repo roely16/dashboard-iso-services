@@ -98,9 +98,33 @@ class AccionesController extends Controller{
 
         $gestiones = DB::connection('rrhh')->select("   SELECT *
                                                         FROM gc_gestion
-                                                        WHERE TO_CHAR(fecha_propuesta_cierre, 'YYYY') = '$year'
+                                                        WHERE TO_CHAR(fecha_propuesta_cierre, 'YYYY') >= '$year'
                                                         AND ESTATUS_GESTION NOT IN ('PENDIENTE', 'ANULADO')
                                                         AND FECHA_APERTURA_ACCION <= TO_DATE('$last_day_month', 'YYYY-MM-DD')");
+
+        // * Validar que la acción correctiva no sea del último trimestre y que finalice hasta el siguiente año 
+
+        // * Válidar con el campo FECHA_APERTURA_ACCION si se creo en el último trimestre y que la FECHA_PROPUESTA_CIERRE no sea hasta el siguiente año
+        $last_quarter = [10,11,12];
+        $bk_gestiones = [];
+
+        foreach ($gestiones as $gestion) {
+            
+            // * Mes sin ceros iniciales
+            $fecha_apetura_accion_mes = date('n', strtotime($gestion->fecha_apertura_accion));
+
+            // * Año sin ceros iniciales
+            $fecha_propuesta_cierre_year = date('Y', strtotime($gestion->fecha_propuesta_cierre));
+
+            if (!in_array($fecha_apetura_accion_mes, $last_quarter) || !($fecha_propuesta_cierre_year > $year)) {
+                
+                $bk_gestiones [] = $gestion;
+
+            }
+
+        }
+
+        $gestiones = $bk_gestiones;
 
         $abiertas = [];
         $cerradas = [];
@@ -132,8 +156,9 @@ class AccionesController extends Controller{
         $headers = [
             [
                 'text' => 'ID',
-                'value' => 'id_gestion',
-                'sortable' => false
+                'value' => 'correl_gestion',
+                'sortable' => false,
+                'width' => '15%'
             ],
             [
                 'text' => 'Descripción',
