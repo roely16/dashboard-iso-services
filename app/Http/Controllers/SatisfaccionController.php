@@ -370,8 +370,16 @@ class SatisfaccionController extends Controller{
                     'value' => 'data-table-expand'
                 ]
             ];
-    
-            $aceptable = round(count($evaluaciones) * (($promedio_total / $procesos_validos) / 100)) == count($evaluaciones) && round($promedio_total / $procesos_validos, 2) < 100 ? round(count($evaluaciones) * (($promedio_total / $procesos_validos) / 100)) - 1 : round(count($evaluaciones) * (($promedio_total / $procesos_validos) / 100)) ;
+            
+            if ($procesos_validos > 0) {
+            
+                $aceptable = round(count($evaluaciones) * (($promedio_total / $procesos_validos) / 100)) == count($evaluaciones) && round($promedio_total / $procesos_validos, 2) < 100 ? round(count($evaluaciones) * (($promedio_total / $procesos_validos) / 100)) - 1 : round(count($evaluaciones) * (($promedio_total / $procesos_validos) / 100)) ;
+
+            }else{
+
+                $aceptable = 0;
+
+            }
 
             $no_aceptable = count($evaluaciones) - $aceptable;
 
@@ -417,7 +425,7 @@ class SatisfaccionController extends Controller{
             ];
     
             $response = [
-                'total' => round($promedio_total / $procesos_validos, 2),
+                'total' => $procesos_validos > 0 ? round($promedio_total / $procesos_validos, 2) : 0,
                 'evaluaciones' => count($evaluaciones),
                 'no_conformes' => count($no_conformes),
                 'bottom_detail' => $bottom_detail,
